@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>添加公告</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="__ADMIN__/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="__ADMIN__/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="__ADMIN__/css/animate.css" rel="stylesheet">
+    <link href="__ADMIN__/css/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+    <link href="__PLUGINS__/layui/css/layui.css" rel="stylesheet">
+    <link href="__PLUGINS__/UMeditor/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
+    <link href="__ADMIN__/css/style.css?v=4.1.0" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <!--面包屑区域 start-->
+        <div class="row wrapper page-heading">
+            <div class="col-sm-5">
+                <ol class="breadcrumb" style="background: transparent;">
+                    {if condition="$crumbs"}
+                    {foreach $crumbs as $v}
+                    <li>
+                        {if condition="$v['url']"}
+                        <a href="{$v['url']}">{$v['name']}</a>
+                        {else/}
+                        <strong>{$v['name']}</strong>
+                        {/if}
+                    </li>
+                    {/foreach}
+                    {/if}
+                </ol>
+            </div>
+        </div>
+        <!--面包屑区域 end-->
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>公告</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <form class="form-horizontal" id="postData">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">标题</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="title" value="{$data['title']}" placeholder="标题 必填">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">内容</label>
+                                <div class="col-sm-10">
+                                    <script type="text/plain" name="content" id="myEditor" style="width:1000px;height:300px;">{$data['content']}</script>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+
+                            <!--<div class="form-group">
+                                <label class="col-sm-2 control-label">排序</label>
+                                <div class="col-sm-10">
+                                    <input type="number" class="form-control" name="sort" value="" placeholder="排序 选填">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>-->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">是否置顶首页弹窗显示</label>
+                                <div class="col-sm-10">
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input type="radio" value="1" {if condition="$data['is_index'] == 1"}checked{/if} name="is_index"> <i></i> 启用
+                                        </label>
+                                    </div>
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input type="radio" value="0" {if condition="$data['is_index'] == 0"}checked{/if} name="is_index"> <i></i> 关闭
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">是否显示</label>
+                                <div class="col-sm-10">
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input type="radio" value="1" {if condition="$data['is_show'] == 1"}checked{/if} name="is_show"> <i></i> 显示
+                                        </label>
+                                    </div>
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input type="radio" value="2" {if condition="$data['is_show'] == 2"}checked{/if} name="is_show"> <i></i> 关闭
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <input type="hidden" name="id" value="{$id}">
+                                    <button class="btn btn-primary" type="button" id="postD"><i class="fa fa-check"></i> 提交</button>
+                                    <a class="btn btn-white" href="{$entranceUrl}/gate/notice.html"><i class="fa fa-mail-reply-all"></i> 返回</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局js -->
+    <script src="__ADMIN__/js/jquery.min.js?v=2.1.4"></script>
+    <script src="__ADMIN__/js/bootstrap.min.js?v=3.3.6"></script>
+    <!--加载um文本编译-->
+    <script type="text/javascript" charset="utf-8" src="__PLUGINS__/UMeditor/umeditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="__PLUGINS__/UMeditor/umeditor.min.js"></script>
+    <script type="text/javascript" src="__PLUGINS__/UMeditor/lang/zh-cn/zh-cn.js"></script>
+
+    <!-- iCheck -->
+    <script src="__ADMIN__/js/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        // 实例化文本
+        var um = UM.getEditor('myEditor');
+
+        $(document).ready(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green'
+            });
+        });
+    </script>
+    <!--加载文件-->
+    <script src="__PLUGINS__/layui/layui.js"></script>
+
+    <script>
+        layui.use(['layer'], function(){
+            var layer = layui.layer;
+
+            var _url = "{$entranceUrl}";
+
+            $(window).keydown(function(event){
+                if (event.keyCode == 13){
+                    $("#postD").click();
+                }
+            });
+
+            $("#postD").on('click',function(){
+                var _data = $("#postData").serialize();
+                var load = layer.load(2);
+                $.ajax({
+                    url: _url + "/gate/addNotice.html",
+                    data: _data,
+                    method: "POST",
+                    async : true,
+                    dataType : "json",
+                    success: function (data) {
+                        layer.close(load);
+                        if (!data.code) {
+                            layer.alert(data.msg,{icon:1},function(index){
+                                layer.close(index);
+                                window.location.href = data.data.url;
+                            });
+                        } else {
+                            layer.alert(data.msg,{icon:5},function(index){
+                                layer.close(index);
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

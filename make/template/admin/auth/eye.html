@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>查看角色-权限</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="__ADMIN__/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="__ADMIN__/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="__ADMIN__/css/animate.css" rel="stylesheet">
+    <link href="__ADMIN__/css/style.css?v=4.1.0" rel="stylesheet">
+    <link rel="stylesheet" href="__PLUGINS__/layui/css/layui.css">
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <!--面包屑区域 start-->
+        <div class="row wrapper page-heading">
+            <div class="col-sm-5">
+                <ol class="breadcrumb" style="background: transparent;">
+                    {if condition="$crumbs"}
+                    {foreach $crumbs as $v}
+                    <li>
+                        {if condition="$v['url']"}
+                        <a href="{$v['url']}">{$v['name']}</a>
+                        {else/}
+                        <strong>{$v['name']}</strong>
+                        {/if}
+                    </li>
+                    {/foreach}
+                    {/if}
+                </ol>
+            </div>
+        </div>
+        <!--面包屑区域 end-->
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>查看角色组-权限</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <form class="form-horizontal">
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">权限菜单
+                                    <br><small class="text-navy">选中的代表已拥有</small>
+                                </label>
+
+                                <div class="col-sm-10">
+                                    <div class="checkbox i-checks">
+                                        {if condition="$group"}
+                                        {foreach $group as $v}
+                                        <div class="checkbox i-checks live-checks">
+                                            <label>
+                                                <input disabled="" {if condition="in_array($v['id'],$ids)"}checked=""{/if} type="checkbox" name="ids[]" class="check live-all" value="{$v['id']}"> <i></i> {$v['title']}
+                                            </label>
+                                        </div>
+                                        {if condition="$v['child']"}
+                                        <div class="checkbox i-checks live-checks-son" style="margin-left: 30px;">
+                                            {foreach $v['child'] as $v2}
+                                            <label style="margin-bottom: 3px;">
+                                                <input disabled="" {if condition="in_array($v2['id'],$ids)"}checked=""{/if} type="checkbox" name="ids[]" class="check live-son" value="{$v2['id']}"> <i></i> {$v2['title']}
+                                            </label>
+                                            {/foreach}
+                                        </div>
+                                        {/if}
+                                        {/foreach}
+                                        {/if}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <a class="btn btn-white" href="{$entranceUrl}/auth/groupList.html"><i class="fa fa-mail-reply-all"></i> 返回</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局js -->
+    <script src="__ADMIN__/js/jquery.min.js?v=2.1.4"></script>
+    <script src="__ADMIN__/js/bootstrap.min.js?v=3.3.6"></script>
+
+    <!-- iCheck -->
+    <script src="__ADMIN__/js/plugins/iCheck/icheck.min.js"></script>
+
+    <!--加载文件-->
+    <script>
+        $(function(){
+            // 初始化插件
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green'
+            });
+        });
+    </script>
+</body>
+</html>

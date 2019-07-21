@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>添加管理员</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="__ADMIN__/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="__ADMIN__/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="__ADMIN__/css/animate.css" rel="stylesheet">
+    <link href="__ADMIN__/css/style.css?v=4.1.0" rel="stylesheet">
+    <link rel="stylesheet" href="__PLUGINS__/layui/css/layui.css">
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <!--面包屑区域 start-->
+        <div class="row wrapper page-heading">
+            <div class="col-sm-5">
+                <ol class="breadcrumb" style="background: transparent;">
+                    {if condition="$crumbs"}
+                    {foreach $crumbs as $v}
+                    <li>
+                        {if condition="$v['url']"}
+                        <a href="{$v['url']}">{$v['name']}</a>
+                        {else/}
+                        <strong>{$v['name']}</strong>
+                        {/if}
+                    </li>
+                    {/foreach}
+                    {/if}
+                </ol>
+            </div>
+        </div>
+        <!--面包屑区域 end-->
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>{if condition="$data['id']"}编辑{else/}添加{/if}角色组-权限</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <form class="form-horizontal" id="postData">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">角色组名称</label>
+                                <div class="col-sm-10">
+                                    <input type="text" value="{$data['title']}" class="form-control" name="title" placeholder="角色组名称 必填">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">权限菜单
+                                    <br><small class="text-navy">勾选权限</small>
+                                </label>
+
+                                <div class="col-sm-10">
+                                    <div class="checkbox i-checks">
+                                        <div class="checkbox i-checks">
+                                            <label>
+                                                <input type="checkbox" value="" class="all"> <i></i> 全选
+                                            </label>
+                                        </div>
+                                        {if condition="$group"}
+                                        {foreach $group as $v}
+                                        <div class="checkbox i-checks live-checks">
+                                            <label>
+                                                <input type="checkbox" name="ids[]" class="check live-all" value="{$v['id']}" {if condition="in_array($v['id'],$ids)"}checked=""{/if} > <i></i> {$v['title']}
+                                            </label>
+                                        </div>
+                                        {if condition="$v['child']"}
+                                        <div class="checkbox i-checks live-checks-son" style="margin-left: 30px;">
+                                            {foreach $v['child'] as $v2}
+                                            <label style="margin-bottom: 3px;">
+                                                <input type="checkbox" name="ids[]" class="check live-son" value="{$v2['id']}" {if condition="in_array($v2['id'],$ids)"}checked=""{/if} > <i></i> {$v2['title']}
+                                            </label>
+                                            {if condition="$v2['child']"}
+                                            <div class="checkbox i-checks live-child-son" style="margin-left: 30px;">
+                                                {foreach $v2['child'] as $v3}
+                                                <label style="margin-bottom: 3px;">
+                                                    <input type="checkbox" name="ids[]" class="check live-child-son" value="{$v3['id']}" {if condition="in_array($v3['id'],$ids)"}checked=""{/if} > <i></i> {$v3['title']}
+                                                </label>
+                                                {/foreach}
+                                            </div>
+                                            {/if}
+                                            {/foreach}
+                                        </div>
+                                        {/if}
+                                        {/foreach}
+                                        {/if}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">状态</label>
+                                <div class="col-sm-10">
+                                    {if condition="$data['status'] == '-1'"}
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input type="radio" checked value="1" name="status"> <i></i> 正常
+                                        </label>
+                                    </div>
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input type="radio" value="0" name="status"> <i></i> 禁用
+                                        </label>
+                                    </div>
+                                    {else/}
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input type="radio" value="1" name="status" {if condition="$data['status'] == 1"}checked{/if} > <i></i> 正常
+                                        </label>
+                                    </div>
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input type="radio" value="0" name="status" {if condition="$data['status'] == 0"}checked{/if}> <i></i> 禁用
+                                        </label>
+                                    </div>
+                                    {/if}
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <input type="hidden" name="init_id" value="{$data['id']}">
+                                    <button class="btn btn-primary " type="button" id="postD"><i class="fa fa-check"></i> 提交</button>
+                                    <a class="btn btn-white" href="{$entranceUrl}/auth/groupList.html"><i class="fa fa-mail-reply-all"></i> 返回</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局js -->
+    <script src="__ADMIN__/js/jquery.min.js?v=2.1.4"></script>
+    <script src="__ADMIN__/js/bootstrap.min.js?v=3.3.6"></script>
+
+    <!-- iCheck -->
+    <script src="__ADMIN__/js/plugins/iCheck/icheck.min.js"></script>
+
+    <!--加载文件-->
+    <script src="__PLUGINS__/layui/layui.js"></script>
+    <script type="text/javascript">
+        var _url = "{$entranceUrl}";
+        layui.use(['layer'], function() {
+            var layer = layui.layer;
+
+            // 初始化插件
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green'
+            });
+
+            // 全选
+            var checkAll = $('input.all');
+            var checkboxes = $('input.check');
+            checkAll.on('ifChecked ifUnchecked', function(event) {
+                if (event.type == 'ifChecked') {
+                    checkboxes.iCheck('check');
+                } else {
+                    checkboxes.iCheck('uncheck');
+                }
+            });
+            checkboxes.on('ifChanged', function(event){
+                if(checkboxes.filter(':checked').length == checkboxes.length) {
+                    checkAll.prop('checked', 'checked');
+                } else {
+                    checkAll.removeProp('checked');
+                }
+                checkAll.iCheck('update');
+            });
+
+            // 第二层全选
+            var checkLiveAll = $('input.live-all');
+            checkLiveAll.on('ifChecked ifUnchecked', function(event) {
+                if (event.type == 'ifChecked') {
+                    $(this).parents(".live-checks").next(".live-checks-son").find(".live-son").iCheck('check');
+                } else {
+                    $(this).parents(".live-checks").next(".live-checks-son").find(".live-son").iCheck('uncheck');
+                }
+            });
+
+            // 第三层全选
+            var checkLiveChildAll = $('input.live-son');
+            checkLiveChildAll.on('ifChecked ifUnchecked', function(event) {
+                if (event.type == 'ifChecked') {
+                    $(this).parents(".live-checks-son").find(".live-child-son").iCheck('check');
+                } else {
+                    $(this).parents(".live-checks-son").find(".live-child-son").iCheck('uncheck');
+                }
+            });
+
+            $("#postD").on('click',function(){
+                var _data = $("#postData").serialize();
+                var load = layer.load(2);
+                $.ajax({
+                    url: _url + "/auth/addGroup.html",
+                    data: _data,
+                    method: "POST",
+                    async : true,
+                    dataType : "json",
+                    success: function (data) {
+                        layer.close(load);
+                        if (!data.code) {
+                            layer.alert(data.msg,{icon:1},function(index){
+                                layer.close(index);
+                                window.location.href = data.data.url;
+                            });
+                        } else {
+                            layer.alert(data.msg,{icon:5},function(index){
+                                layer.close(index);
+                            });
+                        }
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

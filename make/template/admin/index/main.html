@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--360浏览器优先以webkit内核解析-->
+    <title>首页</title>
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="__ADMIN__/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="__ADMIN__/css/animate.css" rel="stylesheet">
+    <link href="__ADMIN__/css/style.css?v=4.1.0" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="widget style1 red-bg">
+                            <div class="row">
+                                <div class="col-xs-4 text-center">
+                                    <i class="fa fa-users fa-5x"></i>
+                                </div>
+                                <div class="col-xs-8 text-right">
+                                    <span> 会员总数 </span>
+                                    <h2 class="font-bold">{$data['member_total']}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="widget style1 navy-bg">
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <i class="fa fa-vimeo fa-5x"></i>
+                                </div>
+                                <div class="col-xs-8 text-right">
+                                    <span> VIP会员数 </span>
+                                    <h2 class="font-bold">{$data['vip_user_count']}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="widget style1 lazur-bg">
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <i class="fa fa-wikipedia-w fa-5x"></i>
+                                </div>
+                                <div class="col-xs-8 text-right">
+                                    <span> 高级VIP会员数 </span>
+                                    <h2 class="font-bold">{$data['gjvip_user_count']}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="widget style1 yellow-bg">
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <i class="fa fa-user fa-5x"></i>
+                                </div>
+                                <div class="col-xs-8 text-right">
+                                    <span> 普通会员数 </span>
+                                    <h2 class="font-bold">{$data['common_user_count']}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="widget red-bg p-lg text-center">
+                            <div class="m-b-md">
+                                <i class="fa fa-user-secret fa-4x"></i>
+                                <h1 class="m-xs">{$data['sever_user_count']}</h1>
+                                <h3 class="font-bold no-margins">
+                                    服务中心人数
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="widget red-bg p-lg text-center" style="background-color: #7266ba;">
+                            <div class="m-b-md">
+                                <i class="fa fa-tree fa-4x"></i>
+                                <h1 class="m-xs">{$data['task_count']}</h1>
+                                <h3 class="font-bold no-margins">
+                                    任务总数
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="widget navy-bg no-padding">
+                            <div class="p-m">
+                                <h1 class="m-xs">¥ {$data['terrace_money_total']}</h1>
+
+                                <h3 class="font-bold no-margins">
+                                    平台总收入
+                                </h3>
+                            </div>
+                            <div class="flot-chart">
+                                <div class="flot-chart-content" id="flot-chart1" ></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="widget yellw-bg no-padding">
+                            <div class="p-m">
+                                <h1 class="m-xs">¥ {$data['expend_money_total']}</h1>
+
+                                <h3 class="font-bold no-margins">
+                                    平台总支出
+                                </h3>
+                            </div>
+                            <div class="flot-chart">
+                                <div class="flot-chart-content" id="flot-chart3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 全局js -->
+    <script src="__ADMIN__/js/jquery.min.js?v=2.1.4"></script>
+    <script src="__ADMIN__/js/jquery-ui-1.10.4.min.js"></script>
+    <script src="__ADMIN__/js/bootstrap.min.js?v=3.3.6"></script>
+
+    <!-- 自定义js -->
+    <script src="__ADMIN__/js/content.js?v=1.0.0"></script>
+
+    <script src="__ADMIN__/js/plugins/flot/jquery.flot.js"></script>
+    <script src="__ADMIN__/js/plugins/flot/jquery.flot.tooltip.min.js"></script>
+    <script src="__ADMIN__/js/plugins/flot/jquery.flot.resize.js"></script>
+    <script>
+        $(document).ready(function () {
+            var d1 = [[1262304000000, 6], [1264982400000, 3057], [1267401600000, 20434], [1270080000000, 31982], [1272672000000, 26602], [1275350400000, 27826], [1277942400000, 24302], [1280620800000, 24237], [1283299200000, 21004], [1285891200000, 12144], [1288569600000, 10577], [1291161600000, 10295]];
+            var d2 = [[1262304000000, 5], [1264982400000, 200], [1267401600000, 1605], [1270080000000, 6129], [1272672000000, 11643], [1275350400000, 19055], [1277942400000, 30062], [1280620800000, 39197], [1283299200000, 37000], [1285891200000, 27000], [1288569600000, 21000], [1291161600000, 17000]];
+
+            var data1 = [
+                {
+                    label: "Data 1",
+                    data: d1,
+                    color: '#17a084'
+                },
+                {
+                    label: "Data 2",
+                    data: d2,
+                    color: '#127e68'
+                }
+            ];
+
+            $.plot($("#flot-chart1"), data1, {
+                xaxis: {
+                    tickDecimals: 0
+                },
+                series: {
+                    lines: {
+                        show: true,
+                        fill: true,
+                        fillColor: {
+                            colors: [{
+                                opacity: 1
+                            }, {
+                                opacity: 1
+                            }]
+                        }
+                    },
+                    points: {
+                        width: 0.1,
+                        show: false
+                    }
+                },
+                grid: {
+                    show: false,
+                    borderWidth: 0
+                },
+                legend: {
+                    show: false
+                }
+            });
+
+
+            var data3 = [
+                {
+                    label: "Data 1",
+                    data: d1,
+                    color: '#fbbe7b'
+                },
+                {
+                    label: "Data 2",
+                    data: d2,
+                    color: '#f8ac59'
+                }
+            ];
+            $.plot($("#flot-chart3"), data3, {
+                xaxis: {
+                    tickDecimals: 0
+                },
+                series: {
+                    lines: {
+                        show: true,
+                        fill: true,
+                        fillColor: {
+                            colors: [{
+                                opacity: 1
+                            }, {
+                                opacity: 1
+                            }]
+                        }
+                    },
+                    points: {
+                        width: 0.1,
+                        show: false
+                    }
+                },
+                grid: {
+                    show: false,
+                    borderWidth: 0
+                },
+                legend: {
+                    show: false
+                }
+            });
+
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>欢迎登录+wldAdmin</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link href="__ADMIN__/css/bootstrap.min.css" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="__ADMIN__/css/animate.css" rel="stylesheet">
+    <link href="__ADMIN__/css/style.css" rel="stylesheet">
+    <link href="__ADMIN__/css/login.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+    <script>
+        if (window.top !== window.self) {
+            window.top.location = window.location;
+        }
+    </script>
+
+</head>
+
+<body class="signin">
+    <div class="signinpanel">
+        <div class="row">
+            <div class="col-sm-12">
+                <form id="postData">
+                    <h4 class="no-margins">登录：</h4>
+                    <p class="m-t-md">欢迎登录+wldAdmin</p>
+                    <input type="text" name="username" value="" class="form-control uname" placeholder="用户名" />
+                    <input type="password" name="password" value="" class="form-control pword m-b" placeholder="密码" />
+                    <button class="btn btn-success btn-block" type="button" id="postD">登录</button>
+                </form>
+            </div>
+        </div>
+        <div class="signup-footer">
+            <div class="pull-left">
+                &copy; wldAdmin
+            </div>
+        </div>
+    </div>
+</body>
+<script src="__PLUGINS__/layui/layui.js"></script>
+<script>
+    var _url = "{$entranceUrl}";
+    layui.use(['layer', 'jquery'], function(){
+        var $ = layui.jquery //末尾不要加分号 ";"
+             ,layer = layui.layer
+
+        $(window).keydown(function(event){
+            if (event.keyCode == 13){
+                $("#postD").click();
+            }
+        });
+
+        $("#postD").on('click',function(){
+            var _data = $("#postData").serialize();
+            var load = layer.load(2);
+            $.ajax({
+                url: _url + "/login/sendLogin",
+                data: _data,
+                method: "POST",
+                async : true,
+                dataType : "json",
+                success: function (data) {
+                    layer.close(load);
+                    if (!data.code) {
+                        window.location.href = data.data.url;
+                    } else {
+                        layer.msg(data.msg,{},function(index){
+                            layer.close(index);
+                        });
+                    }
+                }
+            });
+        });
+    });
+</script>
+</html>

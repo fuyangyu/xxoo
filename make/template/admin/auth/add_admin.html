@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>添加管理员</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="__ADMIN__/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="__ADMIN__/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="__ADMIN__/css/animate.css" rel="stylesheet">
+    <link href="__ADMIN__/css/style.css?v=4.1.0" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <!--面包屑区域 start-->
+        <div class="row wrapper page-heading">
+            <div class="col-sm-5">
+                <ol class="breadcrumb" style="background: transparent;">
+                    {if condition="$crumbs"}
+                    {foreach $crumbs as $v}
+                    <li>
+                        {if condition="$v['url']"}
+                        <a href="{$v['url']}">{$v['name']}</a>
+                        {else/}
+                        <strong>{$v['name']}</strong>
+                        {/if}
+                    </li>
+                    {/foreach}
+                    {/if}
+                </ol>
+            </div>
+        </div>
+        <!--面包屑区域 end-->
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>添加管理员</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <form class="form-horizontal" id="postData">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">所属角色组</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control m-b" name="group_id" style="height: 32px;">
+                                        <option value="">--请选择所属角色--</option>
+                                        {if condition="$data"}
+                                        {foreach $data as $v}
+                                        <option value="{$v['id']}">{$v['title']}</option>
+                                        {/foreach}
+                                        {/if}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">用户名</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="username" placeholder="用户名 必填">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">密码</label>
+
+                                <div class="col-sm-10">
+                                    <input type="password" class="form-control" name="password" placeholder="密码 必填">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">确认密码</label>
+
+                                <div class="col-sm-10">
+                                    <input type="password" class="form-control" name="re_password" placeholder="确认密码 必填">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">昵称</label>
+                                <div class="col-sm-10">
+                                    <input type="text" placeholder="昵称 可选" class="form-control" name="nickname">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">邮箱</label>
+                                <div class="col-sm-10">
+                                    <input type="text" placeholder="邮箱 可选" class="form-control" name="email">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">是否锁定</label>
+                                <div class="col-sm-10">
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input type="radio" checked value="1" name="is_lock"> <i></i> 正常
+                                        </label>
+                                    </div>
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input type="radio" value="2" name="is_lock"> <i></i> 锁定
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <button class="btn btn-primary" type="button" id="postD"><i class="fa fa-check"></i> 提交</button>
+                                    <a class="btn btn-white" href="{$entranceUrl}/auth/index.html"><i class="fa fa-mail-reply-all"></i> 返回</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局js -->
+    <script src="__ADMIN__/js/jquery.min.js?v=2.1.4"></script>
+    <script src="__ADMIN__/js/bootstrap.min.js?v=3.3.6"></script>
+
+    <!-- iCheck -->
+    <script src="__ADMIN__/js/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+        });
+    </script>
+    <!--加载文件-->
+    <script src="__PLUGINS__/layui/layui.js"></script>
+    <script>
+        var _url = "{$entranceUrl}";
+        layui.use(['layer', 'jquery'], function(){
+            var $ = layui.jquery //末尾不要加分号 ";"
+                    ,layer = layui.layer
+
+            $(window).keydown(function(event){
+                if (event.keyCode == 13){
+                    $("#postD").click();
+                }
+            });
+
+            $("#postD").on('click',function(){
+                var _data = $("#postData").serialize();
+                var load = layer.load(2);
+                $.ajax({
+                    url: _url + "/auth/addAdmin",
+                    data: _data,
+                    method: "POST",
+                    async : true,
+                    dataType : "json",
+                    success: function (data) {
+                        layer.close(load);
+                        if (!data.code) {
+                            layer.alert(data.msg,{icon:1},function(index){
+                                layer.close(index);
+                                window.location.href = data.data.url;
+                            });
+                        } else {
+                            layer.alert(data.msg,{icon:5},function(index){
+                                layer.close(index);
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>管理员日志</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="__ADMIN__/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="__ADMIN__/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="__ADMIN__/css/animate.css" rel="stylesheet">
+    <link href="__ADMIN__/css/style.css?v=4.1.0" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>管理员日志</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <form>
+                        <div class="row">
+                            <div class="col-sm-2 m-b-xs">
+                                <input type="text" value="{$param.start_time}" id="cp_start_time" class="form-control" name="start_time" placeholder="开始时间">
+                            </div>
+
+                            <div class="col-sm-2 m-b-xs">
+                                <input type="text" value="{$param.end_time}" id="cp_end_time" class="form-control" name="end_time" placeholder="结束时间">
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <input type="text" placeholder="请输入关键词" name="keywords" value="{$param.keywords}" class="input-sm form-control">
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn btn-sm btn-primary">搜索</button>
+                                        <button style="margin-left: 2px;" type="button" class="btn btn-sm btn-danger" id="cp-rm-ids"> <i class="fa fa-trash-o"></i> 删除</button>
+                                    </span>
+
+                                </div>
+                            </div>
+                        </div>
+                        </form>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 30px;"><input type="checkbox" id="check-all"></th>
+                                        <th>ID</th>
+                                        <th>操作人</th>
+                                        <th>操作行为</th>
+                                        <th>Url</th>
+                                        <th>IP</th>
+                                        <th>操作时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="check-box">
+                                    {if condition="$res['data']"}
+                                    {foreach $res['data'] as $v}
+                                    <tr>
+                                        <td><input type="checkbox" name="ids[]" value="{$v['id']}" class="check_id"></td>
+                                        <td>{$v['id']}</td>
+                                        <td>{$v['username']}</td>
+                                        <td>{$v['title']}</td>
+                                        <td>{$v['url']}</td>
+                                        <td>{$v['ip']}</td>
+                                        <td>{$v['create_time']}</td>
+                                        <td><a data-remote="{$entranceUrl}/auth/logModal/id/{$v['id']}" data-toggle="modal" data-target="#modal">详情</a></td>
+                                    </tr>
+                                    {/foreach}
+                                    {else/}
+                                    <tr>
+                                        <td colspan="8" style="text-align: center">没有任何相关记录</td>
+                                    </tr>
+                                    {/if}
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12 m-b-xs" style="text-align: center;">
+                                {$res.page}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--加载弹出层 start-->
+    <div id="modal" class="modal fade" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+    <!--END-->
+
+
+    <!-- 全局js -->
+    <script src="__ADMIN__/js/jquery.min.js?v=2.1.4"></script>
+    <script src="__ADMIN__/js/bootstrap.min.js?v=3.3.6"></script>
+
+    <!--加载日期驱动js-->
+    <script src="__PLUGINS__/layui/layui.js"></script>
+    <script>
+        // 加载之前移除旧有modal数据
+        $("#modal").on("hidden.bs.modal", function() {
+            $(this).removeData("bs.modal");
+        });
+        var _admin_url = "__ADMIN__";
+        layui.config({
+            base: _admin_url + "/src/admin/"
+        }).use('lay');
+    </script>
+    <script>
+        var _url = "{$entranceUrl}";
+        layui.use(['layer'], function(){
+            var layer = layui.layer;
+
+            /**
+             * 判断对象|数组 是否为空
+             * @param  Array  obj
+             * @return Bool
+             */
+            function isEmpty(obj) {
+                // 本身为空直接返回true
+                if (obj == null) return true;
+                // 然后可以根据长度判断，在低版本的ie浏览器中无法这样判断。
+                if (obj.length > 0)    return false;
+                if (obj.length === 0)  return true;
+                //最后通过属性长度判断。
+                for (var key in obj) {
+                    if (hasOwnProperty.call(obj, key)) return false;
+                }
+                return true;
+            }
+
+            // 获取被选中的值
+            function getCheckVel(){
+                obj = $("#check-box .check_id");
+                check_val = [];
+                for(k in obj){
+                    if(obj[k].checked)
+                        check_val.push(obj[k].value);
+                }
+                return check_val;
+            }
+
+            // 全选
+            $("#check-all").on('click',function(){
+                var _is_opt = $(this).is(":checked");
+                if (_is_opt) {
+                    // 全选
+                    $("#check-box :checkbox").prop("checked", true);
+                } else {
+                    // 全不选
+                    $("#check-box :checkbox").prop("checked", false);
+                }
+            });
+
+
+            // 删除
+            $("#cp-rm-ids").on('click',function(){
+                var _ids = getCheckVel();
+                if (isEmpty(_ids)) {
+                    layer.alert('请勾选左侧ID值',{icon:5},function(index){
+                        layer.close(index);
+                    });
+                    return false;
+                }
+                var load = layer.load(2);
+                $.ajax({
+                    url: _url + "/auth/delLogList",
+                    data: {'ids' : _ids},
+                    method: "POST",
+                    async : true,
+                    dataType : "json",
+                    success: function (data) {
+                        layer.close(load);
+                        if (!data.code) {
+                            layer.msg(data.msg,{icon:1},function(index){
+                                layer.close(index);
+                                window.location.reload();
+                            });
+                        } else {
+                            layer.msg(data.msg,{icon:5},function(index){
+                                layer.close(index);
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

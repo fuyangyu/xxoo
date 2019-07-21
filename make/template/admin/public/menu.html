@@ -1,0 +1,76 @@
+<!--左侧导航 START-->
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="nav-close"><i class="fa fa-times-circle"></i>
+    </div>
+    <div class="sidebar-collapse">
+        <ul class="nav" id="side-menu">
+            <li class="nav-header">
+                <div class="dropdown profile-element">
+                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                        <span class="clear">
+                            <span class="block m-t-xs" style="font-size:20px;">
+                                <i class="fa fa-area-chart"></i>
+                                <strong class="font-bold">wldAdmin</strong>
+                            </span>
+                        </span>
+                    </a>
+                </div>
+                <div class="logo-element">wldAdmin
+                </div>
+            </li>
+            <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                <span class="ng-scope">栏目菜单</span>
+            </li>
+            <style>
+                .nav > li.active > a{
+                    color: #869fb1;
+                }
+                .a-active{
+                    color: #ffffff;
+                }
+            </style>
+            {foreach $adminMenu as $v}
+            {if condition="$v['display'] == 'block'"}
+            {if condition="!$v['line']"}
+            <li>
+                {foreach $v['live_1'] as $v1}
+                {if condition="$v1['display'] == 'block'"}
+                <a {if condition="$v1['url'] != '#'"}class="J_menuItem"{/if} href="{$v1['url']}">
+                    <i class="{$v1['ico']}"></i>
+                    <span class="nav-label">{$v1['name']}</span>
+                    {if condition="$v1['live_2']"}
+                    <span class="fa arrow"></span>
+                    {/if}
+                </a>
+                <ul {if condition="$Request.action == $v1['action'] && $Request.controller == $v1['controller']"}class='nav nav-second-level collapse in' aria-expanded="true"{else/}class="nav nav-second-level" aria-expanded="false" style="height: 0px;"{/if}">
+                    {if condition="$v1['live_2']"}
+                    {foreach $v1['live_2'] as $v2}
+                        {if condition="$v2['display'] == 'block'"}
+                        <li {if condition="$Request.action == $v2['action'] && $Request.controller == $v2['controller']"}class="a-active"{/if}>
+                            <a {if condition="$v2['url'] != '#'"}class="J_menuItem"{/if} href="{$v2['url']}">{$v2['name']}{if condition="$v2['live_3']"} <span class="fa arrow"></span>{/if}</a>
+                            {if condition="$v2['live_3']"}
+                            <ul {if condition="$Request.action == $v2['action'] && $Request.controller == $v2['controller']"}class='nav nav-third-level collapse in' aria-expanded="true"{else/}class="nav nav-third-level collapse" aria-expanded="false" style="height: 0px;"{/if}">
+                            {foreach $v2['live_3'] as $k3 => $v3}
+                            <li {if condition="$Request.action == $v3['action'] && $Request.controller == $v3['controller']"}class="a-active"{/if}>
+                                <a class="J_menuItem" href="{$v3['url']}">{$v3['name']}</a>
+                            </li>
+                            {/foreach}
+                            </ul>
+                            {/if}
+                        </li>
+                        {/if}
+                    {/foreach}
+                    {/if}
+                </ul>
+                {/if}
+                {/foreach}
+            </li>
+            {else/}
+            <li class="{$v['class']}"></li>
+            {/if}
+            {/if}
+            {/foreach}
+        </ul>
+    </div>
+</nav>
+<!--左侧导航 END-->

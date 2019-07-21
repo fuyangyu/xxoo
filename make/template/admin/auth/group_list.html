@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>用户组列表</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="__ADMIN__/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="__ADMIN__/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="__ADMIN__/css/animate.css" rel="stylesheet">
+    <link href="__ADMIN__/css/style.css?v=4.1.0" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <!--面包屑区域 start-->
+        <div class="row wrapper page-heading">
+            <div class="col-sm-5">
+                <ol class="breadcrumb" style="background: transparent;">
+                    {if condition="$crumbs"}
+                    {foreach $crumbs as $v}
+                    <li>
+                        {if condition="$v['url']"}
+                        <a href="{$v['url']}">{$v['name']}</a>
+                        {else/}
+                        <strong>{$v['name']}</strong>
+                        {/if}
+                    </li>
+                    {/foreach}
+                    {/if}
+                </ol>
+            </div>
+        </div>
+        <!--面包屑区域 end-->
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>角色组列表</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-2 m-b-xs">
+                                <a class="btn btn-success btn-outline" href="{$entranceUrl}/auth/addGroup.html">
+                                    <i class="fa fa-group"></i> 添加角色组
+                                </a>
+                            </div>
+                            <div class="col-sm-7 m-b-xs"></div>
+                            <div class="col-sm-3">
+                               <!-- <div class="input-group">
+                                    <input type="text" placeholder="请输入关键词" class="input-sm form-control"> <span class="input-group-btn">
+                                        <button type="button" class="btn btn-sm btn-primary"> 搜索</button> </span>
+                                </div>-->
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="rm-model">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>用户组名称</th>
+                                        <th>状态</th>
+                                        <th>创建时间</th>
+                                        <th>更新时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {if condition="$res['data']"}
+                                {foreach $res['data'] as $v}
+                                    <tr class="cp-rm-tr">
+                                        <td>{$v['id']}</td>
+                                        <td>{$v['title']}</td>
+                                        <td>{$v['status']}</td>
+                                        <td>{$v['create_time']}</td>
+                                        <td>{$v['update_time']}</td>
+                                        <td>
+                                            <a class="btn btn-default" href="{$entranceUrl}/auth/eye/id/{$v['id']}.html" title="查看权限"><i class="fa fa-eye"></i></a>
+                                            <a class="btn btn-info" href="{$entranceUrl}/auth/addGroup/id/{$v['id']}.html" title="编辑"><i class="fa fa-paste"></i></a>
+                                            <a class="btn btn-danger cp-rm" href="javascript:;" did="{$v['id']}" url="{$entranceUrl}/auth/delGroup.html" title="删除"><i class="fa fa-trash-o"></i></a>
+                                        </td>
+                                    </tr>
+                                {/foreach}
+                                {else/}
+                                <tr>
+                                    <td colspan="6" style="text-align: center">没有任何相关记录</td>
+                                </tr>
+                                {/if}
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12 m-b-xs" style="text-align: center">
+                                {$res.page}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局js -->
+    <script src="__ADMIN__/js/jquery.min.js?v=2.1.4"></script>
+    <script src="__ADMIN__/js/bootstrap.min.js?v=3.3.6"></script>
+    <!--加载一个全局执行删除操作的js文件-->
+    <script src="__PLUGINS__/layui/layui.js"></script>
+    <script>
+        var _admin_url = "__ADMIN__";
+        layui.config({
+            version: true, //默认不缓存
+            base: _admin_url + "/src/admin/"
+        }).use('rm');
+    </script>
+</body>
+
+</html>

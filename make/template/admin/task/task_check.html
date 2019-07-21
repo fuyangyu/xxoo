@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>审核任务</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="__ADMIN__/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="__ADMIN__/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="__ADMIN__/css/animate.css" rel="stylesheet">
+    <link href="__ADMIN__/css/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+    <link href="__PLUGINS__/layui/css/layui.css" rel="stylesheet">
+    <link href="__ADMIN__/css/style.css?v=4.1.0" rel="stylesheet">
+    <style>
+        .up-div{
+            float: left;
+            margin-right: 10px;
+            position: relative;
+        }
+        .up-div img{
+            width: 500px;
+            height: 300px;
+            vertical-align: middle;
+            border: 2px solid #edf1f2;
+        }
+        .btn-cc{
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            z-index: 2;
+        }
+        .cp-select{
+            padding: 8px;
+        }
+    </style>
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <!--面包屑区域 start-->
+        <div class="row wrapper page-heading">
+            <div class="col-sm-5">
+                <ol class="breadcrumb" style="background: transparent;">
+                    {if condition="$crumbs"}
+                    {foreach $crumbs as $v}
+                    <li>
+                        {if condition="$v['url']"}
+                        <a href="{$v['url']}">{$v['name']}</a>
+                        {else/}
+                        <strong>{$v['name']}</strong>
+                        {/if}
+                    </li>
+                    {/foreach}
+                    {/if}
+                </ol>
+            </div>
+        </div>
+        <!--面包屑区域 end-->
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>审核广告任务</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <form class="form-horizontal" id="postData">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">标题</label>
+                                <div class="col-sm-10">
+                                    <input type="text" readonly="readonly" class="form-control" name="title" value="{$data['title']}">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">任务截图</label>
+                                <div class="col-sm-10">
+                                    <div class="lightBoxGallery" id="cp-show-img-box">
+                                        <div class="up-div">
+                                            <a href="{$data['img']}" target="_blank" title="图片">
+                                                <img src="{$data['img']}">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">提交人</label>
+                                <div class="col-sm-10">
+                                    <input type="text" readonly="readonly" class="form-control" value="{$data['phone']}" name="task_money">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">任务赏金</label>
+
+                                <div class="col-sm-10">
+                                    <input type="text" readonly="readonly" class="form-control" value="{$data['task_money']}" name="task_money">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">审核失败信息</label>
+
+                                <div class="col-sm-10">
+                                    <textarea style="height: 150px;" class="form-control" name="failure_msg" id="cp_failure_msg" placeholder="审核失败需填写~">{$data['failure_msg']}</textarea>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <button class="btn btn-primary click_check" type="button" status="1"><i class="fa fa-check"></i> 审核通过</button>
+                                    <button class="btn btn-danger click_check" type="button" status="3"><i class="fa fa-check"></i> 审核失败</button>
+                                    <a class="btn btn-white" href="{$entranceUrl}/task/drawList.html"><i class="fa fa-mail-reply-all"></i> 返回</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局js -->
+    <script src="__ADMIN__/js/jquery.min.js?v=2.1.4"></script>
+    <script src="__ADMIN__/js/bootstrap.min.js?v=3.3.6"></script>
+
+    <!-- iCheck -->
+    <script src="__ADMIN__/js/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green'
+            });
+        });
+    </script>
+    <!--加载文件-->
+    <!-- blueimp gallery -->
+    <script src="__ADMIN__/js/plugins/blueimp/jquery.blueimp-gallery.min.js"></script>
+
+    <script src="__PLUGINS__/layui/layui.js"></script>
+
+    <script>
+        var _url = "{$entranceUrl}";
+        var _id = "{$id}";
+    </script>
+
+    <script>
+        layui.use(['layer'], function(){
+            var layer = layui.layer;
+            $("body").on('click','.click_check',function(){
+                var _html = '';
+                var _status = $(this).attr('status');
+                var _failure_msg = $("#cp_failure_msg").val();
+                if (_status == 1) {
+                    _html = '确定要审核通过？';
+                } else {
+                    _html = '确定要审核失败？';
+                }
+                layer.confirm(_html, {
+                    btn: ['确定','取消'], //按钮
+                    icon:3
+                }, function(index){
+                    if (_status == 3) {
+                        if (!_failure_msg)
+                        {
+                            layer.msg('审核失败必须填写必要的原因');
+                            layer.close(index);
+                            return false;
+                        }
+                    }
+                    var load = layer.load(2);
+                    $.ajax({
+                        url: _url + "/task/taskCheck.html",
+                        data: {'id' : _id,'status' : _status, 'failure_msg' : _failure_msg},
+                        method: "POST",
+                        async : true,
+                        dataType : "json",
+                        success: function (data) {
+                            layer.close(load);
+                            if (!data.code) {
+                                layer.alert(data.msg,{icon:1},function(index){
+                                    layer.close(index);
+                                    window.location.href = data.data.url;
+                                });
+                            } else {
+                                layer.alert(data.msg,{icon:5},function(index){
+                                    layer.close(index);
+                                });
+                            }
+                        }
+                    });
+                },function(index){
+                    layer.close(index);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

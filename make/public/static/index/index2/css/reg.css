@@ -1,0 +1,167 @@
+body {
+  background: #ffffff; }
+.header {
+  width: 100%;
+  height: 1.1733333333rem;
+  background-image: url(../img/header.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  -moz-background-size: 100% 100%;
+  font-size: 0.48rem;
+  line-height: 1.1733333333rem;
+  letter-spacing: 0.0533333333rem;
+  text-align: center;
+  color: #191919; }
+
+.header_s {
+  width: 100%;
+  height: 4.64rem;
+  box-sizing: border-box;
+  padding-left: 3.7866666667rem;
+  padding-right: 3.8933333333rem; }
+.header_s .header-s-log {
+  width: 100%;
+  padding-top: 2.2133333333rem;
+  height: 2.9333333333rem; }
+.header_s .header-s-log img {
+  width: 100%;
+  height: 100%;
+  vertical-align: middle; }
+
+.from {
+  width: 100%;
+  padding-left: 1.3333333333rem;
+  padding-right: 1.3333333333rem;
+  margin-top: 2rem;
+  box-sizing: border-box; }
+  .from .input-box {
+    width: 100%;
+    height: 0.96rem;
+    margin-bottom: 0.4rem; }
+    .from .input-box .left {
+      float: left;
+      width: 0.7733333333rem;
+      height: 0.96rem;
+      position: relative; }
+      .from .input-box .left .incon {
+        display: block;
+        width: 0.5333333333rem;
+        height: 0.5333333333rem;
+        position: absolute;
+        top: 0.1333333333rem;
+        left: 0.0266666667rem;
+        z-index: 5; }
+      .from .input-box .left .icon-1 {
+        background-image: url(../img/user.png);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        -moz-background-size: 100% 100%; }
+      .from .input-box .left .icon-2 {
+        background-image: url(../img/code.png);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        -moz-background-size: 100% 100%; }
+      .from .input-box .left .icon-3 {
+        background-image: url(../img/passwd.png);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        -moz-background-size: 100% 100%; }
+      .from .input-box .left .icon-4 {
+        background-image: url(../img/tj.png);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        -moz-background-size: 100% 100%; }
+    .from .input-box .right {
+      float: left;
+      width: 6.56rem;
+      height: 1.12rem; }
+      .from .input-box .right .div-1 {
+        width: 100%;
+        height: 0.9333333333rem;
+        position: relative; }
+        .from .input-box .right .div-1 .input {
+          display: block;
+          width: 100%;
+          height: 100%;
+          line-height: 0.9333333333rem;
+          font-size: 0.4266666667rem;
+          color: #333333;
+          font-weight: 400;
+          border: 0;
+          outline: none;
+          cursor: pointer; }
+        .from .input-box .right .div-1 .ipt-xx {
+          display: block;
+          position: absolute;
+          width: 0.3466666667rem;
+          height: 0.3466666667rem;
+          background-image: url(../img/xx.png);
+          background-repeat: no-repeat;
+          background-size: 100% 100%;
+          -moz-background-size: 100% 100%;
+          z-index: 6;
+          top: 0.2133333333rem;
+          right: 0; }
+      .from .input-box .right .div-2 {
+        width: 100%;
+        height: 0.9333333333rem;
+        position: relative; }
+        .from .input-box .right .div-2 .input {
+          display: block;
+          width: 4.1866666667rem;
+          height: 100%;
+          line-height: 0.9333333333rem;
+          font-size: 0.4266666667rem;
+          color: #333333;
+          font-weight: 400;
+          border: 0;
+          outline: none;
+          cursor: pointer;
+          float: left; }
+        .from .input-box .right .div-2 .line-1 {
+          float: left;
+          width: 2px;
+          margin-top: 0.1333333333rem;
+          height: 0.5866666667rem;
+          background: #ffcd07;
+          border-radius: 1px; }
+        .from .input-box .right .div-2 .line-text {
+          float: left;
+          width: 2.0533333333rem;
+          height: 100%;
+          padding-left: 0.2666666667rem;
+          color: #FFCD07;
+          font-size: 0.3733333333rem;
+          line-height: 0.9333333333rem; }
+      .from .input-box .right .line {
+        width: 100%;
+        height: 1px;
+        background: #f0f0f0; }
+  .from .sub-box {
+    width: 100%;
+    height: 1.3333333333rem;
+    margin-top: 0.6666666667rem; }
+    .from .sub-box .btn-box {
+      display: block;
+      background: white;
+      height: 100%;
+      width: 100%;
+      background-image: url(../img/sub.png);
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      -moz-background-size: 100% 100%;
+      border: 0;
+      outline:none;
+      cursor: pointer;
+    }
+  .from .tips {
+    width: 100%;
+    height: 0.5333333333rem;
+    margin-top: 0.2666666667rem; }
+    .from .tips p {
+      font-size: 0.3733333333rem;
+      letter-spacing: 0.0266666667rem; }
+      .from .tips p a {
+        color: #FFCD07; }
+
+/*# sourceMappingURL=reg.css.map */

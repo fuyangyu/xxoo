@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>发布任务</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="__ADMIN__/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="__ADMIN__/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="__ADMIN__/css/animate.css" rel="stylesheet">
+    <link href="__ADMIN__/css/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+    <link href="__ADMIN__/css/plugins/switchery/switchery.css" rel="stylesheet">
+    <link href="__PLUGINS__/layui/css/layui.css" rel="stylesheet">
+    <link href="__ADMIN__/css/style.css?v=4.1.0" rel="stylesheet">
+    <style>
+        .up-div{
+            float: left;
+            margin-right: 10px;
+            position: relative;
+        }
+        .up-div img{
+            width: 300px;
+            height: 225px;
+            vertical-align: middle;
+        }
+        .btn-cc{
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            z-index: 2;
+        }
+        .cp-select{
+            padding: 8px;
+        }
+    </style>
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <!--面包屑区域 start-->
+        <div class="row wrapper page-heading">
+            <div class="col-sm-5">
+                <ol class="breadcrumb" style="background: transparent;">
+                    {if condition="$crumbs"}
+                    {foreach $crumbs as $v}
+                    <li>
+                        {if condition="$v['url']"}
+                        <a href="{$v['url']}">{$v['name']}</a>
+                        {else/}
+                        <strong>{$v['name']}</strong>
+                        {/if}
+                    </li>
+                    {/foreach}
+                    {/if}
+                </ol>
+            </div>
+        </div>
+        <!--面包屑区域 end-->
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>发布任务</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <!--<div class="alert alert-success alert-dismissable">
+                            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                            发布任务特别注意：任务赏金只限发布任务可编辑，任务发布后系统禁止了该项再次编辑。
+                        </div>-->
+                        <form class="form-horizontal" id="postData">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">所属任务分区</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control m-b" name="task_cid" style="height: 32px;">
+                                        <option value="">--请选择所属任务分区--</option>
+                                        {if condition="$task_cate"}
+                                        {foreach $task_cate as $v}
+                                        <option value="{$v['task_cid']}" {if condition="$res['task_cid'] == $v['task_cid']"}selected{/if} >{$v['name']}</option>
+                                        {/foreach}
+                                        {/if}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">所属会员等级</label>
+                                <div class="col-sm-10">
+                                    {if condition="$userLevel"}
+                                    {foreach $userLevel as $k => $v}
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input type="checkbox"  {if condition="in_array($k,$res['task_user_level'])"}checked{/if} value="{$k}" name="task_user_level[]"> <i></i> {$v}
+                                        </label>
+                                    </div>
+                                    {/foreach}
+                                    {/if}
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <!--<div class="form-group">
+                                <label class="col-sm-2 control-label">所属会员等级</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control m-b" name="task_user_level" style="height: 32px;">
+                                        {if condition="$userLevel"}
+                                        {foreach $userLevel as $k => $v}
+                                        <option value="{$k}" {if condition="$res['task_user_level'] == $k"}selected{/if} >{$v}</option>
+                                        {/foreach}
+                                        {/if}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>-->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">文案图片</label>
+                                <div class="col-sm-10">
+                                    <input type="hidden" name="img_url" value="{$res['img_url']}" id="cp-all-img">
+                                    <button class="btn btn-success " type="button" id="cp_upload_all"><i class="fa fa-upload"></i>&nbsp;&nbsp;<span class="bold">上传</span></button>
+                                    <span style="letter-spacing: 1px; color: #2F4056;font-size: 12px;">温馨提示:图片最好比例最好为 4:3 5:3 16:9</span>
+                                    <div class="lightBoxGallery" id="cp-show-img-box" {if condition="$res['img']"}style="display: block;"{else/}style="display: none;"{/if}>
+                                        {if condition="$res['img']"}
+                                        {foreach $res['img'] as $img}
+                                        <div class="up-div">
+                                            <a href="{$img}" target="_blank" title="图片">
+                                                <img src="{$img}">
+                                            </a>
+                                            <button class="btn btn-warning btn-circle btn-cc" type="button" did="{$img}"><i class="fa fa-times"></i></button>
+                                        </div>
+                                        {/foreach}
+                                        {/if}
+                                        <!--<div class="up-div">
+                                            <a href="__ADMIN__/img/p_big2.jpg" target="_blank" title="图片">
+                                                <img src="__ADMIN__/img/p2.jpg">
+                                            </a>
+                                            <button class="btn btn-warning btn-circle btn-cc" type="button"><i class="fa fa-times"></i></button>
+                                        </div>-->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">标题</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="title" value="{$res['title']}" placeholder="标题 必填">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">文案内容</label>
+
+                                <div class="col-sm-10">
+                                    <textarea placeholder="文案内容" name="content" class="form-control" style="height: 180px">{$res['content']}</textarea>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">任务赏金</label>
+
+                                <div class="col-sm-10">
+                                    <input type="number" class="form-control" value="{$res['task_money']}" name="task_money" placeholder="任务赏金 必填">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">任务数量</label>
+                                <div class="col-sm-10">
+                                    <input type="number" placeholder="任务数量 必填" value="{$res['limit_total_num']}" class="form-control" name="limit_total_num">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">是否开启区域限制</label>
+                                <div class="col-sm-10">
+                                    <input type="checkbox" class="js-switch" {if condition="$res['is_area'] == 1"}checked{/if} name="is_area" value="1"/>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div id="show-area" {if condition="$res['is_area'] == 1"}style="display: block;"{else/}style="display: none;"{/if}>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">任务区域限制</label>
+                                    <div class="col-sm-10" id="city_4">
+                                        <select class="prov cp-select" name="prov"></select>
+                                        <select class="city cp-select" name="city" readonly="readonly"></select>
+                                        <select class="dist cp-select" name="dist" readonly="readonly"></select>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                            </div>
+                            <!--<div class="form-group">
+                                <label class="col-sm-2 control-label">限制用户最多领取</label>
+                                <div class="col-sm-10">
+                                    <input type="number" placeholder="限制用户最多领取 可选" value="2" class="form-control" name="limit_user_num">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>-->
+                            <!--<div class="form-group">
+                                <label class="col-sm-2 control-label">想用户最多领取</label>
+                                <div class="col-sm-10">
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input type="radio" checked value="1" name="is_lock"> <i></i> 正常
+                                        </label>
+                                    </div>
+                                    <div class="radio i-checks">
+                                        <label>
+                                            <input type="radio" value="2" name="is_lock"> <i></i> 锁定
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>-->
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <input type="hidden" name="id" value="{$id}">
+                                    <button class="btn btn-primary" type="button" id="postD"><i class="fa fa-check"></i> 提交</button>
+                                    <a class="btn btn-white" href="{$entranceUrl}/task/index.html"><i class="fa fa-mail-reply-all"></i> 返回</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全局js -->
+    <script src="__ADMIN__/js/jquery.min.js?v=2.1.4"></script>
+    <script src="__ADMIN__/js/bootstrap.min.js?v=3.3.6"></script>
+
+    <!-- iCheck -->
+    <script src="__ADMIN__/js/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green'
+            });
+        });
+    </script>
+    <!--加载文件-->
+    <!-- blueimp gallery -->
+    <script src="__ADMIN__/js/plugins/blueimp/jquery.blueimp-gallery.min.js"></script>
+    <!--城市联动插件-->
+    <script>
+        var _load_city_data_url = "__PLUGINS__" + "/cityselect/js";
+    </script>
+    <script src="__PLUGINS__/cityselect/js/jquery.cityselect.js"></script>
+    <!-- Switchery -->
+    <script src="__ADMIN__/js/plugins/switchery/switchery.js"></script>
+    <script>
+        var elem = document.querySelector('.js-switch');
+        var switchery = new Switchery(elem, {
+            color: '#1AB394'
+        });
+        // 给按钮绑定改变事件
+        elem.onchange = function() {
+            //获取按钮的选中状态
+            isChecked = elem.checked;
+            if (isChecked) {
+                $("#show-area").show('slow');
+            } else {
+                $("#show-area").hide('slow');
+            }
+        };
+    </script>
+
+    <script src="__PLUGINS__/layui/layui.js"></script>
+
+    <script>
+        var _url = "{$entranceUrl}";
+
+        // 文件上传请求地址
+        var _upload_url = _url + '/task/uploads.html';
+
+        // 加载公共的上传文件组件
+        var _admin_url = "__ADMIN__";
+        layui.config({
+            version: true, //默认不缓存
+            base: _admin_url + "/src/admin/"
+        }).use('uploadFile');
+
+        // 初始化区域
+        var _prov = "{$res['prov']}";
+        var _city = "{$res['city']}";
+        var _dist = "{$res['dist']}";
+        $("#city_4").citySelect({
+            prov: _prov,
+            city: _city,
+            dist: _dist,
+            nodata:"none"
+        });
+    </script>
+
+    <script>
+        layui.use(['layer'], function(){
+            var layer = layui.layer;
+
+            $(window).keydown(function(event){
+                if (event.keyCode == 13){
+                    $("#postD").click();
+                }
+            });
+
+            // 移除图片
+            $("#cp-show-img-box").on('click','.btn-cc',function(){
+                var _did = $(this).attr('did');
+                var _img_url = $("#cp-all-img").val();
+                var _this = $(this).parents('.up-div');
+                var load = layer.load(2);
+                $.ajax({
+                    url: _url + "/task/delUploads.html",
+                    data: {'did' : _did, 'img_url' : _img_url},
+                    method: "POST",
+                    async : true,
+                    dataType : "json",
+                    success: function (data) {
+                        layer.close(load);
+                        if (data.code == 1) {
+                            _this.hide('slow');
+                            $("#cp-all-img").attr('value',data.data.img_url)
+                        } else {
+                            layer.alert(data.msg,{icon:5},function(index){
+                                layer.close(index);
+                            });
+                        }
+                    }
+                });
+            });
+
+            $("#postD").on('click',function(){
+                var _data = $("#postData").serialize();
+                var load = layer.load(2);
+                $.ajax({
+                    url: _url + "/task/add.html",
+                    data: _data,
+                    method: "POST",
+                    async : true,
+                    dataType : "json",
+                    success: function (data) {
+                        layer.close(load);
+                        if (!data.code) {
+                            layer.alert(data.msg,{icon:1},function(index){
+                                layer.close(index);
+                                window.location.href = data.data.url;
+                            });
+                        } else {
+                            layer.alert(data.msg,{icon:5},function(index){
+                                layer.close(index);
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

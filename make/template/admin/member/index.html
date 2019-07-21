@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>会员列表</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="__ADMIN__/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="__ADMIN__/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="__PLUGINS__/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="__ADMIN__/css/animate.css" rel="stylesheet">
+    <link href="__ADMIN__/css/style.css?v=4.1.0" rel="stylesheet">
+    <link href="__PLUGINS__/layui/css/layui.css" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <!--面包屑区域 start-->
+    <div class="row wrapper page-heading">
+        <div class="col-sm-5">
+            <ol class="breadcrumb" style="background: transparent;">
+                {if condition="$crumbs"}
+                {foreach $crumbs as $v}
+                <li>
+                    {if condition="$v['url']"}
+                    <a href="{$v['url']}">{$v['name']}</a>
+                    {else/}
+                    <strong>{$v['name']}</strong>
+                    {/if}
+                </li>
+                {/foreach}
+                {/if}
+            </ol>
+        </div>
+    </div>
+    <!--面包屑区域 end-->
+    <!-- Panel Other -->
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>会员列表</h5>
+        </div>
+        <div class="ibox-content">
+            <div class="row row-lg">
+                
+                <div class="col-sm-12">
+                    <!-- Example Events -->
+                    <div class="example-wrap">
+                        <div class="example">
+                            <div class="row" id="cp-table-box">
+                                <div class="col-sm-4 m-b-xs">
+                                    <div class="input-daterange input-group">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input type="text" autocomplete="off" value="" id="cp_start_time" class="form-control" name="start_time" placeholder="开始时间">
+                                        <span class="input-group-addon">到</span>
+                                        <input type="text" autocomplete="off" value="" id="cp_end_time" class="form-control" name="end_time" placeholder="结束时间">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 m-b-xs" style="margin-right: 0;">
+                                    <select class="form-control m-b" name="user_level" id="user_level" style="height: 32px;">
+                                        <option value="0">所属会员等级</option>
+                                        {if condition="$userLevel"}
+                                        {foreach $userLevel as $k => $v}
+                                        <option value="{$k}">{$v}</option>
+                                        {/foreach}
+                                        {/if}
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="input-group">
+                                        <input type="text" placeholder="请输入关键词" id="cp-keywords" name="keywords" value="" class="input-sm form-control">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-sm btn-primary" id="eventquery" title="搜索">搜索</button>
+                                            <!--<button style="margin-left: 2px;" type="button" class="btn btn-sm btn-danger" id="cp-rm-ids" title="批量删除"> <i class="fa fa-trash-o"></i> 批量删除</button>-->
+                                            <button style="margin-left: 1px;" type="button" class="btn btn-sm btn-danger" id="cp-refresh" title="清空筛选条件"><i class="fa fa-refresh"></i></button>
+                                        </span>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <table id="exampleTableEvents"></table>
+                        </div>
+                    </div>
+                    <!-- End Example Events -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Panel Other -->
+</div>
+
+<!-- 全局js -->
+<script src="__ADMIN__/js/jquery.min.js?v=2.1.4"></script>
+<script src="__ADMIN__/js/bootstrap.min.js?v=3.3.6"></script>
+
+<!--加载layui组件-->
+<script src="__PLUGINS__/layui/layui.js"></script>
+<!-- Bootstrap table -->
+<script src="__PLUGINS__/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="__PLUGINS__/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+
+<script>
+    /*注意加载文件顺序千万不能被改变  否则会出现预知的错误！！！
+     你要想写自己的JS 请重新<script><\/script>必须在这个<script>之后，或者写在这个里面的最后面都行*/
+    // 初始化入口地址
+    var _url = "{$entranceUrl}";
+    // 初始化获取table表格数据的后台请求地址
+    var _get_table_url = _url + "/member/getIndexData.html";
+    // 初始化批量删除的请求处理地址
+    var _del_table_url = '';
+    // 初始化表格
+    var _json_columns = [
+        /*{
+            title:'全选',
+            field:'ids',
+            //复选框
+            checkbox:true,
+            width:25,
+            align:'center',
+            valign:'middle'
+        },*/
+        {
+            title: '序号',
+            field: 'uid',
+            align: 'center'
+        },
+        {
+            title: '手机号码',
+            field: 'phone',
+            align: 'center',
+            valign: 'middle'
+        },
+        {
+            title: '会员等级',
+            field: 'member_class',
+            align: 'center',
+            valign: 'middle'
+        },
+        {
+            title: '邀请码',
+            field: 'invite_code',
+            align: 'center',
+            valign: 'middle'
+        },
+        {
+            title: '下线的会员数',
+            field: 'line_total',
+            align: 'center',
+            valign: 'middle'
+        },
+        {
+            title: '注册时间',
+            field: 'add_time',
+            align: 'center',
+            valign: 'middle'
+        },
+        {
+            title: '操作',
+            field: 'operation',
+            align: 'center',
+            valign: 'middle',
+            //更改此项显示的内容，无此参数会显示默认值
+            formatter:function(value,row,index){
+                var html = '<a class="btn btn-info " href="' + _url +'/member/edit/id/'+ row.uid +'.html"><i class="fa fa-paste"></i> 编辑</a> ';
+                var html_2;
+                if (row.line_total > 0) {
+                    html_2 = '<a class="btn btn-default" href="' + _url +'/member/downLine/id/'+ row.uid +'.html"><i class="fa fa-users"></i> 下线用户</a> ';
+                } else {
+                    html_2 = '<button disabled="disabled" class="btn btn-default" href="javascript:;"><i class="fa fa-users"></i> 下线用户</button> ';
+                }
+                return html + html_2;
+            }
+        }
+    ];
+
+
+    // 加载公共的时间组件
+    var _admin_url = "__ADMIN__";
+    layui.config({
+        version: true, //默认不缓存
+        base: _admin_url + "/src/admin/"
+    }).use('lay');
+
+    // 加载table公共的js部分
+    layui.config({
+        version: true, //默认不缓存
+        base: _admin_url + "/src/admin/"
+    }).use('bootstrapTable');
+
+    // 分页查询参数，是以键值对的形式设置的
+    function queryParams(params) {
+        return {
+            // 请求时向服务端传递的参数
+            startTime: $('#cp_start_time').val(),
+            endTime: $('#cp_end_time').val(),
+            keywords: $('#cp-keywords').val(),
+            userLevel:$("#user_level option:selected").val(),
+            limit: params.limit,
+            pageIndex: params.pageNumber
+        }
+    }
+</script>
+
+</body>
+</html>
