@@ -16,22 +16,32 @@ class Index extends Controller
             $scene = trim($this->request->param('scene'));
             if (!$phone || !$scene) return json($this->outJson(0,'请求参数缺失'));
             if (!cp_isMobile($phone)) return json($this->outJson(0,'手机号码格式错误'));
+
+            $checkPhone = Db::name('member')->where(['phone' => trim($phone)])->find();
+
             $check_item = '';
             $randCode = \cocolait\helper\CpMsubstr::rand_string(4,1);
             $display_name = '';
             switch($scene)
             {
                 case 'register':
+                    if ($checkPhone) return json($this->outJson(0,'该手机号已被注册'));
                     $check_item = $phone . '_' . $randCode . '_' . $scene;
                     $display_name = '用户注册';
                     break;
                 case 'find':
+                    if (!$checkPhone) return json($this->outJson(0,'该手机号还未注册'));
                     $check_item = $phone . '_' . $randCode . '_' . $scene;
                     $display_name = '找回密码';
                     break;
                 case 'band':
                     $check_item = $phone . '_' . $randCode . '_' . $scene;
                     $display_name = '绑定银行卡';
+                    break;
+                case 'login':
+                    if (!$checkPhone) return json($this->outJson(0,'该手机号还未注册'));
+                    $check_item = $phone . '_' . $randCode . '_' . $scene;
+                    $display_name = '验证码登陆';
                     break;
             }
             if (!$check_item) return json($this->outJson(0,'短信场景不存在'));

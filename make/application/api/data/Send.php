@@ -13,11 +13,24 @@ class Send
     {
         //不参与验证的方法
         return [
-            'api_login_send',
+            'api_login_login',
             'api_login_register',
             'api_login_findps',
             'api_login_loginout',
-            'api_index_getcode'
+            'api_index_getcode',
+            'api_login_registration',
+            'api_login_logination',
+            'api_login_findation',
+            'api_login_getarea',
+
+            'api_member_index',
+            'api_member_userinfo',
+            'api_member_userinfoactio',
+            'api_member_nicknameactio',
+            'api_member_setnickname',
+            'api_member_inviteactio',
+            'api_member_setinvite',
+            'api_member_upface',
         ];
     }
 

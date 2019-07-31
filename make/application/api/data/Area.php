@@ -120,7 +120,7 @@ class Area
      * 获取省份
      * @return array
      */
-    protected function getProvinceData()
+    public function getProvinceData()
     {
         $data = $this->getCacheFile('area');
         $province = [];
@@ -140,7 +140,7 @@ class Area
      * @param $id
      * @return array
      */
-    protected function getCityData($id)
+    public function getCityData($id)
     {
         $data = $this->getCacheFile('area');
         $city = [];

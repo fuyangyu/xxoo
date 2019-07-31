@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="__STATIC__/index/down/css/common.css"/>
+		<link rel="stylesheet" type="text/css" href="__STATIC__/index/down/css/dd.css"/>
+		<link rel="icon" type="image/png" href="/favicon.ico" sizes="32x32">
+		<title>点动传媒下载页</title>
+	</head>
+	<body>
+		<div class="header">
+			<div class="header-log"><img src="__STATIC__/index/down/img/logo.png"/></div>
+		</div>
+		<div class="qr-box">
+			<div class="qr-left">
+				<div class="qr-img"><img src="{$azUrlImg}"/></div>
+				<a href="{$azUrl}" class="qr-a"><span class="az"></span>安卓版下载</a>
+			</div>
+			<div class="qr-right">
+				<div class="qr-img"><img src="{$pgUrlImg}"/></div>
+				<a href="{$pgUrl}" class="qr-a"><span class="pg"></span>苹果版下载</a>
+			</div>
+			
+			<!--只有一个的情况 目前隐藏-->
+			<div class="mid-qrs hide"><img src="__STATIC__/index/down/img/qrcode.png"/></div>
+		</div>
+		<div class="bt-box">
+			<span class="sp-1">——</span>让每一次接触都产生<span class="sp-2">——</span>
+		</div>
+	</body>
+	<script>
+		/*
+		 * 手机端动态分配rem
+		 */
+		window.onload = function(){
+			// 获取视窗宽度
+			var htmlWidth = document.documentElement.clientWidth || document.body.clientWidth;
+		
+			// 获取视窗高度
+			var htmlDom = document.getElementsByTagName('html')[0];
+			
+			// 动态设置html font-size值
+			htmlDom.style.fontSize = htmlWidth / 10 + 'px';
+		};
+	</script>
+</html>

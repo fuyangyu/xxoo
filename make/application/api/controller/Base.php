@@ -61,6 +61,9 @@ class Base extends Controller
             case 'band':
                 $check_item = $phone . '_' . $code . '_' . $scene;
                 break;
+            case 'login':
+                $check_item = $phone . '_' . $code . '_' . $scene;
+                break;
         }
         $check = Db::name('check_phone')
                 ->where(['check_item' => $check_item,'is_check' => 0, 'phone' => $phone])

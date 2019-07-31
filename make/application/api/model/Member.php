@@ -30,7 +30,26 @@ class Member extends Base
     }
 
     /**
-     * 个人中心-接口数据
+     * 获取个人信息
+     * @param $uid 用户
+     * @return mixed
+     */
+    public function getuserInfo($uid){
+
+        $uid = !empty($uid)?$uid:-1;
+        $sql = "select m.phone,m.face,m.invite_uid,i.nick_name,i.province,i.city FROM `wld_member` as m LEFT JOIN wld_member_info as i ON m.uid = i.uid WHERE m.uid = {$uid};";
+        $data = Db::query($sql);
+        if($data[0]['invite_uid']) {
+            $invite_phone = Db::name('member')->where(['uid' => $data[0]['invite_uid']])->value('phone');
+            $data['invite_phone'] = !empty($invite_phone) ? $invite_phone : 0;
+        }else{
+            $data['invite_phone'] =  0;
+        }
+        return $data;
+    }
+
+    /**
+     * 个人中心-接口数据（目前不用）
      * @param $uid
      * @return array
      * @throws \think\Exception
@@ -305,9 +324,9 @@ class Member extends Base
             'password' => cp_encryption_password($password)
         ]);
         if ($bool) {
-            return $this->outJson(1,'操作成功');
+            return $this->outJson(1,'修改成功');
         } else {
-            return $this->outJson(0,'操作失败');
+            return $this->outJson(0,'修改失败');
         }
     }
 
@@ -320,30 +339,44 @@ class Member extends Base
     {
         Db::startTrans();
         try{
-            $invite_code = $this->createInviteCode();
+//            $invite_code = $this->createInviteCode();
             // 注册新用户
             $uid = Db::name('member')->insertGetId([
                 'phone' => trim($data['phone']),
                 'password' => cp_encryption_password($data['password']),
-                'invite_code' => $invite_code,
-                'member_class' => 1,
+                'invite_uid' => $data['invite_uid'],
+                'member_class' => 1,//普通会员
                 'add_time' => date('Y-m-d H:i:s')
             ]);
-            // 邀请注册 注册关系网
-            $resParent = $this->getInviteCodeParentUid($data['invite_code']);
-            if ($resParent) {
-                $bool = Db::name('member')->where(['uid' => $uid])->update($resParent);
-            } else {
-                $bool = true;
-            }
-            if ($uid && $bool) {
-                // 提交事务
-                Db::commit();
-                $token = \auth\Token::instance()->getAccessToken($uid);
-                return $this->outJson(1,'注册成功',['token' => $token['data']['token']]);
-            } else {
+
+            //添加用户地址
+            if($uid) {
+                Db::name('member_info')->insert([
+                    'uid' => $uid,
+                    'province' => $data['province'],
+                    'city' => $data['city'],
+                    'add_time' => date('Y-m-d H:i:s')
+                ]);
+
+                // 邀请注册 注册关系网
+                $resParent = $this->getInviteCodeParentUid($data['invite_uid']);
+                if ($resParent) {
+                    $bool = Db::name('member')->where(['uid' => $data['invite_uid']])->update($resParent);
+                } else {
+                    $bool = true;
+                }
+                if ($bool) {
+                    // 提交事务
+                    Db::commit();
+                    $token = \auth\Token::instance()->getAccessToken($uid);
+                    return $this->outJson(1, '注册成功', ['token' => $token['data']['token']]);
+                } else {
+                    Db::rollback();
+                    return $this->outJson(0, '注册失败');
+                }
+            }else {
                 Db::rollback();
-                return $this->outJson(0,'注册失败');
+                return $this->outJson(0, '注册失败');
             }
         } catch (\Exception $e) {
             // 回滚事务
@@ -357,14 +390,14 @@ class Member extends Base
      * @param $invite_code
      * @return array
      */
-    public function getInviteCodeParentUid($invite_code)
+    public function getInviteCodeParentUid($invite_uid=-1)
     {
-        $infinity_code = config('code.invite_code') ? config('code.invite_code') : '';
-        if ($invite_code == $infinity_code) return [];
-        $invite_code = strtolower($invite_code);
+//        $infinity_code = config('code.invite_code') ? config('code.invite_code') : '';
+//        if ($invite_code == $invite_code) return [];
+//        $invite_code = strtolower($invite_code);
         // 查询父级一
         $old = Db::name('member')
-                    ->where(['invite_code' => $invite_code])
+                    ->where(['uid' => $invite_uid])
                     ->field('uid,parent_level_1,parent_level_2,parent_level_3,member_class')
                     ->find();
         if (!$old) return [];

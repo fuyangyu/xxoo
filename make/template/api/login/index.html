@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8>
+    <meta name=viewport content="width=device-width,initial-scale=1">
+    <title>点动传媒</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/index/css/aui.css">
+    <link rel="stylesheet" type="text/css" href="__STATIC__/index/css/main.css">
+    <link rel="icon" type="image/png" href="__STATIC__/index/img/logo.png" sizes="32x32">
+</head>
+<style>
+    body {
+        min-height: 100vh;
+    }
+
+    .hello {
+        background-size: cover;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .down {
+        margin-left: 12%;
+        padding-top: 0.5rem;
+        text-align: left;
+        color: #fff;
+    }
+
+    .signIn .aui-list .aui-list-item,
+    .signUp .aui-list .aui-list-item {
+        background-image: none;
+    }
+
+    .v-toast {
+        width: 100%;
+        position: fixed;
+        top: 45%;
+        z-index: 9999;
+        text-align: center;
+    }
+
+    .v-toast .toast-msg {
+        position: relative;
+        display: inline-block;
+        padding: 8px 20px;
+        color: #fff;
+        background-color: #28243b;
+        border-radius: 20px;
+        text-align: center;
+    }
+    .quanqiugouBox{
+        background-color: rgba(255, 255, 255, 0.3);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<body>
+<div v-cloak class="hello" style="background-image: url('__STATIC__/index/img/bg.png');" id="app">
+    <header class="aui-bar aui-bar-nav" style="background-color: rgba(255,255,255,0);background-image: none;">
+        <a class="aui-pull-left aui-btn">
+            <span class="aui-iconfont" style="color: #fff;"></span>
+        </a>
+    </header>
+    <div id="signUp" class="signUp">
+        <div class="z-logo" style="width: 30vw; margin-left: 35vw; margin-bottom: 1.5rem;">
+            <img src="__STATIC__/index/img/logo.png">
+        </div>
+        <div class="aui-content">
+            <ul class="aui-list aui-form-list z-no-bt">
+                <!--<li class="aui-list-item">-->
+                <!--<div class="aui-list-item-inner aui-border-b">-->
+                <!--<div class="aui-list-item-label-icon">-->
+                <!--<img class="z-icon" src="__STATIC__/index/img/icon31.png" alt="">-->
+                <!--</div>-->
+                <!--<div class="aui-list-item-input">-->
+                <!--<input class="z-phone" type="text" v-model="username" placeholder="输入登录账号">-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--</li>-->
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner aui-border-b">
+                        <div class="aui-list-item-label-icon">
+                            <img class="z-icon" src="__STATIC__/index/img/phone_2.png" alt="">
+                        </div>
+                        <div class="aui-list-item-input">
+                            <input class="z-phone" type="tel" v-model="phone" placeholder="输入手机号">
+                        </div>
+                    </div>
+                </li>
+                <!--<li class="aui-list-item">-->
+                <!--<div class="aui-list-item-inner aui-border-b">-->
+                <!--<div class="aui-list-item-label-icon">-->
+                <!--<img class="z-icon" src="__STATIC__/index/img/smsCode_1.png" alt="">-->
+                <!--</div>-->
+                <!--<div class="aui-list-item-input z-pos-rel" style="padding-right: 0;">-->
+                <!--<input type="text" v-model="imageCode" placeholder="输入图形验证码">-->
+                <!--<img :src="imageCodeUrl" alt="" @click="getImageCode" style="position: absolute;top: 0.4rem;right: 0;height: 1.4rem;">-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--</li>-->
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner aui-border-b">
+                        <div class="aui-list-item-label-icon">
+                            <img class="z-icon" src="__STATIC__/index/img/smsCode.png" alt="">
+                        </div>
+                        <div class="aui-list-item-input z-pos-rel" style="padding-right: 0;">
+                            <input type="tel" v-model="verifyCode" placeholder="输入验证码">
+                            <div class="z-smsBtn aui-border" @click="getCaptcha">{{captchaBtnText}}</div>
+                        </div>
+                    </div>
+                </li>
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner aui-border-b">
+                        <div class="aui-list-item-label-icon">
+                            <img class="z-icon" src="__STATIC__/index/img/password_2.png" alt="">
+                        </div>
+                        <div class="aui-list-item-input">
+                            <input type="password" v-model="password" placeholder="设置密码(6~16位)">
+                        </div>
+                    </div>
+                </li>
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner aui-border-b">
+                        <div class="aui-list-item-label-icon">
+                            <img class="z-icon" src="__STATIC__/index/img/password.png" alt="">
+                        </div>
+                        <div class="aui-list-item-input">
+                            <input type="password" v-model="confirmPassword" placeholder="确认密码(6~16位)">
+                        </div>
+                    </div>
+                </li>
+                <li class="aui-list-item">
+                    <div class="aui-list-item-inner aui-border-b">
+                        <div class="aui-list-item-label-icon">
+                            <img class="z-icon" src="__STATIC__/index/img/yqm.png" alt="">
+                        </div>
+                        <div class="aui-list-item-input">
+                            <input type="text" v-model="code" placeholder="邀请码(必填)" v-bind:disabled="readonly">
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <p>
+            <div class="aui-btn aui-btn-danger aui-btn-block z-btn" :class="{bgCCC:signUpIng}" @click="signUp">确认注册</div>
+            </p>
+            <p class="down" @click="down"><span>已经注册，前去 </span><span style="color: #0062cc;">下载</span></p>
+        </div>
+    </div>
+    <div class="v-toast" v-show="toast.show">
+        <div class="toast-msg">{{toast.msg}}</div>
+    </div>
+    <div v-show="quanqiugoushow" class="quanqiugouBox">
+
+    </div>
+</div>
+<script type="text/javascript" src="__STATIC__/index/js/vue.js"></script>
+<script type="text/javascript" src="__STATIC__/index/js/axios.min.js"></script>
+<script type="text/javascript" src="__STATIC__/index/js/aui-dialog.js"></script>
+<script type="text/javascript">
+    var Tool = {
+        isPhone: function(phone) {
+            return /^((17[0-9])|(14[0-9])|(16[0-9])|(13[0-9])|(15[^4,\D])|(18[0-9])|(19[0-9]))\d{8}$/.test(phone);
+        },
+        isPwd: function(password) {
+            return /^[0-9A-Za-z]{6,16}$/.test(password);
+        },
+        isCaptcha: function(code) {
+            return /^[0-9]{4}$/.test(code);
+        },
+        getQueryString: function(search) {
+            var url = search || window.location.search,
+                    arr, args,
+                    result = {};
+            if (url === "") {
+                return result;
+            }
+            arr = url.substr(1).split('&');
+            for (var i = 0, len = arr.length, item; i < len; i++) {
+                item = arr[i].split('=');
+                result[item[0]] = item[1];
+            }
+            return result;
+        },
+    };
+    var time = 60,
+            interval;
+    var Host = "{$host}";
+    const Config = {
+        Host: Host,
+        SERVER_PATH: Host + '/index.php/',
+    };
+    var errMsg ="您当前网络不佳,请稍后再试~";
+    var okMsg ="操作成功!";
+    var vm = new Vue({
+        el: '#app',
+        data: {
+//            checkVerfy: Config.SERVER_PATH + "checkVerifyCode",
+            signUpApi: Config.SERVER_PATH + "/index/signUp",
+            getSMSApi: Host + "/api.php/index/getCode",
+            getPhoneById: Config.SERVER_PATH + "getPhoneByInviteCode",
+            phone: "",
+            password: "",
+            confirmPassword:"",
+            //username: "",
+            verifyCode: "",
+//            imageCode: "",
+            code: "{$invite_code}",
+            captchaBtnText: "获取",
+            getCaptchaIng: false,
+            signUpIng: true,
+            phoneFocus: false,
+            captchaFocus: false,
+            ischecked: true,
+            readonly: true,
+            toast: {
+                show: false,
+                msg: ''
+            },
+            imageCodeUrl: '',
+            quanqiugoushow: false,
+            quanqiugoudown: '' // 下载地址
+        },
+        methods: {
+            init: function() {
+                var self = this;
+                self.getInviteCode();
+//                self.getImageCode();
+            },
+            down: function() {
+                this.quanqiugouBoxShow2();
+                return;
+//                window.location.href = Config.Host + '/Html/webSignUp/download.html'
+            },
+            getInviteCode: function() {
+//                var _code = Tool.getQueryString().myCode;
+                if (this.code) {
+                    this.readonly = true;
+                } else {
+                    this.readonly = false;
+                }
+            },
+            getImageCode: function() {
+                this.imageCodeUrl = Config.SERVER_PATH + "Tools/verify?time=" + new Date().getTime();
+            },
+            signUp: function() {
+                var self = this;
+//                if(!Tool.isPwd(self.username)){
+//                    self.toastInfo('账户格式6~16位数字字母');
+//                    return;
+//                }
+                if (!Tool.isPhone(self.phone)) {
+                    self.toastInfo("手机号格式不正确");
+                    return;
+                }
+                if (!Tool.isCaptcha(self.verifyCode)) {
+                    self.toastInfo("验证码格式有误");
+                    return;
+                }
+                if (!Tool.isPwd(self.password)) {
+                    self.toastInfo("密码格式6~16位数字字母组合");
+                    return;
+                }
+                if (self.password != self.confirmPassword) {
+                    self.toastInfo("两次输入的密码不一致，请重新输入！");
+                    return;
+                }
+                if (!self.code) {
+                    self.toastInfo("请输入邀请码");
+                    return;
+                }
+                if (self.signUpIng) {
+                    return;
+                }
+
+                self.signUpIng = true;
+                axios.post(self.signUpApi, {
+                    phone: self.phone,
+                    password: self.password,
+                    confirm_password: self.confirmPassword,
+                    code: self.verifyCode,
+                    invite_code: self.code
+                })
+                .then(function(res) {
+                    var ret = res.data;
+
+                    if (ret) {
+                        if (ret.status == 1) {
+                            self.signUpIng = false;
+                            self.toastInfo(ret.msg || okMsg);
+                            setTimeout(function() {
+                                window.location.reload();
+//                                window.location.href = self.quanqiugoudown;
+                            }, 2000);
+                        } else {
+                            self.signUpIng = false;
+                            self.toastInfo(ret.msg || errMsg);
+                        }
+                    } else {
+                        self.signUpIng = false;
+                        self.toastInfo(errMsg);
+                    }
+                })
+                .catch(function() {
+                    self.toastInfo(errMsg);
+                });
+
+            },
+            checkForm: function() {
+                var self = this;
+                if (!Tool.isPhone(self.phone)) {
+                    return false;
+                }
+                if (!Tool.isPwd(self.password)) {
+                    return false;
+                }
+                if (!Tool.isCaptcha(self.verifyCode)) {
+                    return false;
+                }
+                if (!self.code) {
+                    return false;
+                }
+                return true;
+            },
+            getCaptcha: function() {
+                var self = this;
+                if (self.getCaptchaIng) {
+                    return;
+                }
+                self.getCaptchaIng = true;
+                if (!Tool.isPhone(self.phone)) {
+                    self.getCaptchaIng = false;
+                    self.toastInfo("手机号格式不正确");
+                    return;
+                } else {
+                    axios.get(self.getSMSApi, {
+                        params: {
+                            phone: self.phone,
+                            scene : 'register',
+                            type: 1
+                        }
+                    }).then(function(res) {
+                        var ret = res.data;
+                        self.toastInfo(ret.msg);
+                        if (ret) {
+                            if (ret.code == 0) {
+                                interval = setInterval(refreshGetCaptcha, 1000); //创建计时器
+                                self.captchaFocus = true;
+                            } else {
+                                self.getCaptchaIng = false;
+                            }
+                        } else {
+                            self.getCaptchaIng = false;
+                        }
+                    }).catch(function() {
+                        self.toastInfo(errMsg);
+                        self.getCaptchaIng = false;
+                    });
+                }
+
+                function refreshGetCaptcha() {
+                    self.captchaBtnText = time + "s";
+                    time--;
+                    if (time < 0) {
+                        clearInterval(interval); //清除计时器
+                        self.getCaptchaIng = false;
+                        self.captchaBtnText = "获取";
+                        time = 60;
+                    }
+                }
+            },
+            toastInfo: function(msg) {
+                var self = this;
+                self.toast.msg = msg;
+                self.toast.show = true;
+                setTimeout(function() {
+                    self.toast.show = false;
+                    self.toast.msg = '';
+                }, 1500);
+            },
+            quanqiugouBoxShow: function(){
+                var self = this;
+                this.quanqiugoushow = true;
+                var dialog = new auiDialog();
+                dialog.alert({
+                    title: "点动传媒",
+                    msg: '点动传媒已上线，前去下载注册',
+                    buttons: ['取消', '确定'],
+                }, function (ret) {
+                    if (ret.buttonIndex == 2) { //确定操作
+                        window.location.href = self.quanqiugoudown;
+                    }else{
+                        self.quanqiugoushow = false;
+                    }
+                });
+            },
+            quanqiugouBoxShow2: function(){
+                var self = this;
+                this.quanqiugoushow = true;
+                var dialog = new auiDialog();
+                dialog.alert({
+                    title: "点动传媒",
+                    msg: '点动传媒还未上线',
+                    buttons: ['取消', '确定'],
+                }, function (ret) {
+                    if (ret.buttonIndex == 2) { //确定操作
+                        self.quanqiugoushow = false;
+                    }else{
+                        self.quanqiugoushow = false;
+                    }
+                });
+            }
+        },
+        watch: {
+            phone: function() {
+                var bool = this.checkForm();
+                if (bool) this.signUpIng = false;
+                if (!bool) this.signUpIng = true;
+            },
+            password: function() {
+                var bool = this.checkForm();
+                if (bool) this.signUpIng = false;
+                if (!bool) this.signUpIng = true;
+            },
+            verifyCode: function() {
+                var bool = this.checkForm();
+                if (bool) this.signUpIng = false;
+                if (!bool) this.signUpIng = true;
+            },
+            code: function() {
+                var bool = this.checkForm();
+                if (bool) this.signUpIng = false;
+                if (!bool) this.signUpIng = true;
+            }
+        }
+    });
+    vm.init();
+</script>
+</body>
+</html>

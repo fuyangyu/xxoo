@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="__STATIC__/index/index2/css/common.css"/>
+		<link rel="stylesheet" type="text/css" href="__STATIC__/index/index2/css/reg.css"/>
+		<link rel="icon" type="image/png" href="/favicon.ico" sizes="32x32">
+		<title>点动传媒-邀请注册</title>
+	</head>
+	<body>
+		<!--<div class="header">
+			注册
+		</div>-->
+		<div class="header_s">
+			<div class="header-s-log"><img src="__STATIC__/index/down/img/logo.png"/></div>
+		</div>
+
+		<div class="from clearfix">
+			<form id="form-1">
+				<div class="input-box">
+					<div class="left">
+						<span class="incon icon-1"></span>
+					</div>
+					<div class="right">
+						<div class="div-1">
+							<input type="text" placeholder="请输入手机号码" id="cp-phone" name="phone" value="" class="input" />
+							<span class="ipt-xx"></span>
+						</div>
+						<div class="line"></div>
+					</div>
+				</div>
+				
+				<div class="input-box">
+					<div class="left">
+						<span class="incon icon-2"></span>
+					</div>
+					<div class="right">
+						<div class="div-2">
+							<input type="text"  placeholder="请输入验证码" name="code" value="" class="input" />
+							<div class="line-1"></div>
+							<div class="line-text" id="getCode">获取验证码</div>
+						</div>
+						<div class="line"></div>
+					</div>
+				</div>
+				
+				<div class="input-box">
+					<div class="left">
+						<span class="incon icon-3"></span>
+					</div>
+					<div class="right">
+						<div class="div-1">
+							<input type="password" placeholder="请输入密码" name="password" value="" class="input" />
+							<span class="ipt-xx"></span>
+						</div>
+						<div class="line"></div>
+					</div>
+				</div>
+
+				<div class="input-box">
+					<div class="left">
+						<span class="incon icon-3"></span>
+					</div>
+					<div class="right">
+						<div class="div-1">
+							<input type="password" name="confirm_password" placeholder="请输入确认密码" value="" class="input" />
+							<span class="ipt-xx"></span>
+						</div>
+						<div class="line"></div>
+					</div>
+				</div>
+
+				<div class="input-box">
+					<div class="left">
+						<span class="incon icon-4"></span>
+					</div>
+					<div class="right">
+						<div class="div-1">
+							<input type="text" name="invite_code" placeholder="请输入邀请码" {if condition="$invite_code"}readonly="readonly"{/if} value="{$invite_code}" class="input" />
+							{if condition="!$invite_code"}
+							<span class="ipt-xx"></span>
+							{/if}
+						</div>
+						<div class="line"></div>
+					</div>
+				</div>
+				<div class="sub-box">
+					<button class="btn-box" title="注册" type="button" id="sub-data"></button>
+				</div>
+				<div class="tips">
+					<p>用户已注册,<a href="javascript:;" id="cp-down" style="cursor:pointer">去下载</a></p>
+				</div>
+			</form>
+		</div>
+		<div style="clear: both;height: 1.2rem;"></div>
+	</body>
+	<script src="__STATIC__/index/index2/js/inti.js"></script>
+	<script src="__STATIC__/index/index2/js/jquery-3.2.1.min.js"></script>
+	<script src="__STATIC__/index/index2/layer_mobile/layer.js"></script>
+	<script>
+		$(function(){
+			var _down_url = "{$down_url}";
+			// 提交表单
+			$("#sub-data").on('click',function(){
+				var _data = $("#form-1").serialize();
+				$.ajax({
+					url: "/api.php/login/register",
+					data: _data,
+					method: "POST",
+					async : true,
+					dataType : "json",
+					success: function (data) {
+						if (data.status == 1) {
+							layer.open({
+								content: '注册成功！'
+								,btn: ['前去下载', '取消']
+								,yes: function(){
+									if (_down_url) {
+										window.location.href = _down_url;
+									} else {
+										layer.open({
+											content: '点动传媒App,还没开放下载！'
+											,btn: '我知道了'
+											,yes:function(){
+												layer.closeAll();
+												window.reload();
+											}
+										});
+									}
+								}
+								,no : function(){
+									layer.closeAll();
+								}
+							});
+						} else {
+							layer.open({
+								content: data.msg
+								,skin: 'msg'
+								,time: 3 //2秒后自动关闭
+							});
+						}
+					}
+				});
+				return false;
+			});
+
+			$(".ipt-xx").on('click', function(){
+				$(this).siblings('.input').val('');
+			});
+
+			$("#cp-down").on('click',function(){
+				if (_down_url) {
+					window.location.href = _down_url;
+				} else {
+					layer.open({
+						content: '点动传媒App,还没开放下载！'
+						,btn: '我知道了'
+					});
+				}
+			});
+
+			// 发送短信验证码
+			$("#getCode").on('click',function(){
+				var _phone = $("#cp-phone").val();
+				if (!_phone) {
+					layer.open({
+						content: '请填写手机号码'
+						,skin: 'msg'
+						,time: 2 //2秒后自动关闭
+					});
+					return false;
+				}
+				if (!isPhone(_phone)) {
+					layer.open({
+						content: '手机号码格式错误'
+						,skin: 'msg'
+						,time: 2 //2秒后自动关闭
+					});
+					return false;
+				}
+				playTime();
+				$.ajax({
+					url: "/api.php/index/getCode",
+					data: {'phone' : _phone, 'scene' : 'register'},
+					method: "POST",
+					async : true,
+					dataType : "json",
+					success: function (data) {
+						/*if (data.status == 1) {
+							playTime();
+						} else {
+							layer.open({
+								content: data.msg
+								,skin: 'msg'
+								,time: 2 //2秒后自动关闭
+							});
+						}*/
+					}
+				});
+			});
+
+			function isPhone(phone)
+			{
+				return /^((17[0-9])|(14[0-9])|(16[0-9])|(13[0-9])|(15[^4,\D])|(18[0-9])|(19[0-9]))\d{8}$/.test(phone);
+			}
+
+			function playTime()
+			{
+				var _time = 60;
+				var _times = setInterval(function(){
+					_time--;
+					$("#getCode").html('倒计时' + _time + 'S');
+					if (_time < 1) {
+						$("#getCode").html('获取验证码');
+						clearInterval(_times);
+						return false;
+					}
+				}, 1000);
+			}
+		});
+	</script>
+</html>

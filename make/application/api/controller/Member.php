@@ -4,7 +4,7 @@ use think\Db;
 
 class Member extends Base
 {
-    // 个人中心
+    // 个人中心（暂时不用）
     public function index()
     {
         try{
@@ -20,20 +20,109 @@ class Member extends Base
         }
     }
 
+
+    //个人信息渲染页
+    public function userInfoActio(){
+        return $this->fetch('demo');
+    }
+
+    //设置昵称渲染页
+    public function nicknameActio(){
+        $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+        $nickname = Db::name('member_info')->where(['uid' => $uid])->value('nick_name');
+        if(empty($nickname)){
+            $nickname = Db::name('member')->where(['uid' => $uid])->value('phone');
+        }
+        return $this->fetch('demo',['nickname'=>$nickname]);
+    }
+
+    /**
+     * @return mixed
+     * 昵称修改处理
+     */
+    public function setNickname(){
+        try{
+            $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+            $nickname = trim($this->request->param('nickname'));
+            $data = Db::name('member_info')->where('uid',$uid)->setField('nick_name',$nickname);
+            if($data){
+                return json($this->outJson(1,'修改成功'));
+            }else{
+                return json($this->outJson(0,'修改失败'));
+            }
+        }catch (\Exception $e){
+            return json($this->outJson(0,'服务器响应失败' . $e->getMessage()));
+        }
+
+    }
+
+    //填写推荐人渲染页
+    public function inviteActio(){
+        return $this->fetch('demo');
+    }
+
+
+    /**
+     * 填写推荐人处理
+     * @return \think\response\Json
+     */
+    public function setInvite(){
+        try{
+            $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+            $phone = trim($this->request->param('phone'));
+            //获取填写推荐人uid
+            $imvite_uid = Db::name('member')->where('phone',$phone)->value('uid');
+            if(!$imvite_uid) return json($this->outJson(0,'推荐人不存在'));
+            //获取当前用户是否有推荐人
+            $former_uid = Db::name('member')->where('uid',$uid)->value('invite_uid');
+            if($former_uid) return json($this->outJson(0,'已有推荐人'));
+            //修改推荐人
+            $data = Db::name('member')->where('uid',$uid)->setField('invite_uid',$imvite_uid);
+            if($data){
+                return json($this->outJson(1,'修改成功'));
+            }else{
+                return json($this->outJson(0,'修改失败'));
+            }
+        }catch (\Exception $e){
+            return json($this->outJson(0,'服务器响应失败' . $e->getMessage()));
+        }
+
+
+    }
+    /**
+     * @return \think\response\Json
+     * 获取个人信息
+     */
+    public function userInfo(){
+        try{
+            $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+            $model = new \app\api\model\Member();
+            $data = $model->getuserInfo($uid);
+            if($data){
+                return json($this->outJson(1,'获取成功',$data));
+            }else{
+                return json($this->outJson(0,'获取失败'));
+            }
+        }catch (\Exception $e){
+            return json($this->outJson(0,'服务器响应失败' . $e->getMessage()));
+        }
+    }
+
+
     // 头像上传
     public function upFace()
     {
         try{
             if ($this->request->isPost()) {
-                $base64 = trim($this->request->param('base64'));
-                if (!$base64) return json($this->outJson(0,'请求参数不完整'));
+                $picture = trim($this->request->param('picture'));
+                if (!$picture) return json($this->outJson(0,'请求参数不完整'));
                 //# dataURI base_64 编码上传 手机端常用方式
                 $rootPath = './uploads/face/' . date('Ymd');
                 $target = $rootPath . "/" . date('Ymd') . uniqid() . ".jpg" ;
                 if (!file_exists($rootPath)) {
                     cp_directory($rootPath);
                 }
-                $img = base64_decode($base64);
+                $img = base64_decode($picture);
                 if (file_put_contents($target, $img)){
                     $face = substr($target,1);
                     $int = Db::name('member')->where(['uid' => $this->uid])->setField('face',$face);
@@ -88,22 +177,7 @@ class Member extends Base
         }
     }
 
-    // 获取省市区
-    /*public function getArea()
-    {
-        try{
-            if ($this->request->isPost()) {
-                $id = $this->request->param('id',0,'intval');
-                $level = $this->request->param('level',1,'intval');
-                $data = \app\api\data\Area::instance()->getArea($id,$level);
-                return json($this->outJson(1,'获取成功',$data));
-            } else {
-                return json($this->outJson(500,'非法操作'));
-            }
-        } catch (\Exception $e) {
-            return json($this->outJson(0,'服务器响应失败'));
-        }
-    }*/
+
 
     // 绑定银行卡
     public function bank()
