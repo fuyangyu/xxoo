@@ -28,7 +28,7 @@ class Token{
      * @param String $user_id
      * @return array
      */
-    public function getAccessToken($user_id)
+    public function getAccessToken($user_id,$nick_name='')
     {
         $fileData = Cache::get('token');
         $token_id = md5($user_id . "_" . uniqid());
@@ -38,13 +38,14 @@ class Token{
                 $fileData[$user_id] = [
                     'token' => $token_id,
                     'time' => time() +  $v_time,
-                    'uid' => $user_id
+                    'uid' => $user_id,
+                    'nick_name' => $nick_name,
                 ];
                 Cache::set('token',$fileData,0);
-                return $this->outJson(1,'获取token成功',['token' => $fileData[$user_id]['token']]);
+                return $this->outJson(1,'获取token成功',['data' => $fileData[$user_id]]);
             } else {
                 // 存在缓存的情况
-                return $this->outJson(1,'获取token成功',['token' => $fileData[$user_id]['token']]);
+                return $this->outJson(1,'获取token成功',['data' => $fileData[$user_id]]);
             }
         } else {
             // 不存在的情况
@@ -52,10 +53,11 @@ class Token{
             $fileData[$user_id] = [
                 'token' => $token_id,
                 'time' => time() +  $v_time,
-                'uid' => $user_id
+                'uid' => $user_id,
+                'nick_name' => $nick_name,
             ];
             Cache::set('token',$fileData,0);
-            return $this->outJson(1,'获取token成功',['token' => $fileData[$user_id]['token']]);
+            return $this->outJson(1,'获取token成功',['token' => $fileData[$user_id]]);
         }
     }
 

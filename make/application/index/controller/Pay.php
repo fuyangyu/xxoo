@@ -48,7 +48,7 @@ class Pay
         $config = [
             'appid' => $this->config['app_id'],
             'rsaPrivateKey' => $this->config['rsaPrivateKey'],//开发者私钥私钥
-            'alipayrsaPublicKey' => $this->config['alipayrsaPublicKey'],//支付宝公钥
+            'alipayrsaPublicKey' => $this->config[''],//支付宝公钥
             'charset' => strtolower('utf-8'),//编码
             'notify_url' => $this->config['notify_url'],//回调地址(支付宝支付成功后回调修改订单状态的地址)
             'payment_type' => 1,//(固定值)

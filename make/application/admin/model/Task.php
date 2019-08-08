@@ -1,5 +1,6 @@
 <?php
 namespace app\admin\model;
+use PhpMyAdmin\Server\Status\Variables;
 use think\Db;
 use think\Request;
 use think\Response;
@@ -228,7 +229,7 @@ class Task extends Base
     {
         if ($value) {
             $v = json_decode($value, true);
-            return $v['prov'] . "_" . $v['city'] . "_" .  $v['dist'];
+            return $v['prov'] . "_" . $v['city'];
         } else {
             return '';
         }
@@ -252,26 +253,30 @@ class Task extends Base
         $id = $data['id'];
         $prov_id = Db::name('region')->where(['name' => trim($data['prov']),'level' => 1])->value('id');
         $city_id = Db::name('region')->where(['name' => trim($data['city']),'level' => 2])->value('id');
-        $dist_id = Db::name('region')->where(['name' => trim($data['dist']),'level' => 3])->value('id');
+//        $dist_id = Db::name('region')->where(['name' => trim($data['dist']),'level' => 3])->value('id');
         $task_area = [
             'prov' => trim($data['prov']),
             'city' => trim($data['city']),
-            'dist' => trim($data['dist']),
+//            'dist' => trim($data['dist']),
             'prov_id' => $prov_id,
             'city_id' => $city_id,
-            'dist_id' => $dist_id
+//            'dist_id' => $dist_id
         ];
         $is_area = isset($data['is_area']) ? 1 : 0;
         $init = [
             'title' => trim($data['title']),
             'content' => trim($data['content']),
-            'is_user' => 2,
+//            'is_user' => 2,
             'task_user_level' => implode(',',$data['task_user_level']),
             'task_money' => trim($data['task_money']),
-            'task_type' => 1,
+//            'task_type' => 1,
             'is_area' => $is_area,
-            'limit_total_num' => trim($data['limit_total_num']),
+            'task_icon'=> !empty($data['task_icon'])?$data['task_icon']:'',   //任务图标
+            'task_step' =>!empty($data['task_step'])?$data['task_step']:'', //任务步骤
+            'taks_fixation_num' => !empty($data['taks_fixation_num'])?$data['taks_fixation_num']:0, //任务领取固定增值
+            'start_time' => !empty($data['start_time'])?$data['start_time']:time(),    //任务开始时间
 //            'limit_user_num' => trim($data['limit_user_num']),
+            'limit_total_num' => trim($data['limit_total_num']),
             'task_area' => json_encode($task_area),
             'task_cid' => trim($data['task_cid']),
             'img_url' => trim($data['img_url']),
@@ -354,6 +359,116 @@ class Task extends Base
             $this->rollback();
             $this->error = '系统繁忙,稍后再试...';
             return false;
+        }
+    }
+
+    /**
+     * @param int $task_money 佣金金额 (未调用已写在控制器)
+     * @param int $uid  用户id
+     */
+    public function brokerage($task_money=0,$task_id=0,$uid=0){
+
+        $data = array();
+        // 启动事务
+        $this->startTrans();
+        $user = Db::name('member')->where(['uid'=>$uid])->field('uid,total_money,task_money,member_class,parent_level_1,parent_level_2,parent_level_3,invite_uid')->find();
+        //获取分佣配置
+        $allot = Db::name('allot_log')->where(['user_level'=>$user['member_class'],'charge_type'=>2])->find();
+        if($user && $allot){
+
+            //直推分佣
+            if(!empty($user['invite_uid'])) {
+                $data['uid_one'] = $user['invite_uid'];
+                $data['one_money'] = $task_money * ($allot['allot_one'] / 100);
+//                    Db::name('member')->where(['uid'=>$user['invite_uid']])->setInc('total_money', $allot_money);
+                $status1 = Db::name('member')->where(['uid' => $user['invite_uid']])->setInc('channel_money', $data['one_money']);
+            }
+            //间推分佣
+            if(!empty($user['parent_level_2'])){
+                $data['uid_two'] = $user['parent_level_1'];
+                $data['two_money'] = $task_money * ($allot['allot_two']/100);
+//                        Db::name('member')->where(['uid'=>$user['parent_level_1']])->setInc('total_money', $allot_money_two);
+              $status2 = Db::name('member')->where(['uid'=>$user['parent_level_1']])->setInc('channel_money', $data['two_money']);
+            }
+
+            //服务中心分佣
+            if(!empty($user['parent_level_3'])){
+                $data['serve_one_money'] = $task_money * ($allot['team_one']/100);   //第一个服务中心分佣金额
+                $data['serve_two_money'] = $task_money * ($allot['team_two']/100);   //第二个服务中心分佣金额\
+                $service = array();
+                $service = $this->recursionService($user['parent_level_3'],$service);
+                $data['serve_uid_one'] = $service[0];
+                $data['serve_uid_two'] = $service[1];
+//                        Db::name('member')->where(['uid'=>$service[0]])->setInc('total_money', $team_one);
+                $status3 = Db::name('member')->where(['uid'=>$service[0]])->setInc('channel_money', $data['serve_one_money']);
+                $status4 = Db::name('member')->where(['uid'=>$service[1]])->setInc('channel_money', $data['serve_two_money']);
+            }
+
+            //写入分佣记录
+            $data['task_money'] =$task_money;
+            $data['uid'] = $uid;
+            $data['tid'] = $task_id;
+            $data['type'] = 3;  //任务
+            $data['add_time'] = date('Y-m_d H:i:s');
+            if(!empty($data)){
+                $status5 = Db::name('brokerage_log')->insertGetId($data);
+            }
+            //用户总收入金额和任务佣金总收入
+            $member['task_money'] = $user['task_money'] + $task_money;    //任务总收入佣金
+//                    $member['total_money'] = $user['total_money'] + $task_money;  //累计收入总金额
+            $status6 = Db::name('member')->where(['uid'=>$uid])->update($member);
+
+            //更新整个平台已完成任务总金额
+            $status7 = Db::name('earnings')->where(['send_id'=>666])->setInc('task_total_money', $task_money);
+
+            if($status1 && $status2 && $status3 && $status4 && $status5 && $status6 && $status7){
+                //提交事务
+                $this->commit();
+                return true;
+            }else{
+                $this->rollback();
+                return false;
+            }
+
+
+        }else{
+            return false;
+        }
+
+    }
+
+    /**(占未调用)
+     * @param int $uid 获得分佣的用户id
+     * @param $money    获得分佣的金额
+     * @return bool
+     */
+    public function addMoney($uid=0,$money=0){
+
+        $sql = "UPDATE wld_member SET total_money=total_money+{$money},task_money=task_money+{$money} WHERE uid={$uid};";
+        return $task = Db::query($sql);
+
+    }
+
+    /**
+     * 递归循环查找两个最近的服务中心
+     * @param int $uid  用户id
+     * @return array
+     */
+
+    public function recursionService($uid=0,&$data=array())
+    {
+        if (count($data) != 2) {
+            $user = Db::name('member')->where(['uid' => $uid, 'member_class' => 4])->field('uid,invite_uid')->find();
+            if ($user) {
+                array_push($data, $user['uid']);
+                if (count($data) == 2) {
+                    return $data;
+                } else {
+                    return $this->recursionService($user['invite_uid'], $data);
+                }
+            }else {
+                return $data;
+            }
         }
     }
 }

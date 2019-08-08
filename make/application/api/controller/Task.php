@@ -3,11 +3,135 @@ namespace app\api\controller;
 use think\Db;
 class Task extends Base
 {
+
     /**
-     * 获取任务分区
+     * 当前任务
      * @return \think\response\Json
      */
-    public function taskList()
+    public function task(){
+        $data = array();
+        $task_cid = $this->request->param('task_cid');  //任务分区参数
+        if(empty($task_cid)){   //首次进入不传任务分区的参数
+            //任务区
+            $data['classify'] = Db::name('task_classify')
+                ->order(['sort' => 'asc', 'task_cid' => 'desc'])
+                ->field('task_cid,name')
+                ->select();
+            if($data['classify']){
+                $task_cid = $data['classify'][0]['task_cid'];
+            }
+        }
+
+        //获取用会员级别
+//       $member_class = Db::name('member')->where(['uid' => $this->uid])->value('member_class');
+
+        //当天任务
+        $sql = "SELECT task_id,title,task_icon,is_area,task_user_level,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num FROM wld_task
+                WHERE start_time < unix_timestamp(now()) AND status = 1 AND task_cid = {$task_cid}
+                ORDER BY start_time DESC LIMIT 5;";
+        $task = Db::query($sql);
+        if(!empty($task)){
+            foreach($task as &$v){
+                if($v['is_area'] == 1){
+                    $v['task_area'] = json_decode($v['task_area'],true)['city'];
+                }
+            }
+        }
+        $data['task'] = $task;
+
+
+    }
+
+    /**
+     * 当前任务更多请求
+     * @return \think\response\Json
+     */
+    public function taskMore(){
+        if ($this->request->isPost()) {
+            $data = array();
+            $page = $this->request->param('page',1); //页数
+            $task_cid = $this->request->param('task_cid');  //任务分区参数
+            $limit = 10;    //每页数量
+            $start = 0;     //开始位置
+            if ($page > 1) {
+                $start = ($page-1) * $limit;
+            }
+            $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num FROM wld_task
+                    WHERE start_time < unix_timestamp(now()) AND status = 1 AND task_cid = {$task_cid}
+                    ORDER BY start_time DESC LIMIT {$start},{$limit};";
+            $task = Db::query($sql);
+            if(!empty($task)){
+                foreach($task as &$v){
+                    if($v['is_area'] == 1){
+                        $v['task_area'] = json_decode($v['task_area'],true)['city'];
+                    }
+                }
+            }
+            $data['task'] = $task;
+            return json($this->outJson(1,'成功',$data));
+        } else {
+            return json($this->outJson(500,'非法操作'));
+        }
+    }
+
+
+    /**
+     * 任务预告
+     *  @return \think\response\Json
+     */
+    public function taskNotice(){
+
+        $data = array();
+        //当天任务
+        $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money FROM wld_task
+                WHERE start_time > unix_timestamp(now()) AND status = 1
+                ORDER BY start_time ASC LIMIT 4;";
+        $data = Db::query($sql);
+        if(!empty($data)){
+            foreach($data as &$v){
+                if($v['is_area'] == 1){
+                    $v['task_area'] = json_decode($v['task_area'],true)['city'];
+                }
+            }
+        }
+        return json($this->outJson(1,'成功',$data));
+    }
+
+    /**
+     * 任务预告更多请求
+     * @return \think\response\Json
+     */
+
+    public function taskNoticeMore(){
+        $data = array();
+        $page = $this->request->param('page',1); //页数
+        $limit = 10;    //每页数量
+        $start = 0;     //开始位置
+        if ($page > 1) {
+            $start = ($page-1) * $limit;
+        }
+        $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money FROM wld_task
+                    WHERE start_time > unix_timestamp(now()) AND status = 1
+                    ORDER BY start_time ASC LIMIT {$start},{$limit};";
+        $data = Db::query($sql);
+        if(!empty($data)){
+            foreach($data as &$v){
+                if($v['is_area'] == 1){
+                    $v['task_area'] = json_decode($v['task_area'],true)['city'];
+                }
+            }
+        }
+        return json($this->outJson(1,'成功',$data));
+    }
+
+
+
+
+    /**
+     * 获取任务分区 (暂不用)
+     * @return \think\response\Json
+     */
+    public function taskNtice()
     {
         try{
             if ($this->request->isPost()) {
@@ -51,7 +175,7 @@ class Task extends Base
 
 
     /**
-     * 任务大厅-获取某个指定会员等级的任务列表数据
+     * 任务大厅-获取某个指定会员等级的任务列表数据(暂不用)
      * @return \think\response\Json
      */
     public function appointTask()
@@ -72,21 +196,18 @@ class Task extends Base
     }
 
     /**
-     * 获取指定任务的详细信息
+     * 获取任务详细信息
      * @return \think\response\Json
      */
     public function findTask()
     {
         try{
-            if ($this->request->isPost()) {
-                $tid = $this->request->param('tid',0,'intval');
-                if (!$tid) return json($this->outJson(0,'请求参数不完整'));
-                $model = new \app\api\model\Task();
-                $data = $model->getFindData($tid);
-                return json($this->outJson(1,'获取成功',$data));
-            } else {
-                return json($this->outJson(500,'非法操作'));
-            }
+            $tid = $this->request->param('tid',0,'intval');
+            if (!$tid) return json($this->outJson(0,'请求参数不完整'));
+            $model = new \app\api\model\Task();
+            $data = $model->getFindData($tid,$this->uid);
+            return json($this->outJson(1,'获取成功',$data));
+
         } catch(\Exception $e){
             return json($this->outJson(0,'服务器响应失败'));
         }
@@ -100,12 +221,15 @@ class Task extends Base
     {
         try{
             if ($this->request->isPost()) {
-                $tid = $this->request->param('tid',0,'intval');
-                if (!$tid) return json($this->outJson(0,'请求参数不完整'));
+                $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid; //374;
+                $task_id = $this->request->param('task_id',0,'intval'); //23;
+                if (!$task_id) return json($this->outJson(0,'请求参数不完整'));
+
                 $model = new \app\api\model\Task();
-                $data = $model->drawTask($this->uid, $tid);
+                $data = $model->drawTask($uid, $task_id);
                 return json($data);
-            } else {
+            }
+            else {
                 return json($this->outJson(500,'非法操作'));
             }
         } catch(\Exception $e){
@@ -114,7 +238,7 @@ class Task extends Base
     }
 
     /**
-     * 提交任务大厅-获取某个指定会员等级的任务列表数据
+     * 提交任务大厅-获取某个指定会员等级的任务列表数据（暂未调用）
      * @return \think\response\Json
      */
     public function subAppointTask()
@@ -135,7 +259,7 @@ class Task extends Base
     }
 
     /**
-     * 提交任务大厅-获取指定任务的详细信息
+     * 提交任务大厅-获取指定任务的详细信息(暂未调用)
      * @return \think\response\Json
      */
     public function subFindTask()
@@ -156,22 +280,22 @@ class Task extends Base
     }
 
     /**
-     * 提交任务截图上传 【已废弃】
+     * 提交任务截图上传
      * @return \think\response\Json
      */
     public function upTaskFile()
     {
         try{
             if ($this->request->isPost()) {
-                $base64 = $this->request->param('base64');
-                if (!$base64) return json($this->outJson(0,'请求参数不完整'));
+                $task_screenshot = $this->request->param('task_screenshot');
+                if (!$task_screenshot) return json($this->outJson(0,'请求参数不完整'));
                 //# dataURI base_64 编码上传 手机端常用方式
                 $rootPath = './uploads/assignment/' . date('Ymd');
                 $target = $rootPath . "/" . date('Ymd') . uniqid() . ".jpg" ;
                 if (!file_exists($rootPath)) {
                     cp_directory($rootPath);
                 }
-                $img = base64_decode($base64);
+                $img = base64_decode($task_screenshot);
                 if (file_put_contents($target, $img)){
                     $file_img = substr($target,1);
                     return json($this->outJson(1,'上传成功',['img' => $file_img]));
@@ -195,23 +319,10 @@ class Task extends Base
     {
         try{
             if ($this->request->isPost()) {
-                $id = $this->request->param('id',0,'intval');
-                $base64 = $this->request->param('base64');
-                if (!$id || !$base64) return json($this->outJson(0,'请求参数不完整'));
-                //# dataURI base_64 编码上传 手机端常用方式
-                $rootPath = './uploads/assignment/' . date('Ymd');
-                $target = $rootPath . "/" . date('Ymd') . uniqid() . ".jpg" ;
-                if (!file_exists($rootPath)) {
-                    cp_directory($rootPath);
-                }
-                $img = base64_decode($base64);
-                if (file_put_contents($target, $img)){
-                    $file_img = substr($target,1);
-                } else {
-                    return json($this->outJson(0,'图片上传失败'));
-                }
-                $model = new \app\api\model\AllotLog();
-                $data = $model->subTask($this->uid, $id, $file_img);
+                $task_id = $this->request->param('task_id',0,'intval'); //23;
+                $task_screenshot = $this->request->param('task_screenshot');    //'/uploads/assignment/20190119/201901195c42c50bf15eb.jpg';
+                $model = new \app\api\model\Task();
+                $data = $model->subTask(374, $task_id, $task_screenshot);
                 return json($data);
             } else {
                 return json($this->outJson(500,'非法操作'));

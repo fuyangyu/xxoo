@@ -14,7 +14,7 @@ class Task extends Base
     protected $momentDateTime = '8-20';
 
     // 领取任务的间隔
-    protected $incision = 2;
+    protected $incision = 24;
 
     /**
      * 任务大厅-获取任务列表
@@ -104,7 +104,7 @@ class Task extends Base
     }
 
     /**
-     * 提交任务大厅 - 获取任务单条记录
+     * 提交任务大厅 - 获取任务单条记录(暂未调用)
      * @param $id
      * @return array
      */
@@ -171,11 +171,11 @@ class Task extends Base
      * @param $tid
      * @return array
      */
-    public function getFindData($tid)
+    public function getFindData($tid,$uid=0)
     {
         $data = Db::name('task')
                 ->where(['task_id' => $tid])
-                ->field('task_id,title,content,img_url')
+                ->field('task_id,title,content,img_url,task_money,task_step')
                 ->find();
         $temp = [];
         if ($data) {
@@ -183,9 +183,25 @@ class Task extends Base
             $temp['title'] = $data['title'];
             $temp['content'] = $data['content'];
             $temp['img'] = explode('@',$data['img_url']);
+            $temp['money'] = $data['task_money'];
+            if(!empty($data['task_step'])){
+                $temp['step'] = $data['task_step']; //上传的任务规则
+            }else{
+                //获取统一任务规则
+                $rule = cp_getCacheFile('system');
+                $temp['task_rule_des'] = isset($rule['task_rule_des']) ? $rule['task_rule_des'] : '';   //规则描述
+                $temp['task_rule_img'] = isset($rule['task_rule_img']) ? $rule['task_rule_img'] : '';   //规则图片流程介绍
+            }
+        }
+        //任务驳回原因
+        $msg = Db::name('send_task_log')->where(['task_id'=>$tid,'is_check'=>3,'uid'=>$uid])->value('failure_msg');
+        if(!empty($msg)){
+            $temp['failure_msg'] = $msg;
         }
         return $temp;
     }
+
+
 
     /**
      * 用户领取任务
@@ -196,31 +212,14 @@ class Task extends Base
     public function drawTask($uid, $tid)
     {
         $check = Db::name('task')
-                ->where(['task_id' => $tid])
+                ->where(['task_id' => $tid,'statu' => 1])
                 ->field('task_id,title,limit_total_num,task_user_level,task_area,get_task_num,limit_user_num,task_money,task_cid,task_user_level,is_area')
                 ->find();
 
-        // 1.任务总数量必须有可领取的数量 判断该项任务是否还可以在领取
-        $diff = $check['limit_total_num'] - $check['get_task_num'];
-        if ($diff <= 0) {
-            return $this->outJson(0,'该任务已被领取完');
+        // 判断任务库存
+        if ($check['limit_total_num']  <= 0) {
+            return $this->outJson(0,'呀！任务被抢光了！');
         }
-        // 2.每天领取的时间在8-20点之间
-        $exp = explode('-',$this->momentDateTime);
-        $start_time = strtotime(date('Y-m-d')) + ($exp[0] * 3600);
-        $end_time  = strtotime(date('Y-m-d')) + ($exp[1] * 3600);
-        $time = time();
-        if ($start_time < $time && $time < $end_time) {
-            // 每天领取的时间在8-20点之间
-        } else {
-            return $this->outJson(0,"每日只能在{$this->momentDateTime}点之间领取任务");
-        }
-
-        // 检测该用户是否已经有领取该项任务 只针对同一个任务
-        // 针对所有任务必须满足2个条件 1.任务总数量必须有可领取的数量 2.每天领取的时间在8-20点之间
-        // 针对同一个任务多加一条条件 3.如果该条任务被领取过了
-        // 3-1）必须要审核通过 3-2）必须要与审核通过该条任务间隔2个小时
-        // 领取了 是否超过最大值 领取时间在每日8-20:00之间 间隔2个小时而且必须得上一条被审核 领取一次
 
         // 1.检测该任务的会员等级要求 匹配该用户的会员等级是否满足要求
         $user_level = Db::name('member')->where(['uid' => $uid])->value('member_class');
@@ -230,21 +229,21 @@ class Task extends Base
         }
 
         // 3.如果数据中存在区域数据 那么匹配该会员的区域是否属于与该任务的所规定的区域是否匹配
-        if ($check['is_area']) {
+        if ($check['is_area'] == 1) {
             // 开启区域限制
-            $info = Db::name('member_info')->where(['uid' => $uid])->field('province,city,district')->find();
+            $info = Db::name('member_info')->where(['uid' => $uid])->field('province,city')->find();
             if (!$info) {
                 return $this->outJson(0,'您的所属区域与该任务不匹配，无法进行领取!');
             } else {
                 if ($check['task_area']) {
                     $area = json_decode($check['task_area'],true);
                     // 验证是否在同一个区域
-                    $bool = $this->diffArea($area,$info);
-                    if ($bool !== true) return $bool;
+                    if ($area['prov_id'] != $info['province'] && ($area['City_id'] != $info['City']) ){
+                        return $this->outJson(0,'您的所属区域与该任务不匹配，无法进行领取!');
+                    }
                 }
             }
         }
-
         // 检测该任务今日是否有领取
         $checkTaskLogData = Db::name('send_task_log')
             ->where(['task_id' => $tid, 'uid' => $uid])
@@ -252,23 +251,14 @@ class Task extends Base
             ->order('id','desc')
             ->find();
         if ($checkTaskLogData) {
-            // TODO 已经领取过的情况
-            // 判断是否超过领取最大值
-            /*$count_log = count($checkTaskLogData);
-            if ($count_log >= $check['limit_user_num']) {
-                return $this->outJson(0,'您今日已领取了' . $check['limit_user_num'] . '条,将无法在领取');
-            }*/
             // 3-1）必须要审核通过
             if ($checkTaskLogData['is_check'] != 1) {
                 return $this->outJson(0,"该任务当天您已领取,等待平台审核中");
             }
-            // 3-2）必须要与审核通过该条任务间隔2个小时
-            $pop_arr = array_pop($checkTaskLogData);
-            $popTime = strtotime($pop_arr['add_time']);
-            $incisionTime = $this->incision * 3600;
-            $diff = time() - $popTime;
-            if ($diff < $incisionTime) {
-                // 少于2个小时
+            // 3-2）必须要与审核通过该条任务间隔24个小
+//            $pop_arr = array_pop($checkTaskLogData);
+            $incisionTime = $checkTaskLogData['add_time']+$this->incision * 3600;;
+            if (time() < $incisionTime) {   // 少于24个小时
                 return $this->outJson(0,"当日任务领取必须间隔{$this->incision}小时");
             }
         }
@@ -281,18 +271,20 @@ class Task extends Base
             'add_time' => date('Y-m-d H:i:s'),
             'task_cid' => $check['task_cid'],
             'task_user_level' => $check['task_user_level'],
-            'is_check' => 0
+            'is_check' => 0 //0:领取 1：审核通过 2：待审核 3：审核失败
         ];
 
         // 启动事务
         Db::startTrans();
         try{
             $id = Db::name('send_task_log')->insertGetId($init_insert);
-            $bool = Db::name('task')->where(['task_id' => $tid])->setInc('get_task_num',1);
+            //库存减一 领取任务数量加一
+            $sql = "UPDATE wld_task SET get_task_num = get_task_num+1,limit_total_num=limit_total_num-1 WHERE task_id={$tid};";
+            $bool = Db::execute($sql);
             if ($id && $bool) {
                 // 提交事务
                 Db::commit();
-                return $this->outJson(1,"领取成功");
+                return $this->outJson(1,"领取成功",['task_id'=>$tid]);
             } else {
                 // 回滚事务
                 Db::rollback();
@@ -325,9 +317,41 @@ class Task extends Base
         if ($province_id == $new_province_id && $city_id != $new_city_id) {
             return $this->outJson(0,'您的所属区域与该任务不匹配，无法进行领取!');
         }
-        if ($province_id == $new_province_id && $city_id == $new_city_id && $district_id != $new_district_id) {
-            return $this->outJson(0,'您的所属区域与该任务不匹配，无法进行领取!');
-        }
+//        if ($province_id == $new_province_id && $city_id == $new_city_id && $district_id != $new_district_id) {
+//            return $this->outJson(0,'您的所属区域与该任务不匹配，无法进行领取!');
+//        }
         return true;
+    }
+
+
+
+
+    /**
+     * 提交任务
+     * @param $uid
+     * @param $id
+     * @param $img
+     * @return array
+     */
+    public function subTask($uid, $task_id, $img)
+    {
+        $old = Db::name('send_task_log')->where(['task_id' => $task_id, 'uid' => $uid,'is_check' => 0])->field('id,is_check,add_time')->find();
+        if (!$old) return $this->outJson(0, '参数不合法');
+//        if($old['add_time']+86400 > time()) return $this->$this->outJson(0,'需要提供24小时以后的截图');
+//        if ($old['is_check'] == 2) return $this->outJson(0, '该任务已经提交,耐心等待平台审核');
+        if (!file_exists("." . $img)) return $this->outJson(0, '图片上传失败');
+        // 修改任务数据
+        $update = [
+            'img' => $img,
+            'is_check' => 2,
+            'sub_time' => date('Y-m-d H:i:s')
+        ];
+
+        $offer = Db::name('send_task_log')->where(['task_id' => $task_id,'uid' =>$uid])->update($update);
+        if ($offer) {
+            return $this->outJson(1, '提交成功！我们会尽快审核，审核通过之后，任务收入会自动发放哦！');
+        } else {
+            return $this->outJson(0, '操作失败');
+        }
     }
 }

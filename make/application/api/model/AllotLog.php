@@ -12,7 +12,7 @@ class AllotLog extends Base
 
 
     /**
-     * 提交任务并且创建佣金记录
+     * 提交任务并且创建佣金记录(暂未调用)
      * @param $uid
      * @param $id
      * @param $img
@@ -67,8 +67,10 @@ class AllotLog extends Base
     /**
      * 会员充值
      * @param int $uid 用户UID
-     * @param int $level 充值会员级别 1：普通VIP会员充值 2：高级VIP充值
+     * @param int $level 充值会员级别 1：会员开通 2：VIP 3：svip
      * @param int $pay_status 支付方式 1：余额支付 2：支付宝 3：快捷支付 4:微信支付
+     * @param int $renew 默认值：1 续费标识
+     * @param int $upgrade 默认值：1 升级标识
      * @return array
      */
     public function userPay($uid, $level, $pay_status = 1)

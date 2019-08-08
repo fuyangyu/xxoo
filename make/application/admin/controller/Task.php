@@ -43,6 +43,31 @@ class Task extends AdminBase
         }
     }
 
+    /**
+     *任务上下架
+     * @return \think\response\Json
+     */
+
+    public function alterTaskStatus(){
+        $task_id = $this->request->param('task_id');   //任务id
+        $status = $this->request->param('status');    //任务状态 1:上架 2:下架
+        if($status = 1){
+            $limit_total_num = Db::name('task')->where(['task_id' => $task_id])->value('limit_total_num');
+            if($limit_total_num > 0){
+                $data = Db::name('task')->where(['task_id' => $task_id])->setField('status',$status);
+                if($data){
+                    return json($this->outJson('0','下架成功'));
+                }
+            }else{
+                return json($this->outJson('1','无法上架数量为0的任务!'));
+            }
+        }
+        $data = Db::name('task')->where(['task_id' => $task_id])->setField('status',$status);
+        if($data){
+            return json($this->outJson('0','下架成功'));
+        }
+    }
+
     // 任务审核
     public function drawList()
     {
@@ -120,163 +145,145 @@ class Task extends AdminBase
     }
 
     /**
-     * 审核广告任务
+     * 获取任务审核详情
+     * @return mixed
+     */
+    public function getTask(){
+        $id = $this->request->param('id');
+        $data = Db::name('send_task_log')->where(['id' => $id])->find();
+        $data['phone'] = Db::name('member')->where(['uid' => $data['uid']])->value('phone');
+        return $this->fetch('task_check',[
+            'crumbs'=>[
+                ['url' => $this->entranceUrl . "/index/main",'name'=>'首页'],
+                ['url' => $this->entranceUrl . "/task/drawList",'name'=>'任务记录列表'],
+                ['url' => '','name'=> '审核任务']
+            ],
+            'id' => $id,
+            'data' => $data
+        ]);
+    }
+
+
+    /**
+     * 审核任务
      * @return mixed
      */
     public function taskCheck()
     {
-        if ($this->request->isAjax()) {
-            // 修改任务状态
-            $id = $this->request->param('id');
-            $status = $this->request->param('status');
-            $failure_msg = $this->request->param('failure_msg');
-            // 启动事务
-            Db::startTrans();
-            try{
-                if ($status == 1) {
-                    // 审核成功
-                    $up = Db::name('send_task_log')->where(['id' => $id])->update([
-                        'is_check' => 1,
-                        'check_time' => date('Y-m-d H:i:s'),
-                        'check_admin_id' => Session::get('admin')['uid'],
-                        'check_admin_name' => Session::get('admin')['username']
-                    ]);
-                    $task_old_data = Db::name('send_task_log')
-                                    ->where(['id' => $id])
-                                    ->field('task_id,task_money,uid')
-                                    ->find();
-                    // TODO 记录业务分润收益记录
-                    $c_data = [
-                        'uid' => $task_old_data['uid'],
-                        'task_log_id' => $id,
-                        'order_sn' => ''
-                    ];
-                    $init_earnings_log_data = createEarningsLog($task_old_data['task_money'],2,$task_old_data['task_id'],$c_data);
-                    $eg_id = Db::name('earnings_log')->insertGetId($init_earnings_log_data);
-                    // TODO 汇总业务分润金额
-                    $earnings_data = Db::name('earnings')->where(['send_id' => 666])->find();
-                    if ($earnings_data) {
-                        $earnings_id = Db::name('earnings')->where(['send_id' => 666])->update([
-                            'terrace_total_money' => $init_earnings_log_data['terrace_money'] + $earnings_data['terrace_total_money'],
-                            'static_total_money' => $init_earnings_log_data['static_money'] + $earnings_data['static_total_money'],
-                            'fund_total_money' => $init_earnings_log_data['fund_money'] + $earnings_data['fund_total_money']
-                        ]);
-                    } else {
-                        $earnings_id = Db::name('earnings')->insertGetId([
-                            'terrace_total_money' => $init_earnings_log_data['terrace_money'],
-                            'static_total_money' => $init_earnings_log_data['static_money'],
-                            'fund_total_money' => $init_earnings_log_data['fund_money']
-                        ]);
-                    }
-
-                    // 佣金发放
-                    $check = Db::name('hire_log')->where(['type_log_id' => $id])->field('uid,hire_money')->select();
-                    if ($check) {
-                        // 存在佣金更新
-                        $check_up = Db::name('hire_log')->where(['type_log_id' => $id])->update([
-                            'is_check' => 1,
-                            'check_time' => date('Y-m-d H:i:s')
-                        ]);
-                        // 给用户加佣金
-                        $uid_s = [];
-                        $money_arr =[];
-                        foreach ($check as $k => $v) {
-                            $uid_s[] = $v['uid'];
-                            $money_arr[$v['uid']] = $v['hire_money'];
+        $model = new \app\admin\model\Task();
+        // 修改任务状态
+        $id = $this->request->param('id');  //353
+        $status = $this->request->param('status');
+        $failure_msg = '你大爷';
+        $this->request->param('failure_msg');
+        // 启动事务
+        Db::startTrans();
+        try{
+            $task_old_data = Db::name('send_task_log')
+                ->where(['id' => $id])
+                ->field('task_id,task_money,uid,is_check')
+                ->find();
+            if ($status == 1 && $task_old_data['is_check'] ==2) {//
+                // 审核成功
+                $up = Db::name('send_task_log')->where(['id' => $id])->update([
+                    'is_check' => 1,
+                    'check_time' => date('Y-m-d H:i:s'),
+                    'check_admin_id' => Session::get('admin')['uid'],//355
+                    'check_admin_name' => Session::get('admin')['username'] //admin
+                ]);
+//                -- 发放佣金开始 --
+                // 佣金发放(已直接写在控制器)
+//                $bl = $model->brokerage($task_old_data['task_money'],$task_old_data['task_id'],$task_old_data['uid']);
+                // 启动事务
+                $user = Db::name('member')->where(['uid'=>$task_old_data['uid']])->field('uid,total_money,task_money,member_class,parent_level_1,parent_level_2,parent_level_3,invite_uid')->find();
+                //获取分佣配置
+                $allot = Db::name('allot_log')->where(['user_level'=>$user['member_class'],'charge_type'=>2])->find();
+                if($user && $allot){
+                    //直推分佣
+                    if(!empty($user['invite_uid'])) {
+                        $data['uid_one'] = $user['invite_uid'];
+                        $data['one_money'] = $task_old_data['task_money'] * ($allot['allot_one'] / 100);
+//                    Db::name('member')->where(['uid'=>$user['invite_uid']])->setInc('total_money', $allot_money);
+                        $status1 = Db::name('member')->where(['uid' => $user['invite_uid']])->setInc('channel_money', $data['one_money']);
+                        //间推分佣
+                        if(!empty($user['parent_level_2']) && $status1){
+                            $data['uid_two'] = $user['parent_level_1'];
+                            $data['two_money'] = $task_old_data['task_money'] * ($allot['allot_two']/100);
+//                        Db::name('member')->where(['uid'=>$user['parent_level_1']])->setInc('total_money', $allot_money_two);
+                            $status2 = Db::name('member')->where(['uid'=>$user['parent_level_2']])->setInc('channel_money', $data['two_money']);
                         }
-                        $bl = false;
-                        $bl_one = 0;
-                        if ($uid_s) {
-                            foreach ($uid_s as $uid) {
-                                $bl = true;
-                                $bl_one = Db::name('member')->where('uid','=',$uid)->setInc('balance',$money_arr[$uid]);
+                        //服务中心分佣
+                        if(!empty($user['parent_level_3']) && $status2){
+                            $data['serve_one_money'] = $task_old_data['task_money'] * ($allot['team_one']/100);   //第一个服务中心分佣金额
+                            $data['serve_two_money'] = $task_old_data['task_money'] * ($allot['team_two']/100);   //第二个服务中心分佣金额\
+                            $service = array();
+                            $service = $model->recursionService($user['parent_level_3'],$service);
+                            if(!empty($service[0])) {
+                                $data['serve_uid_one'] = $service[0];
+                                Db::name('member')->where(['uid' => $service[0]])->setInc('channel_money', $data['serve_one_money']);
+                            }
+                            if(!empty($service[1])) {
+                                $data['serve_uid_two'] = $service[1];
+                                Db::name('member')->where(['uid' => $service[1]])->setInc('channel_money', $data['serve_two_money']);
+                            }
+                            //写入分佣记录
+                            $data['task_money'] = $task_old_data['task_money'];
+                            $data['uid'] = $task_old_data['uid'];
+                            $data['tid'] = $task_old_data['task_id'];
+                            $data['type'] = 3;  //任务
+                            $data['add_time'] = date('Y-m_d H:i:s');
+                            if(!empty($data)){
+                                Db::name('brokerage_log')->insertGetId($data);
                             }
                         }
-
-                        if ($bl) {
-                            if ($up && $check_up && $bl_one && $eg_id && $earnings_id) {
-                                // 提交事务
-                                Db::commit();
-                                return $this->outJson(0,'操作成功',[
-                                    'logMsg' => "审核任务成功-id($id)",
-                                    'url' => $this->entranceUrl . "/task/drawList.html"
-                                ]);
-                            } else {
-                                // 回滚事务
-                                Db::rollback();
-                                return $this->outJson(1,'操作失败,编码001,up:' . $up . "-check_up:" . $check_up . '-bl_one:' . $bl_one . '-eg_id:' . $eg_id . "-earnings_id:" .$earnings_id );
-                            }
-                        } else {
-                            if ($up && $check_up && $eg_id && $earnings_id) {
-                                // 提交事务
-                                Db::commit();
-                                return $this->outJson(0,'操作成功',[
-                                    'logMsg' => "审核任务成功-id($id)",
-                                    'url' => $this->entranceUrl . "/task/drawList.html"
-                                ]);
-                            } else {
-                                // 回滚事务
-                                Db::rollback();
-                                return $this->outJson(1,'操作失败,编码001');
-                            }
-                        }
-
-                    } else {
-                        // 不存在直接跳过
-                        if ($up && $eg_id && $earnings_id) {
-                            // 提交事务
-                            Db::commit();
-                            return $this->outJson(0,'操作成功',[
-                                'logMsg' => "审核任务成功-id($id)",
-                                'url' => $this->entranceUrl . "/task/drawList.html"
-                            ]);
-                        } else {
-                            // 回滚事务
-                            Db::rollback();
-                            return $this->outJson(1,'操作失败');
-                        }
                     }
-
-                } else {
-                    // 审核失败
-                    $up = Db::name('send_task_log')->where(['id' => $id])->update([
-                        'is_check' => 3,
-                        'failure_msg' => $failure_msg,
-                        'check_time' => date('Y-m-d H:i:s'),
-                        'check_admin_id' => Session::get('admin')['uid'],
-                        'check_admin_name' => Session::get('admin')['username']
-                    ]);
-                    if ($up) {
-                        // 提交事务
-                        Db::commit();
-                        return $this->outJson(0,'操作成功',[
-                            'logMsg' => "审核任务失败-id($id),原因：" . $failure_msg,
-                            'url' => $this->entranceUrl . "/task/drawList.html"
-                        ]);
-                    } else {
-                        // 回滚事务
-                        Db::rollback();
-                        return $this->outJson(1,'操作失败');
-                    }
+                    //用户总收入金额和任务佣金总收入
+                    $member['task_money'] = $user['task_money'] + $task_old_data['task_money'];    //任务总收入佣金
+                    Db::name('member')->where(['uid'=>$task_old_data['uid']])->update($member);
+                    //更新整个平台已完成任务总金额
+                    Db::name('earnings')->where(['send_id'=>666])->setInc('task_total_money', $task_old_data['task_money']);
                 }
-            } catch (\Exception $e) {
-                // 回滚事务
-                Db::rollback();
-                return $this->outJson(1,'操作失败,debug:'. $e->getMessage());
+                //-- 分佣发放完毕 --
+
+                if ($up) {
+                    // 提交事务
+                    Db::commit();
+                    return json($this->outJson(0,'操作成功',[
+                        'logMsg' => "审核任务成功-id($id)",
+                        'url' => $this->entranceUrl . "/task/drawList.html"
+                    ]));
+                } else {
+                    // 回滚事务
+                    Db::rollback();
+                    return json($this->outJson(1,'操作失败,编码001'));
+                }
+
+            } else {
+                // 审核失败
+                $ups = Db::name('send_task_log')->where(['id' => $id])->update([
+                    'is_check' => 3,
+                    'failure_msg' => $failure_msg,
+                    'check_time' => date('Y-m-d H:i:s'),
+                    'check_admin_id' => Session::get('admin')['uid'],
+                    'check_admin_name' => Session::get('admin')['username']
+                ]);
+                if ($ups) {
+                    // 提交事务
+                    Db::commit();
+                    return json($this->outJson(0,'操作成功',[
+                        'logMsg' => "审核任务失败-id($id),原因：" . $failure_msg,
+                        'url' => $this->entranceUrl . "/task/drawList.html"
+                    ]));
+                } else {
+                    // 回滚事务
+                    Db::rollback();
+                    return json($this->outJson(1,'操作失败'));
+                }
             }
-        } else {
-            $id = $this->request->param('id');
-            $data = Db::name('send_task_log')->where(['id' => $id])->find();
-            $data['phone'] = Db::name('member')->where(['uid' => $data['uid']])->value('phone');
-            return $this->fetch('task_check',[
-                'crumbs'=>[
-                    ['url' => $this->entranceUrl . "/index/main",'name'=>'首页'],
-                    ['url' => $this->entranceUrl . "/task/drawList",'name'=>'任务记录列表'],
-                    ['url' => '','name'=> '审核任务']
-                ],
-                'id' => $id,
-                'data' => $data
-            ]);
+        } catch (\Exception $e) {
+            // 回滚事务
+            Db::rollback();
+            return json($this->outJson(1,'操作失败,debug:'. $e->getMessage()));
         }
     }
 
@@ -310,6 +317,7 @@ class Task extends AdminBase
     {
         $id = $this->request->param('id',0);
         $html = $id ? '编辑' : '发布';
+        $result = array();
         if ($this->request->isAjax()) {
             // 处理添加
             $validate = new \app\admin\validate\Task();
@@ -340,7 +348,7 @@ class Task extends AdminBase
                 'limit_total_num' => '',
                 'prov' => '广东省',
                 'city' => "深圳市",
-                'dist' => '南山区',
+                //'dist' => '南山区',
                 'limit_user_num' => '',
                 'is_area' => 0,
                 'img' => []
@@ -351,7 +359,7 @@ class Task extends AdminBase
                 $result['task_user_level'] = explode(',',$result['task_user_level']);
                 $result['prov'] = $json_area['prov'];
                 $result['city'] = $json_area['city'];
-                $result['dist'] = $json_area['dist'];
+//                $result['dist'] = $json_area['dist'];
                 $result['img'] = explode('@',$result['img_url']);
             }
             return $this->fetch('add',[

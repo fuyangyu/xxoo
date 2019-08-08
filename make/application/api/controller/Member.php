@@ -29,10 +29,9 @@ class Member extends Base
     //设置昵称渲染页
     public function nicknameActio(){
         $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
-        $nickname = Db::name('member_info')->where(['uid' => $uid])->value('nick_name');
-        if(empty($nickname)){
-            $nickname = Db::name('member')->where(['uid' => $uid])->value('phone');
-        }
+        $data = Db::name('member')->field('phone,nick_name')->where(['uid' => $uid])->find();
+        $nickname = !empty($data['nick_name'])?$data['nick_name']:$data['phone'];
+
         return $this->fetch('demo',['nickname'=>$nickname]);
     }
 
@@ -44,7 +43,7 @@ class Member extends Base
         try{
             $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
             $nickname = trim($this->request->param('nickname'));
-            $data = Db::name('member_info')->where('uid',$uid)->setField('nick_name',$nickname);
+            $data = Db::name('member')->where('uid',$uid)->setField('nick_name',$nickname);
             if($data){
                 return json($this->outJson(1,'修改成功'));
             }else{
@@ -91,7 +90,7 @@ class Member extends Base
     }
     /**
      * @return \think\response\Json
-     * 获取个人信息
+     * 获取用户信息
      */
     public function userInfo(){
         try{
@@ -142,7 +141,29 @@ class Member extends Base
         }
     }
 
-    // 个人资料
+
+    public function memberCenter(){
+
+        $data = array();
+        //获取用户详情
+        $data['user'] = Db::name('member')->where('uid',$this->uid)->field('nick_name,face,member_class,vip_start_time')->find();
+        //根据用户会员情况获取会员
+
+
+        //获取配置会用数量计算会员静态收益比
+//        VIP静态收益=【[当月会员收入总和*3%+当月已完成状态的广告任务总金额*5%]*80%/6*1】/VIP用户数量
+
+//        SVIP静态收益=【[当月会员收入总和*3%+当月已完成状态的广告任务总金额*5%]*80%/6*2】/SVIP用户数量
+
+//        服务中心静态收益=【[当月会员收入总和*3%+当月已完成状态的广告任务总金额*5%]*80%/6*3】/服务中心用户数量
+
+        //专属VIP任务 获取比本身会员高一级的任务
+
+        //获取最新5条已完成任务无帅选条件
+
+    }
+
+    // 个人资料 (暂未调用)
     public function info()
     {
         try{

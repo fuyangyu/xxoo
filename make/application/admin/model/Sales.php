@@ -149,22 +149,24 @@ class Sales extends Base
     /*
      * 处理添加编辑
      */
-    public function store($data)
+    public function store($data=array())
     {
-        $id = $data['id'];
-        $init = [
-            'allot_one' => trim($data['allot_one']),
-            'allot_two' => trim($data['allot_two']),
-            'allot_three' => trim($data['allot_three']),
-            'infinite' => trim($data['infinite']),
-            'carry_index' => trim($data['carry_index']),
-            'charge_type' => trim($data['charge_type']),
-            'user_level' => trim($data['user_level']),
-        ];
-        if ($id > 0) {
-            // 编辑
-            Db::name('allot_log')->where(['id' => $id])->update($init);
-            return $this->outJson(0,'操作成功!');
+        if (!empty($data['id'])) {  // 编辑
+            $init = [
+                'allot_one' => trim($data['allot_one']),
+                'allot_two' => trim($data['allot_two']),
+                'allot_three' => trim($data['allot_three']),
+                'infinite' => trim($data['infinite']),
+                'carry_index' => trim($data['carry_index']),
+                'charge_type' => trim($data['charge_type']),
+                'user_level' => trim($data['user_level']),
+                'team_one' => trim($data['team_one']),
+                'team_two' => trim($data['team_two']),
+            ];
+
+            if(Db::name('allot_log')->where(['id' => $data['id']])->update($init)){
+                return $this->outJson(0,'操作成功!');
+            }
         } else {
             // 新增
             $init['add_time'] = date('Y-m-d H:i:s');

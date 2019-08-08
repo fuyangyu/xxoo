@@ -8,11 +8,11 @@
 // +----------------------------------------------------------------------
 // | Author: 流年 <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-if (!function_exists('createEarningsLog')) {
+if (!function_exists('createEarningsLog')) { //(暂不用)
     /**
      * 创建业务分润收益记录的数据
      * @param int $money 业务金额
-     * @param int $type 业务类型 1：会员收费 2：广告任务
+     * @param int $type 业务类型 1：会员收费 2：任务
      * @param int $type_id 业务id 1：用户id 2：任务ID
      * @param array $data 其他的业务参数
      * @return array
@@ -36,7 +36,7 @@ if (!function_exists('createEarningsLog')) {
     }
 }
 
-if (!function_exists('computational')) {
+if (!function_exists('computational')) {    //(暂不用)
     /**
      * 分润-计算公式
      * @param $type

@@ -40,7 +40,7 @@ class Login extends Base
                 if (!$vdata = $validate->scene($code)->check($data)) {
                     return json($this->outJson(0,$validate->getError()));
                 }
-                $checkPhone = Db::name('member')->where(['phone' => trim($data['phone'])])->field('uid')->find();
+                $checkPhone = Db::name('member')->where(['phone' => trim($data['phone'])])->field('uid,nick_name')->find();
                 if (!$checkPhone) return json($this->outJson(0,'该手机号还未注册'));
                 //不同登陆流程
                 if(!empty($data['code'])){
@@ -49,8 +49,8 @@ class Login extends Base
                     if (!$bool){
                         return json($this->outJson(0,'短信验证码错误'));
                     }else {
-                        $token = \auth\Token::instance()->getAccessToken($checkPhone['uid']);
-                        return json($this->outJson(1, '登录成功', ['token' => $token['data']['token']]));
+                        $token = \auth\Token::instance()->getAccessToken($checkPhone['uid'],$checkPhone['nick_name']);
+                        return json($this->outJson(1, '登录成功', ['token' => $token['data']]));
                     }
                 }else {
                     $model = new \app\api\model\Member();
@@ -68,8 +68,6 @@ class Login extends Base
     // 用户注册页
     public function registration()
     {
-
-//        if (isLogin()) $this->redirect($this->entranceUrl . "/index");  重定向跳转
         return $this->fetch('demo');
     }
 
@@ -83,31 +81,31 @@ class Login extends Base
         try{
             if ($this->request->isPost()) {
                 $validate = new \app\api\validate\Member();
-//                $data = ['phone'=>'17610619619','password'=>123456];
+//                $data = ['phone'=>'18986338986','password'=>123456,'invite_phone'=>'15502725551','province'=>1964,'city'=>1988];
                 $data = $this->request->param();
                 if (!$vdata = $validate->scene('register')->check($data)) {
                     return json($this->outJson(0,$validate->getError()));
                 }
-                // 验证邀请码(用户手机号)
+                // 验证邀请码(用户手机号) 1:invite_phone指注册时邀请人号码
                 if (empty($data['invite_phone'])) {
                     $data['invite_uid'] = $data['invite_phone'] = 0;
-                } else {
+                }else {
                     $data['invite_uid'] = $check = Db::name('member')->where(['phone' => trim($data['invite_phone'])])->value('uid');
                     if (!$check) return json($this->outJson(0,'推荐人不存在哦！'));
                 }
 
                 // 验证该号码是否已经被注册
-//                $checkPhone = Db::name('member')->where(['phone' => trim($data['phone'])])->find();
-//                if ($checkPhone) return json($this->outJson(0,'该手机号码已被注册'));
-//
+                $checkPhone = Db::name('member')->where(['phone' => trim($data['phone'])])->find();
+                if ($checkPhone) return json($this->outJson(0,'该手机号码已被注册'));
+
                 //验证地址
                 if(empty($data['province']) || empty($data['city'])){
                     return json($this->outJson(0,'请选择所在地！'));
                 }
 
                  //验证短信验证码
-                $bool = $this->checkPhoneCode(trim($data['phone']), trim($data['code']), 'register');
-                if (!$bool) return json($this->outJson(0,'短信验证码错误'));
+//                $bool = $this->checkPhoneCode(trim($data['phone']), trim($data['code']), 'register');
+//                if (!$bool) return json($this->outJson(0,'短信验证码错误'));
 
 
                 // 验证通过后 写库
@@ -127,6 +125,21 @@ class Login extends Base
         } catch (\Exception $e){
             return json($this->outJson(0,'服务器响应失败'));
         }
+    }
+
+    /**
+     * 验证短信验证码
+     * @return \think\response\Json
+     */
+    public function verifier(){
+        $validate = new \app\api\validate\Member();
+        $data = $this->request->param();
+        if (!$vdata = $validate->scene('VerifyLogin')->check($data)) {
+            return json($this->outJson(0,$validate->getError()));
+        }
+        //验证短信验证码
+        $bool = $this->checkPhoneCode(trim($data['phone']), trim($data['code']), 'register');
+        if (!$bool) return json($this->outJson(0,'短信验证码错误'));
     }
 
     // 找回密码页

@@ -91,7 +91,9 @@ class Sales extends AdminBase
                 'infinite' => '',
                 'carry_index' => '',
                 'charge_type' => 1,
-                'user_level' => 1
+                'user_level' => 1,
+                'team_one' => '',
+                'team_two' => ''
             ];
             if ($id > 0) {
                 $result = Db::name('allot_log')->where(['id' => $id])->find();

@@ -80,7 +80,7 @@ class Member extends Base
     }
 
     /**
-     * 获取用户个人资料
+     * 获取用户个人资料 (暂未调用)
      * @param $uid
      * @return array|false|\PDOStatement|string|\think\Model
      */
@@ -245,7 +245,7 @@ class Member extends Base
     }
 
     /**
-     * 用户个人资料新增和更新
+     * 用户个人资料新增和更新(暂时没用)
      * @param $uid
      * @param $data
      * @return bool
@@ -299,13 +299,13 @@ class Member extends Base
     {
         $phone = trim($data['phone']);
         $password = $data['password'];
-        $check = Db::name('member')->where(['phone' => $phone])->field('uid,password')->find();
+        $check = Db::name('member')->where(['phone' => $phone])->field('uid,password,nick_name')->find();
         if (!$check) return $this->outJson(0,'用户名或者密码错误');
         if ($check['password'] != cp_encryption_password($password)) {
             return $this->outJson(0,'用户名或者密码错误');
         }
-        $token = \auth\Token::instance()->getAccessToken($check['uid']);
-        return $this->outJson(1,'登录成功',['token' => $token['data']['token']]);
+        $token = \auth\Token::instance()->getAccessToken($check['uid'],$check['nick_name']);
+        return $this->outJson(1,'登录成功',['data' => $token['data']]);
     }
 
     /**
@@ -361,7 +361,7 @@ class Member extends Base
                 // 邀请注册 注册关系网
                 $resParent = $this->getInviteCodeParentUid($data['invite_uid']);
                 if ($resParent) {
-                    $bool = Db::name('member')->where(['uid' => $data['invite_uid']])->update($resParent);
+                    $bool = Db::name('member')->where(['uid' => $uid])->update($resParent);
                 } else {
                     $bool = true;
                 }
@@ -369,7 +369,7 @@ class Member extends Base
                     // 提交事务
                     Db::commit();
                     $token = \auth\Token::instance()->getAccessToken($uid);
-                    return $this->outJson(1, '注册成功', ['token' => $token['data']['token']]);
+                    return $this->outJson(1, '注册成功', ['token' => $token['data']]);
                 } else {
                     Db::rollback();
                     return $this->outJson(0, '注册失败');
@@ -392,6 +392,7 @@ class Member extends Base
      */
     public function getInviteCodeParentUid($invite_uid=-1)
     {
+        $data = [];
 //        $infinity_code = config('code.invite_code') ? config('code.invite_code') : '';
 //        if ($invite_code == $invite_code) return [];
 //        $invite_code = strtolower($invite_code);
@@ -401,33 +402,28 @@ class Member extends Base
                     ->field('uid,parent_level_1,parent_level_2,parent_level_3,member_class')
                     ->find();
         if (!$old) return [];
-        $data = [];
-        // 检测邀请人的父类id
-        if (!$old['parent_level_1']) {
+        //推荐人一二级不为空 对应 自己二三级
+        if ($old['parent_level_1'] && $old['parent_level_2']) {
+
+            $data['parent_level_1'] = $old['uid'];
+            $data['parent_level_2'] = $old['parent_level_1'];
+            $data['parent_level_3'] = $old['parent_level_2'];
+        }
+        // 存在父类第一层id 第二次父类为空的情况
+        if ($old['parent_level_1']) {
+            $data['parent_level_1'] = $old['uid'];
+            $data['parent_level_2'] = $old['parent_level_1'];
+        }else{
             // 父级 第一层 如果为空 直接就是邀请人
             $data['parent_level_1'] = $old['uid'];
         }
-        if ($old['parent_level_1'] && !$old['parent_level_2']) {
-            // 存在父类第一层id 第二次父类为空的情况
-            $data['parent_level_1'] = $old['uid'];
-            $data['parent_level_2'] = $old['parent_level_1'];
-        }
-        if ($old['parent_level_1'] && $old['parent_level_2'] && !$old['parent_level_3']) {
-            $data['parent_level_1'] = $old['uid'];
-            $data['parent_level_2'] = $old['parent_level_1'];
-            $data['parent_level_3'] = $old['parent_level_2'];
-        }
-        if ($old['parent_level_1'] && $old['parent_level_2'] && $old['parent_level_3']) {
-            $data['parent_level_1'] = $old['uid'];
-            $data['parent_level_2'] = $old['parent_level_1'];
-            $data['parent_level_3'] = $old['parent_level_2'];
-        };
         // 每个会员的直接上级
-        $data['parents'] = $old['uid'];
+//        $data['parents'] = $old['uid'];
         /*if ($old['member_class'] == 4) {
             // 如果邀请你的人 是 服务中心 你的最大级就是他
             $data['parents'] = $old['uid'];
         }*/
+
         return $data;
     }
 }

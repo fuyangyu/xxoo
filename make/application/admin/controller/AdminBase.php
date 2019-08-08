@@ -59,7 +59,7 @@ class AdminBase extends Base
         return [
             '1' => '会员收费',
             '2' => '广告任务',
-            '3' => '静态分佣'
+//            '3' => '静态分佣'
         ];
     }
 

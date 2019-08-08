@@ -209,7 +209,7 @@
             formatter:function(value,row,index){
                 var html;
                 if (row.is_check > 0) {
-                    html = '<a class="btn btn-info " href="' + _url +'/task/taskCheck/id/'+ row.id +'.html"><i class="fa fa-paste"></i> 审核</a> ';
+                    html = '<a class="btn btn-info " href="' + _url +'/task/getTask/id/'+ row.id +'.html"><i class="fa fa-paste"></i> 审核</a> ';
                     if (row.is_check == 1) {
                         html = '<button class="btn btn-info " href="javascript:;" disabled="disabled"><i class="fa fa-paste"></i> 审核</button> ';
                     }
