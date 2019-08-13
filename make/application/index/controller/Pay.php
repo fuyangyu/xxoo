@@ -188,111 +188,137 @@ class Pay
     }
 
     /**
-     * 修改订单状态
+     * 修改订单状态 用户会员等级和到期时间 佣金发放
      * @param $out_trade_no
-     * @param $status
      * @return array
      */
-    protected function setOrderStatus($out_trade_no, $status = false)
+    protected function setOrderStatus($out_trade_no)
     {
-        $check = Db::name('pay_log')->where(['order_sn' => $out_trade_no,'pay_status' => 1])->find();
-        if ($check) {
-            // TODO 包括 佣金用户余额额度的增加 佣金状态 支付状态
-            // TODO 新增记录业务分润收益记录 以及汇总业务分润金额
+        try {
             // 启动事务
             Db::startTrans();
-            try{
-                /*// TODO 记录业务分润收益记录
-                $c_data = [
-                    'uid' => $check['uid'],
-                    'task_log_id' => 0,
-                    'order_sn' => $out_trade_no
+            $pay_log = Db::name('pay_log')->where(['order_sn' => $out_trade_no, 'pay_status' => 1])->find();
+            if (!$pay_log) return $this->outJson(0, '操作失败', ['debug' => '操作失败，错误编码001,未找到订单']);
+            //获取用户信息
+            $user = Db::name('member')->where(['uid' => $pay_log['uid']])->field('uid,total_money,member_brokerage_money,member_class,parent_level_1,parent_level_2,parent_level_3,invite_uid')->find();
+            if (!$user) return $this->outJson(0, '操作失败', ['debug' => '操作失败，错误编码002,用户信息获取失败']);
+            //获取会员分佣配置
+            $allot = Db::name('allot_log')->where(['user_level' => $user['member_class'], 'charge_type' => 1])->find();
+            if (!$allot) return $this->outJson(0, '操作失败', ['debug' => '操作失败，错误编码003,获取分佣配置失败']);
+
+            // 修改支付状态
+            $pay_log_id = Db::name('pay_log')->where(['id' => $pay_log['id']])->update([
+                'pay_status' => 2,
+                'pay_time' => time()
+            ]);
+
+            $member = array();
+            $content = '';
+            //计算出会员升级等级和修改会员过期时间
+            if ($pay_log['type'] == 1 && $user['member_class'] == 1) {   //type:1 充值 2 续费 3 升级 ; member_class:会员原等级 ：普通用户
+                switch ($pay_log['vip']) {
+                    case 2:
+                        $member['member_class'] = 2;  //vip
+                        $member['vip_start_time'] = date('Y-m_d H:i:s');
+                        $member['$vip_end_time'] = date('Y-m_d H:i:s', strtotime("+1 year"));
+                        $content = '加入点动生活VIP会员';
+                        break;
+                    case 3:
+                        $member['member_class'] = 3;  //svip
+                        $member['vip_start_time'] = date('Y-m_d H:i:s');
+                        $member['$vip_end_time'] = date('Y-m_d H:i:s', strtotime("+1 year"));
+                        $content = '加入点动生活SVIP会员';
+                        break;
+                }
+            }
+            if ($pay_log['type'] == 2 && $user['vip_end_time']) { //续费 会员到期时间增加一年
+                $member['$vip_end_time'] = date('Y-m_d H:i:s', strtotime("+1 year", strtotime($user['vip_end_time'])));
+                $content = '续费点动生活会员';
+            }
+            if ($pay_log['type'] == 3 && $user['member_class'] == 2) {    //升级只能vip升级svip 只修改会员等级 不休改到期时间
+                $member['member_class'] = 3;  //svip
+                $content = '升级为点动生活SVIP会员';
+            }
+            //修改会员状态和过期时间
+            $member_id = Db::name('member')->where(['uid' => $pay_log['uid']])->update($member);
+
+            if ($pay_log_id && $member_id) {
+                //直推分佣
+                if (!empty($user['invite_uid'])) {
+                    $data['uid_one'] = $user['invite_uid'];
+                    $data['one_money'] = $pay_log['money'] * ($allot['allot_one'] / 100);
+                    $status1 = Db::name('member')->where(['uid' => $user['invite_uid']])->setInc('member_brokerage_money', $data['one_money']);
+                    //间推分佣
+                    if (!empty($user['parent_level_2']) && $status1) {
+                        $data['uid_two'] = $user['parent_level_1'];
+                        $data['two_money'] = $pay_log['money'] * ($allot['allot_two'] / 100);
+                        $status2 = Db::name('member')->where(['uid' => $user['parent_level_2']])->setInc('member_brokerage_money', $data['two_money']);
+                        //服务中心分佣
+                        if (!empty($user['parent_level_3']) && $status2) {
+                            $data['serve_one_money'] = $pay_log['money'] * ($allot['team_one'] / 100);   //第一个服务中心分佣金额
+                            $data['serve_two_money'] = $pay_log['money'] * ($allot['team_two'] / 100);   //第二个服务中心分佣金额
+                            $service = array();
+                            $model = new \app\admin\model\Task();
+                            $service = $model->recursionService($user['parent_level_3'], $service);
+                            if (!empty($service[0])) {
+                                $data['serve_uid_one'] = $service[0];
+                                Db::name('member')->where(['uid' => $service[0]])->setInc('member_brokerage_money', $data['serve_one_money']);
+                            }
+                            if (!empty($service[1])) {
+                                $data['serve_uid_two'] = $service[1];
+                                Db::name('member')->where(['uid' => $service[1]])->setInc('member_brokerage_money', $data['serve_two_money']);
+                            }
+                            //写入分佣记录
+                            $data['task_money'] = $pay_log['money'];
+                            $data['uid'] = $pay_log['uid'];
+                            $data['tid'] = $pay_log['id'];
+                            $data['type'] = $pay_log['type'];  //充值类型 1：充值 2：续费 3：升级
+                            $data['add_time'] = date('Y-m_d H:i:s');
+                            if (!empty($data)) {
+                                Db::name('brokerage_log')->insertGetId($data);
+                            }
+                        }
+                    }
+                }
+                //更新整个平台已完成任务总金额
+                Db::name('earnings')->where(['send_id' => 666])->setInc('member_total_money', $pay_log['money']);
+                $phone = substr_replace($user['phone'],'****',3,4);
+                $message[0] = [  //直推用户
+                    'uid' => $user['invite_uid'],
+                    'content' => '您的团队用户'.$phone.$content.'，获得推荐佣金'.$data['one_money'].'元',
+                    'add_time' => date('Y-m-d H:i:s')
                 ];
-                $init_earnings_log_data = createEarningsLog($check['money'],1,$check['uid'],$c_data);
-                $eg_id = Db::name('earnings_log')->insertGetId($init_earnings_log_data);
-                // TODO 汇总业务分润金额
-                $earnings_data = Db::name('earnings')->where(['send_id' => 666])->find();
-                if ($earnings_data) {
-                    $earnings_id = Db::name('earnings')->where(['send_id' => 666])->update([
-                        'terrace_total_money' => $init_earnings_log_data['terrace_money'] + $earnings_data['terrace_total_money'],
-                        'static_total_money' => $init_earnings_log_data['static_money'] + $earnings_data['static_total_money'],
-                        'fund_total_money' => $init_earnings_log_data['fund_money'] + $earnings_data['fund_total_money']
-                    ]);
-                } else {
-                    $earnings_id = Db::name('earnings')->insertGetId([
-                        'terrace_total_money' => $init_earnings_log_data['terrace_money'],
-                        'static_total_money' => $init_earnings_log_data['static_money'],
-                        'fund_total_money' => $init_earnings_log_data['fund_money']
-                    ]);
-                }*/
-                // 修改支付状态
-                $id_1 = Db::name('pay_log')->where(['id' => $check['id']])->update([
-                    'pay_status' => 2,
-                    'pay_time' => time()
-                ]);
-                if ($type = 1) {
-                    // 会员充值
-                    // 修改用户会员等级
-                    if ($status) {
-                        // TODO 测试状态 0.01
-                        $member_class = 3;
-                    } else {
-                        $member_class = $this->getMoneyAttr($check['money']);
-                    }
-                    $id_2 = Db::name('member')->where(['uid' => $check['uid']])->setField('member_class',$member_class);
-                } else {
-                    // TODO 其他扩展
-                    $id_2 = 1;
-                }
-                // 检测是否存在佣金
-                $check_hire_log = Db::name('hire_log')
-                        ->where(['order_sn' => $out_trade_no])
-                        ->field('hire_money,uid,id')
-                        ->select();
-                if ($check_hire_log) {
-                    $id_3 = 0;
-                    $id_4 = 0;
-                    // 存在佣金 发放佣金
-                    foreach ($check_hire_log as $k => $v) {
-                        // 给用户加佣金
-                        $id_3 = Db::name('member')
-                                ->where(['uid' => $v['uid']])
-                                ->setInc('balance',$v['hire_money']);
-                        // 修改佣金状态
-                        $id_4 =Db::name('hire_log')->where(['id' => $v['id']])->update([
-                            'is_check' => 1,
-                            'check_time' => date('Y-m-d H:i:s')
-                        ]);
-                    }
-                    if ($id_1 && $id_2 && $id_3 && $id_4) {
-                        // 提交事务
-                        Db::commit();
-                        return $this->outJson(1,'操作成功');
-                    } else {
-                        // 回滚事务
-                        Db::rollback();
-                        return $this->outJson(0,'操作失败',['debug' => '操作失败，错误编码001,订单号：' . $out_trade_no .'[参数值1:' . $id_1 . '-参数值2:' . $id_2 . '-参数值3:' . $id_3 .'-参数值4:' . $id_4 . ']']);
-                    }
-                } else {
-                    // 没有佣金的情况
-                    if ($id_1 && $id_2) {
-                        // 提交事务
-                        Db::commit();
-                        return $this->outJson(1,'操作成功');
-                    } else {
-                        // 回滚事务
-                        Db::rollback();
-                        return $this->outJson(0,'操作失败',['debug' => '操作失败，错误编码002,订单号：' . $out_trade_no .'[参数值1:' . $id_1 . '-参数值2:' . $id_2.']']);
-                    }
-                }
-            } catch (\Exception $e) {
+                $message[1] = [  //间退用户
+                    'uid' => $user['parent_level_2'],
+                    'content' => '您的团队用户'.$phone.$content.'，获得推荐佣金'.$data['one_money'].'元',
+                    'add_time' => date('Y-m-d H:i:s')
+                ];
+                $message[2] = [  //第一服务中心
+                    'uid' => $service[0],
+                    'content' => '您的团队用户'.$phone.$content.'，获得推荐佣金'.$data['one_money'].'元',
+                    'add_time' => date('Y-m-d H:i:s')
+                ];
+                $message[3] = [  //第二服务中心
+                    'uid' => $service[0],
+                    'content' => '您的团队用户'.$phone.$content.'，获得推荐佣金'.$data['one_money'].'元',
+                    'add_time' => date('Y-m-d H:i:s')
+                ];
+                //消息记录
+                Db::name('message_log')->insertAll($message);
+                // 提交事务
+                Db::commit();
+                return $this->outJson(1, '操作成功');
+            } else {
                 // 回滚事务
                 Db::rollback();
-                return $this->outJson(0,'操作失败',['debug' => '操作失败，错误编码003,订单号：' . $out_trade_no . '错误体debug：' . $e->getMessage()]);
+                return $this->outJson(0,'操作失败',['debug' => '操作失败，错误编码004,订单号：' . $out_trade_no . '错误体debug：修改订单状态或会员状态失败' ]);
             }
-        } else {
-            return $this->outJson(1,'操作成功');
+        }catch (\Exception $e){
+            // 回滚事务
+            Db::rollback();
+            return $this->outJson(0,'操作失败',['debug' => '操作失败，错误编码003,订单号：' . $out_trade_no . '错误体debug：' . $e->getMessage()]);
         }
+
     }
 
     /**
@@ -494,7 +520,7 @@ class Pay
      * @param array $data
      * @return array
      */
-    protected function outJson($code = 0, $msg = '', $data = [])
+    protected function  outJson($code = 0, $msg = '', $data = [])
     {
         return [
             "status" => $code,

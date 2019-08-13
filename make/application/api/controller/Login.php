@@ -40,7 +40,7 @@ class Login extends Base
                 if (!$vdata = $validate->scene($code)->check($data)) {
                     return json($this->outJson(0,$validate->getError()));
                 }
-                $checkPhone = Db::name('member')->where(['phone' => trim($data['phone'])])->field('uid,nick_name')->find();
+                $checkPhone = Db::name('member')->where(['phone' => trim($data['phone'])])->field('uid,nick_name,vip_end_time')->find();
                 if (!$checkPhone) return json($this->outJson(0,'该手机号还未注册'));
                 //不同登陆流程
                 if(!empty($data['code'])){
@@ -50,11 +50,35 @@ class Login extends Base
                         return json($this->outJson(0,'短信验证码错误'));
                     }else {
                         $token = \auth\Token::instance()->getAccessToken($checkPhone['uid'],$checkPhone['nick_name']);
+                        //验证会员到期时间存储消息
+                        $expire = 60*60*24*30;
+                        $vip_end = strtotime($$checkPhone['vip_end_time']) - time();
+                        if($expire < $vip_end){
+                            $end_time = sprintf('%d', floor($vip_end / 86400));
+                            $this->insertMessage([
+                                'uid' => $checkPhone['uid'],
+                                'content' => '您的点动生活会员只有'.$end_time.'天就要过期了，赶紧去续费吧！',
+                                'add_time' => date('Y-m-d H:i:s')
+                            ]);
+                        }
                         return json($this->outJson(1, '登录成功', ['token' => $token['data']]));
                     }
                 }else {
                     $model = new \app\api\model\Member();
                     $result = $model->sendLogin($data);
+                    if($result['status'] == 1){
+                        //验证会员到期时间存储消息
+                        $expire = 60*60*24*30;
+                        $vip_end = strtotime($$checkPhone['vip_end_time']) - time();
+                        if($expire < $vip_end){
+                            $end_time = sprintf('%d', floor($vip_end / 86400));
+                            $this->insertMessage([
+                                'uid' => $checkPhone['uid'],
+                                'content' => '您的点动生活会员只有'.$end_time.'天就要过期了，赶紧去续费吧！',
+                                'add_time' => date('Y-m-d H:i:s')
+                            ]);
+                        }
+                    }
                     return json($result);
                 }
             } else {

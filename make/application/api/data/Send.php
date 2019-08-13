@@ -23,6 +23,7 @@ class Send
             'api_member_inviteactio', 'api_member_setinvite', 'api_member_upface',
 
             //会员充值
+            'api_pay_membercenter','api_pay_privilegetaskmore','api_pay_chargepay',
 
             //邀请好友
             'api_invit_index',
@@ -30,6 +31,9 @@ class Send
             //任务
             'api_task_findtask', 'api_task_uptaskfile', 'api_task_subtask', 'api_task_task','api_task_taskmore','api_task_draw','api_task_tasknotice',
             'api_task_taskNoticemore',
+
+            //消息
+            'api_home_messagestatus'
         ];
     }
 

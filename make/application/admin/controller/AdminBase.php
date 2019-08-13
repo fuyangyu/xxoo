@@ -165,4 +165,10 @@ class AdminBase extends Base
             return ['status' => 0, 'msg' => $msg];
         }
     }
+
+    //添加消息
+    protected function insertMessage($data = array()){
+
+        return Db::name('message_log')->insert($data);
+    }
 }

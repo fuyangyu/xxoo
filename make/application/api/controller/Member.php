@@ -142,27 +142,6 @@ class Member extends Base
     }
 
 
-    public function memberCenter(){
-
-        $data = array();
-        //获取用户详情
-        $data['user'] = Db::name('member')->where('uid',$this->uid)->field('nick_name,face,member_class,vip_start_time')->find();
-        //根据用户会员情况获取会员
-
-
-        //获取配置会用数量计算会员静态收益比
-//        VIP静态收益=【[当月会员收入总和*3%+当月已完成状态的广告任务总金额*5%]*80%/6*1】/VIP用户数量
-
-//        SVIP静态收益=【[当月会员收入总和*3%+当月已完成状态的广告任务总金额*5%]*80%/6*2】/SVIP用户数量
-
-//        服务中心静态收益=【[当月会员收入总和*3%+当月已完成状态的广告任务总金额*5%]*80%/6*3】/服务中心用户数量
-
-        //专属VIP任务 获取比本身会员高一级的任务
-
-        //获取最新5条已完成任务无帅选条件
-
-    }
-
     // 个人资料 (暂未调用)
     public function info()
     {
@@ -414,7 +393,7 @@ class Member extends Base
      * 服务中心升级申请
      * @return \think\response\Json
      */
-    public function serve()
+    public function upServe()
     {
         try{
             if ($this->request->isPost()) {
@@ -445,12 +424,12 @@ class Member extends Base
                     } else {
                         // 回滚事务
                         Db::rollback();
-                        return json($this->outJson(1, '操作失败'));
+                        return json($this->outJson(0, '操作失败'));
                     }
                 } catch (\Exception $e) {
                     // 回滚事务
                     Db::rollback();
-                    return json($this->outJson(1, '操作失败'));
+                    return json($this->outJson(0, '操作失败'));
                 }
             } else {
                 return json($this->outJson(500,'非法操作'));

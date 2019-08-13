@@ -305,6 +305,7 @@ class Member extends Base
             return $this->outJson(0,'用户名或者密码错误');
         }
         $token = \auth\Token::instance()->getAccessToken($check['uid'],$check['nick_name']);
+
         return $this->outJson(1,'登录成功',['data' => $token['data']]);
     }
 
@@ -417,13 +418,21 @@ class Member extends Base
             // 父级 第一层 如果为空 直接就是邀请人
             $data['parent_level_1'] = $old['uid'];
         }
-        // 每个会员的直接上级
-//        $data['parents'] = $old['uid'];
-        /*if ($old['member_class'] == 4) {
-            // 如果邀请你的人 是 服务中心 你的最大级就是他
-            $data['parents'] = $old['uid'];
-        }*/
 
         return $data;
+    }
+
+    //专属任务更多
+    public function memberTaskMore($user_level = 2,$page = 1,$limit = 5){
+
+        $start = 0;     //开始位置
+        if ($page > 1) {
+            $start = ($page-1) * $limit;
+        }
+        $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num FROM wld_task
+                    WHERE start_time < unix_timestamp(now()) AND status = 1 AND task_user_level IN ($user_level)
+                    ORDER BY add_time DESC LIMIT {$start},{$limit};";
+        $task = Db::query($sql);
+        return $this->outJson(1,'成功',$task);
     }
 }

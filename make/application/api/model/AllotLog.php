@@ -323,7 +323,7 @@ class AllotLog extends Base
     /**
      * 检测业务类型并且创建相应的业务佣金记录
      * @param int $uid  当前用户Id
-     * @param int $type 业务类型
+     * @param int $· 业务类型
      * @param int $money  业务佣金
      * @param int $type_id 业务类型id 广告任务-task_id 会员收费 uid
      * @param int $task_log_id 任务日志id 只有是广告任务才传入
@@ -975,11 +975,11 @@ class AllotLog extends Base
      * @param int $uid  用户id
      * @param int $money 充值金额
      * @param int $pay_mode 支付方式
-     * @param int $type 业务类型 1：会员升级充值
+     * @param int $type 业务类型 1：充值 2：续费 3.升级
      * @param string $goods_name 商品名称
      * @return array
      */
-    protected function createPayLogData($uid, $money, $pay_mode,$type, $goods_name)
+    protected function createPayLogData($uid, $money, $pay_mode,$type, $goods_name,$vip)
     {
         // 初始化 充值记录
         $pay_log = [
@@ -989,18 +989,13 @@ class AllotLog extends Base
             'pay_mode' => $pay_mode,
             'add_time' => time(),
             'order_sn' => $this->createOrderSn(),
-            'goods_name' => $goods_name
-        ];
-        if ($pay_mode == 1) {
-            // 余额支付
-            // 充值记录
-            $pay_log['pay_time'] = time();
-            $pay_log['pay_status'] = 2;
-        } else {
+            'goods_name' => $goods_name,
+            'vip' => $vip,
+
             // TODO 其他支付方式 必须支付完成才进行 所有操作状态修改
             // TODO 包括用户余额额度的增加 佣金状态 支付状态
-            $pay_log['pay_status'] = 1;
-        }
+            $pay_log['pay_status'] = 1
+        ];
         return $pay_log;
     }
 

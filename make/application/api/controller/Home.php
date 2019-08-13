@@ -164,7 +164,7 @@ class Home extends Base
     }
 
     /**
-     * 会员升级充值
+     * 会员升级充值(未调用)
      * @return \think\response\Json
      */
     public function chargePay()
@@ -251,4 +251,30 @@ class Home extends Base
         $qrCode->save($dir_name . $filename);
         return ['status' => 1,'msg' => $dir_name . $filename];
     }
+
+    public function messageStatus(){
+        $uid = $this->request->param('uid',1);
+        $message = Db::name('message_log')->where(['uid' => $uid,'status' => 1])->order('id desc')->find();
+        $status = $message?1:2; //1：未读 2：已读
+        return json($this->outJson(1,'成功',$status));
+    }
+
+    /**
+     * 消息列表
+     * @return \think\response\Json
+     */
+    public function messageList(){
+        $data = array();
+        $page = $this->request->param('page',1); //页数
+        $uid = $this->request->param('uid',1); //页数
+        $limit = 10;    //每页数量
+        $start = 0;     //开始位置
+        if ($page > 1) {
+            $start = ($page-1) * $limit;
+        }
+        $sql = "SELECT * FROM wld_message_log where uid = $uid ORDER BY id DESC LIMIT {$start},{$limit};";
+        $data = Db::query($sql);
+        return json($this->outJson(1,'成功',$data));
+    }
+
 }

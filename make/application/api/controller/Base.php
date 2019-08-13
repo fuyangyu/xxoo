@@ -93,4 +93,10 @@ class Base extends Controller
     {
         return Db::name('member')->where(['uid' => $this->uid])->value('phone');
     }
+
+    //添加消息
+    protected function insertMessage($data = array()){
+
+        return Db::name('message_log')->insert($data);
+    }
 }
