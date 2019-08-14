@@ -38,14 +38,14 @@ class Home extends Base
     }
 
     /**
-     * 所有公告列表
+     * 首页公告
      * @return \think\response\Json
      */
     public function notice()
     {
         try{
             if ($this->request->isPost()) {
-                $data = Db::name('notice')->where(['is_show' => 1])->field('id,title,content,add_time')->order(['id'=>'desc'])->select();
+                $data = Db::name('notice')->where(['is_show' => 1])->field('id,title,content,add_time')->order(['id'=>'desc'])->limit(2)->select();
                 $data = $data ? $data : [];
                 return json($this->outJson(1,'获取成功',$data));
             } else {
@@ -139,22 +139,24 @@ class Home extends Base
     }
 
     /**
-     * 获取会员等级充值的费用信息
+     * 首页点动会员
      * @return \think\response\Json
      */
-    public function charge()
+    public function showCharge()
     {
         try{
             if ($this->request->isPost()) {
+                $data = array();
                 $fileData = cp_getCacheFile('system');
-                $res = [
-                    'vip' => [
-                        ['name' => '普通VIP','money' => isset($fileData['common_money']) ? $fileData['common_money'] : '']
-                        ,['name' => '高级VIP','money' => isset($fileData['expert_money']) ? $fileData['expert_money'] : '']
-                    ],
-                    'img' => isset($fileData['member_img']) ? $fileData['member_img'] : ''
-                ];
-                return json($this->outJson(1,'获取成功',$res));
+                $data['common_money'] = isset($fileData['common_money']) ? $fileData['common_money'] : '';
+                $data['expert_money'] = isset($fileData['expert_money']) ? $fileData['expert_money'] : '';
+                $data['serve_money'] = isset($fileData['serve_money']) ? $fileData['serve_money'] : '';
+
+                //点动会员数据记录
+                $sql = "SELECT m.nick_name,m.face,b.type,b.task_money,b.add_time FROM wld_brokerage_log as b LEFT JOIN wld_member as m ON b.uid = m.uid AND b.type in(1,4) ORDER BY b.id DESC LIMIT 4;";
+                $task = Db::query($sql);
+                $data['task'] = $task;
+                return json($this->outJson(1,'获取成功',$data));
             } else {
                 return json($this->outJson(500,'非法操作'));
             }
@@ -277,4 +279,54 @@ class Home extends Base
         return json($this->outJson(1,'成功',$data));
     }
 
+    /**
+     * 精选任务
+     * @return \think\response\Json
+     */
+    public function showTask(){
+        $task = array();
+        //精选任务
+        $sql = "SELECT task_id,title,task_icon,is_area,task_user_level,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num FROM wld_task
+                WHERE start_time < unix_timestamp(now()) AND status = 1
+                ORDER BY start_time DESC LIMIT 5;";
+        $task = Db::query($sql);
+        if(!empty($task)){
+            foreach($task as &$v){
+                if($v['is_area'] == 1){
+                    $v['task_area'] = json_decode($v['task_area'],true)['city'];
+                }
+            }
+        }
+        return json($this->outJson(1,'成功',$task));
+    }
+
+    /**
+     * 首页精选任务更多
+     * @return \think\response\Json
+     */
+    public function showTaskMore(){
+        if ($this->request->isPost()) {
+            $task = array();
+            $page = $this->request->param('page',1); //页数
+            $limit = 10;    //每页数量
+            $start = 0;     //开始位置
+            if ($page > 1) {
+                $start = ($page-1) * $limit;
+            }
+            $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num FROM wld_task
+                    WHERE start_time < unix_timestamp(now()) AND status = 1
+                    ORDER BY start_time DESC LIMIT {$start},{$limit};";
+            $task = Db::query($sql);
+            if(!empty($task)){
+                foreach($task as &$v){
+                    if($v['is_area'] == 1){
+                        $v['task_area'] = json_decode($v['task_area'],true)['city'];
+                    }
+                }
+            }
+            return json($this->outJson(1,'成功',$task));
+        } else {
+            return json($this->outJson(500,'非法操作'));
+        }
+    }
 }

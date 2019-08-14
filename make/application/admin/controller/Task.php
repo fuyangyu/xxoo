@@ -226,7 +226,7 @@ class Task extends AdminBase
                                 $data['task_money'] = $task_old_data['task_money'];
                                 $data['uid'] = $task_old_data['uid'];
                                 $data['tid'] = $task_old_data['task_id'];
-                                $data['type'] = 3;  //任务
+                                $data['type'] = 4;  //任务
                                 $data['add_time'] = date('Y-m_d H:i:s');
                                 if(!empty($data)){
                                     Db::name('brokerage_log')->insertGetId($data);

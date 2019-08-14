@@ -21,10 +21,6 @@ class Task extends Base
                 $task_cid = $data['classify'][0]['task_cid'];
             }
         }
-
-        //获取用会员级别
-//       $member_class = Db::name('member')->where(['uid' => $this->uid])->value('member_class');
-
         //当天任务
         $sql = "SELECT task_id,title,task_icon,is_area,task_user_level,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num FROM wld_task
                 WHERE start_time < unix_timestamp(now()) AND status = 1 AND task_cid = {$task_cid}
@@ -38,8 +34,7 @@ class Task extends Base
             }
         }
         $data['task'] = $task;
-
-
+        return json($this->outJson(1,'成功',$data));
     }
 
     /**
