@@ -1,0 +1,103 @@
+---------------------------------------------------------------
+[ 2019-08-13T13:55:53+08:00 ] 127.0.0.1 POST /make.php/login/sendLogin
+[ info ] www.make.com/make.php/login/sendLogin [运行时间：0.106342s][吞吐率：9.40req/s] [内存消耗：2,459.23kb] [文件加载：57]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.011306s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_admin` [ RunTime:0.013772s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_admin` WHERE  `username` = 'admin' LIMIT 1 [ RunTime:0.000455s ]
+[ sql ] [ SQL ] UPDATE `wld_admin`  SET `last_login_ip`='127.0.0.1',`login_time`=1565675753,`update_time`=1565675753  WHERE  `uid` = 1 [ RunTime:0.001583s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_admin_log` [ RunTime:0.015375s ]
+[ sql ] [ SQL ] INSERT INTO `wld_admin_log` (`title` , `content` , `url` , `admin_id` , `username` , `useragent` , `ip` , `create_time`) VALUES ('用户登录' , '{\"username\":\"admin\"}' , '/make.php/login/sendLogin' , 1 , 'admin' , 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36' , '127.0.0.1' , 1565675753) [ RunTime:0.003008s ]
+---------------------------------------------------------------
+[ 2019-08-13T13:55:53+08:00 ] 127.0.0.1 GET /make.php/index
+[ info ] www.make.com/make.php/index [运行时间：0.074519s][吞吐率：13.42req/s] [内存消耗：2,135.11kb] [文件加载：52]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001411s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.014627s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.002845s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.014906s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000471s ]
+---------------------------------------------------------------
+[ 2019-08-13T13:55:53+08:00 ] 127.0.0.1 GET /make.php/index/main.html
+[ info ] www.make.com/make.php/index/main.html [运行时间：0.140578s][吞吐率：7.11req/s] [内存消耗：2,118.34kb] [文件加载：52]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001172s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.013455s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000413s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.015111s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000497s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.016643s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_member` LIMIT 1 [ RunTime:0.000413s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_member` WHERE  `member_class` = 1 LIMIT 1 [ RunTime:0.000361s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_member` WHERE  `member_class` = 2 LIMIT 1 [ RunTime:0.000298s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_member` WHERE  `member_class` = 3 LIMIT 1 [ RunTime:0.000311s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_member` WHERE  `member_class` = 4 LIMIT 1 [ RunTime:0.000254s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_pay_log` [ RunTime:0.015343s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_pay_log` WHERE  `pay_status` = 2 LIMIT 1 [ RunTime:0.000346s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.017473s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `is_check` = 1 LIMIT 1 [ RunTime:0.000824s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.015105s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_task` WHERE  `task_id` > 0 LIMIT 1 [ RunTime:0.000256s ]
+---------------------------------------------------------------
+[ 2019-08-13T13:56:47+08:00 ] 127.0.0.1 GET /make.php/task/ccc
+[ info ] www.make.com/make.php/task/ccc [运行时间：0.099143s][吞吐率：10.09req/s] [内存消耗：2,162.46kb] [文件加载：55]
+[ error ] [10501]SQLSTATE[21S01]: Insert value list does not match column list: 1136 Column count doesn't match value count at row 3[C:\php\PHPTutorial\WWW\object\diandong\home\wwwroot\make\framework\library\think\db\Connection.php:463]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001535s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.015612s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000428s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.011986s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000435s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_message_log` [ RunTime:0.011613s ]
+---------------------------------------------------------------
+[ 2019-08-13T13:57:49+08:00 ] 127.0.0.1 GET /make.php/task/ccc
+[ info ] www.make.com/make.php/task/ccc [运行时间：0.088533s][吞吐率：11.30req/s] [内存消耗：2,173.23kb] [文件加载：55]
+[ error ] [10501]SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '0' for key 'PRIMARY'[C:\php\PHPTutorial\WWW\object\diandong\home\wwwroot\make\framework\library\think\db\Connection.php:463]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.010611s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.010447s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000320s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.010545s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000359s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_message_log` [ RunTime:0.010075s ]
+---------------------------------------------------------------
+[ 2019-08-13T13:58:53+08:00 ] 127.0.0.1 GET /make.php/task/ccc
+[ info ] www.make.com/make.php/task/ccc [运行时间：0.109552s][吞吐率：9.13req/s] [内存消耗：2,173.23kb] [文件加载：55]
+[ error ] [10501]SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '0' for key 'PRIMARY'[C:\php\PHPTutorial\WWW\object\diandong\home\wwwroot\make\framework\library\think\db\Connection.php:463]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001149s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.021346s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000356s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.009967s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000407s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_message_log` [ RunTime:0.010112s ]
+---------------------------------------------------------------
+[ 2019-08-13T13:59:17+08:00 ] 127.0.0.1 GET /make.php/task/ccc
+[ info ] www.make.com/make.php/task/ccc [运行时间：0.103510s][吞吐率：9.66req/s] [内存消耗：2,173.23kb] [文件加载：55]
+[ error ] [10501]SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '0' for key 'PRIMARY'[C:\php\PHPTutorial\WWW\object\diandong\home\wwwroot\make\framework\library\think\db\Connection.php:463]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.010924s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.009975s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000347s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.011252s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000501s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_message_log` [ RunTime:0.010562s ]
+---------------------------------------------------------------
+[ 2019-08-13T13:59:48+08:00 ] 127.0.0.1 GET /make.php/task/ccc
+[ info ] www.make.com/make.php/task/ccc [运行时间：0.095698s][吞吐率：10.45req/s] [内存消耗：2,136.14kb] [文件加载：51]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001374s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.021056s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000400s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.010794s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000435s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_message_log` [ RunTime:0.010237s ]
+[ sql ] [ SQL ] INSERT INTO `wld_message_log` (`uid` , `content` , `add_time`) VALUES ( 374,'您已经完成“新鲜潮州海鲜直供”任务获得任务收如入100','2019-08-13 13:59:48' ) , ( 105,'您的团队用户189****8986完成“新鲜潮州海鲜直供”任务获得任务收如入50','2019-08-13 13:59:48' ) , ( 83,'您的团队用户189****8986完成“新鲜潮州海鲜直供”任务获得任务收如入20','2019-08-13 13:59:48' ) [ RunTime:0.000664s ]
+---------------------------------------------------------------
+[ 2019-08-13T14:00:07+08:00 ] 127.0.0.1 GET /make.php/task/ccc
+[ info ] www.make.com/make.php/task/ccc [运行时间：0.075791s][吞吐率：13.19req/s] [内存消耗：2,136.14kb] [文件加载：51]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000970s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.010013s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000397s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.010220s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000405s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_message_log` [ RunTime:0.010941s ]
+[ sql ] [ SQL ] INSERT INTO `wld_message_log` (`uid` , `content` , `add_time`) VALUES ( 374,'您已经完成“新鲜潮州海鲜直供”任务获得任务收如入100','2019-08-13 14:00:07' ) , ( 105,'您的团队用户189****8986完成“新鲜潮州海鲜直供”任务获得任务收如入50','2019-08-13 14:00:07' ) , ( 83,'您的团队用户189****8986完成“新鲜潮州海鲜直供”任务获得任务收如入20','2019-08-13 14:00:07' ) [ RunTime:0.000464s ]
+---------------------------------------------------------------
+[ 2019-08-13T15:11:33+08:00 ] 127.0.0.1 GET /api.php/home/messageStatus
+[ info ] www.make.com/api.php/home/messageStatus [运行时间：0.073610s][吞吐率：13.59req/s] [内存消耗：2,081.55kb] [文件加载：51]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.012435s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_message_log` [ RunTime:0.011237s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_message_log` WHERE  `uid` = 374  AND `status` = 1 ORDER BY `id` DESC LIMIT 1 [ RunTime:0.000449s ]

@@ -1,0 +1,1118 @@
+---------------------------------------------------------------
+[ 2019-01-21T01:06:41+08:00 ] 120.229.70.157 POST /api.php/home/notice
+[ info ] www.dotgomedia.com/api.php/home/notice [运行时间：0.049534s][吞吐率：20.19req/s] [内存消耗：3,342.63kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000839s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_notice` [ RunTime:0.001421s ]
+[ sql ] [ SQL ] SELECT `id`,`title`,`content`,`add_time` FROM `wld_notice` WHERE  `is_show` = 1 ORDER BY `id` DESC [ RunTime:0.000706s ]
+---------------------------------------------------------------
+[ 2019-01-21T01:06:41+08:00 ] 120.229.70.157 POST /api.php/home/play
+[ info ] www.dotgomedia.com/api.php/home/play [运行时间：0.050700s][吞吐率：19.72req/s] [内存消耗：3,294.49kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000855s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_banner` [ RunTime:0.001393s ]
+[ sql ] [ SQL ] SELECT `url`,`skip` FROM `wld_banner` WHERE  `is_show` = 1 ORDER BY `sort` DESC,`id` DESC [ RunTime:0.000795s ]
+---------------------------------------------------------------
+[ 2019-01-21T01:06:42+08:00 ] 120.229.70.157 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.062100s][吞吐率：16.10req/s] [内存消耗：3,928.52kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000578s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001315s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 78 LIMIT 1 [ RunTime:0.000445s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001119s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 78  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000721s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001038s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 78  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000457s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001063s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 78 LIMIT 1 [ RunTime:0.000422s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001064s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 78 LIMIT 1 [ RunTime:0.000359s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001060s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 78 LIMIT 1 [ RunTime:0.000357s ]
+---------------------------------------------------------------
+[ 2019-01-21T01:06:42+08:00 ] 120.229.70.157 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.062105s][吞吐率：16.10req/s] [内存消耗：3,928.52kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000470s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001321s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 78 LIMIT 1 [ RunTime:0.000433s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001105s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 78  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000702s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001036s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 78  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000404s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.000983s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 78 LIMIT 1 [ RunTime:0.000430s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001006s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 78 LIMIT 1 [ RunTime:0.000402s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001008s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 78 LIMIT 1 [ RunTime:0.000446s ]
+---------------------------------------------------------------
+[ 2019-01-21T08:01:21+08:00 ] 113.57.183.42 POST /api.php/home/play
+[ info ] www.dotgomedia.com/api.php/home/play [运行时间：0.047435s][吞吐率：21.08req/s] [内存消耗：3,294.74kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000611s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_banner` [ RunTime:0.001394s ]
+[ sql ] [ SQL ] SELECT `url`,`skip` FROM `wld_banner` WHERE  `is_show` = 1 ORDER BY `sort` DESC,`id` DESC [ RunTime:0.000533s ]
+---------------------------------------------------------------
+[ 2019-01-21T08:01:21+08:00 ] 113.57.183.42 POST /api.php/home/notice
+[ info ] www.dotgomedia.com/api.php/home/notice [运行时间：0.049748s][吞吐率：20.10req/s] [内存消耗：3,341.96kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000456s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_notice` [ RunTime:0.001322s ]
+[ sql ] [ SQL ] SELECT `id`,`title`,`content`,`add_time` FROM `wld_notice` WHERE  `is_show` = 1 ORDER BY `id` DESC [ RunTime:0.000692s ]
+---------------------------------------------------------------
+[ 2019-01-21T08:01:22+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.075146s][吞吐率：13.31req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000556s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001302s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000471s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001074s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000648s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001062s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000477s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001030s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000450s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001054s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000413s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001008s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000371s ]
+---------------------------------------------------------------
+[ 2019-01-21T08:01:22+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.083834s][吞吐率：11.93req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001000s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001771s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000503s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001669s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000896s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001601s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000761s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001302s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000496s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001155s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000462s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001421s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000524s ]
+---------------------------------------------------------------
+[ 2019-01-21T08:01:25+08:00 ] 113.57.183.42 POST /api.php/pay/wallet
+[ info ] www.dotgomedia.com/api.php/pay/wallet [运行时间：0.065833s][吞吐率：15.19req/s] [内存消耗：3,286.71kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001086s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001748s ]
+[ sql ] [ SQL ] SELECT `balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000858s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001656s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 0 LIMIT 1 [ RunTime:0.000862s ]
+---------------------------------------------------------------
+[ 2019-01-21T08:01:26+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.077286s][吞吐率：12.94req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000996s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.002303s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000900s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001718s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000988s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001943s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000770s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001609s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000829s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001758s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000768s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001969s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000674s ]
+---------------------------------------------------------------
+[ 2019-01-21T08:01:27+08:00 ] 113.57.183.42 POST /api.php/task/taskList
+[ info ] www.dotgomedia.com/api.php/task/taskList [运行时间：0.062592s][吞吐率：15.98req/s] [内存消耗：3,332.11kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000894s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task_classify` [ RunTime:0.001613s ]
+[ sql ] [ SQL ] SELECT `task_cid`,`name` FROM `wld_task_classify` ORDER BY `sort` ASC,`task_cid` DESC [ RunTime:0.000850s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.001638s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 3 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.000876s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 2 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.000830s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 4 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.000854s ]
+---------------------------------------------------------------
+[ 2019-01-21T08:01:28+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.076764s][吞吐率：13.03req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000956s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001824s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000923s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001623s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.001178s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001698s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000779s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001358s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000667s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001704s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000820s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001523s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000848s ]
+---------------------------------------------------------------
+[ 2019-01-21T09:08:52+08:00 ] 113.57.183.42 POST /api.php/home/notice
+[ info ] www.dotgomedia.com/api.php/home/notice [运行时间：0.056858s][吞吐率：17.59req/s] [内存消耗：3,341.96kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000951s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_notice` [ RunTime:0.001629s ]
+[ sql ] [ SQL ] SELECT `id`,`title`,`content`,`add_time` FROM `wld_notice` WHERE  `is_show` = 1 ORDER BY `id` DESC [ RunTime:0.000970s ]
+---------------------------------------------------------------
+[ 2019-01-21T09:08:53+08:00 ] 113.57.183.42 POST /api.php/home/play
+[ info ] www.dotgomedia.com/api.php/home/play [运行时间：0.054379s][吞吐率：18.39req/s] [内存消耗：3,294.74kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000877s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_banner` [ RunTime:0.001677s ]
+[ sql ] [ SQL ] SELECT `url`,`skip` FROM `wld_banner` WHERE  `is_show` = 1 ORDER BY `sort` DESC,`id` DESC [ RunTime:0.001173s ]
+---------------------------------------------------------------
+[ 2019-01-21T09:08:54+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.066890s][吞吐率：14.95req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000549s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001313s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000448s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001111s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000622s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001092s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000473s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001194s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000451s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001065s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000456s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001115s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000427s ]
+---------------------------------------------------------------
+[ 2019-01-21T09:08:54+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.069081s][吞吐率：14.48req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000515s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001506s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000565s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001305s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000715s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001164s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000499s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001221s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000417s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001068s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000445s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001080s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000463s ]
+---------------------------------------------------------------
+[ 2019-01-21T09:08:55+08:00 ] 113.57.183.42 POST /api.php/task/taskList
+[ info ] www.dotgomedia.com/api.php/task/taskList [运行时间：0.062807s][吞吐率：15.92req/s] [内存消耗：3,332.11kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000981s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task_classify` [ RunTime:0.001573s ]
+[ sql ] [ SQL ] SELECT `task_cid`,`name` FROM `wld_task_classify` ORDER BY `sort` ASC,`task_cid` DESC [ RunTime:0.001310s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.002515s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 3 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.000999s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 2 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.000790s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 4 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.000768s ]
+---------------------------------------------------------------
+[ 2019-01-21T09:08:56+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.077655s][吞吐率：12.88req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001029s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001744s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000809s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001378s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.001009s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001263s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000994s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001560s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000807s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001512s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000809s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001587s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000786s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:13+08:00 ] 113.57.183.42 POST /api.php/home/play
+[ info ] www.dotgomedia.com/api.php/home/play [运行时间：0.046062s][吞吐率：21.71req/s] [内存消耗：3,294.74kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000592s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_banner` [ RunTime:0.001351s ]
+[ sql ] [ SQL ] SELECT `url`,`skip` FROM `wld_banner` WHERE  `is_show` = 1 ORDER BY `sort` DESC,`id` DESC [ RunTime:0.000537s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:13+08:00 ] 113.57.183.42 POST /api.php/home/notice
+[ info ] www.dotgomedia.com/api.php/home/notice [运行时间：0.051925s][吞吐率：19.26req/s] [内存消耗：3,341.96kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000436s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_notice` [ RunTime:0.001156s ]
+[ sql ] [ SQL ] SELECT `id`,`title`,`content`,`add_time` FROM `wld_notice` WHERE  `is_show` = 1 ORDER BY `id` DESC [ RunTime:0.000677s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:15+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.067836s][吞吐率：14.74req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000547s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001368s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000643s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001165s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000661s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001118s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000452s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001155s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000410s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001100s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000389s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001017s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000439s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:15+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.069927s][吞吐率：14.30req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000489s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001400s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000489s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001197s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000700s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001237s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000463s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001075s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000436s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001055s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000433s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001081s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000407s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:16+08:00 ] 113.57.183.42 POST /api.php/pay/wallet
+[ info ] www.dotgomedia.com/api.php/pay/wallet [运行时间：0.058175s][吞吐率：17.19req/s] [内存消耗：3,286.71kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000881s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001405s ]
+[ sql ] [ SQL ] SELECT `balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000735s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001289s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 0 LIMIT 1 [ RunTime:0.000778s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:17+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.081036s][吞吐率：12.34req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001002s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001609s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000891s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001449s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.001262s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001880s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000754s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001551s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.001024s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.002034s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000789s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001562s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000950s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:18+08:00 ] 113.57.183.42 POST /api.php/task/taskList
+[ info ] www.dotgomedia.com/api.php/task/taskList [运行时间：0.061800s][吞吐率：16.18req/s] [内存消耗：3,332.11kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001044s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task_classify` [ RunTime:0.001484s ]
+[ sql ] [ SQL ] SELECT `task_cid`,`name` FROM `wld_task_classify` ORDER BY `sort` ASC,`task_cid` DESC [ RunTime:0.000762s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.001537s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 3 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.000783s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 2 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.000767s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 4 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.000841s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:19+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.069024s][吞吐率：14.49req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000750s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001345s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000649s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001168s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000719s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001085s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000613s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001867s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000743s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001733s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000700s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001567s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000659s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:20+08:00 ] 113.57.183.42 POST /api.php/task/findTask
+[ info ] www.dotgomedia.com/api.php/task/findTask [运行时间：0.058079s][吞吐率：17.22req/s] [内存消耗：3,862.14kb] [文件加载：57]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000995s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.001988s ]
+[ sql ] [ SQL ] SELECT `task_id`,`title`,`content`,`img_url` FROM `wld_task` WHERE  `task_id` = 24 LIMIT 1 [ RunTime:0.000811s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:22+08:00 ] 113.57.183.42 POST /api.php/task/draw
+[ info ] www.dotgomedia.com/api.php/task/draw [运行时间：0.072575s][吞吐率：13.78req/s] [内存消耗：3,885.43kb] [文件加载：57]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000810s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.001571s ]
+[ sql ] [ SQL ] SELECT `task_id`,`title`,`limit_total_num`,`task_user_level`,`task_area`,`get_task_num`,`limit_user_num`,`task_money`,`task_cid`,`is_area` FROM `wld_task` WHERE  `task_id` = 24 LIMIT 1 [ RunTime:0.000828s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001220s ]
+[ sql ] [ SQL ] SELECT `member_class` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000674s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_send_task_log` [ RunTime:0.001590s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_send_task_log` WHERE  `task_id` = 24  AND `uid` = 83  AND `add_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' ORDER BY `id` DESC LIMIT 1 [ RunTime:0.001314s ]
+[ sql ] [ SQL ] INSERT INTO `wld_send_task_log` (`task_id` , `title` , `uid` , `task_money` , `add_time` , `task_cid` , `task_user_level` , `is_check`) VALUES (24 , '“石品坊”天然翡翠' , 83 , 5 , '2019-01-21 13:47:22' , 2 , '2,3,4' , 0) [ RunTime:0.000999s ]
+[ sql ] [ SQL ] UPDATE `wld_task`  SET `get_task_num`=`get_task_num`+1  WHERE  `task_id` = 24 [ RunTime:0.000776s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:24+08:00 ] 113.57.183.42 POST /api.php/task/findTask
+[ info ] www.dotgomedia.com/api.php/task/findTask [运行时间：0.055788s][吞吐率：17.92req/s] [内存消耗：3,862.38kb] [文件加载：57]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000737s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.001345s ]
+[ sql ] [ SQL ] SELECT `task_id`,`title`,`content`,`img_url` FROM `wld_task` WHERE  `task_id` = 23 LIMIT 1 [ RunTime:0.000652s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:26+08:00 ] 113.57.183.42 POST /api.php/task/draw
+[ info ] www.dotgomedia.com/api.php/task/draw [运行时间：0.073077s][吞吐率：13.68req/s] [内存消耗：3,885.43kb] [文件加载：57]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000821s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.001639s ]
+[ sql ] [ SQL ] SELECT `task_id`,`title`,`limit_total_num`,`task_user_level`,`task_area`,`get_task_num`,`limit_user_num`,`task_money`,`task_cid`,`is_area` FROM `wld_task` WHERE  `task_id` = 23 LIMIT 1 [ RunTime:0.000968s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001795s ]
+[ sql ] [ SQL ] SELECT `member_class` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000828s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_send_task_log` [ RunTime:0.001475s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_send_task_log` WHERE  `task_id` = 23  AND `uid` = 83  AND `add_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' ORDER BY `id` DESC LIMIT 1 [ RunTime:0.001146s ]
+[ sql ] [ SQL ] INSERT INTO `wld_send_task_log` (`task_id` , `title` , `uid` , `task_money` , `add_time` , `task_cid` , `task_user_level` , `is_check`) VALUES (23 , '新鲜潮州海鲜直供' , 83 , 2 , '2019-01-21 13:47:26' , 3 , '1,2,3,4' , 0) [ RunTime:0.000969s ]
+[ sql ] [ SQL ] UPDATE `wld_task`  SET `get_task_num`=`get_task_num`+1  WHERE  `task_id` = 23 [ RunTime:0.000687s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:27+08:00 ] 113.57.183.42 POST /api.php/task/findTask
+[ info ] www.dotgomedia.com/api.php/task/findTask [运行时间：0.061975s][吞吐率：16.14req/s] [内存消耗：3,861.80kb] [文件加载：57]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000979s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.001464s ]
+[ sql ] [ SQL ] SELECT `task_id`,`title`,`content`,`img_url` FROM `wld_task` WHERE  `task_id` = 26 LIMIT 1 [ RunTime:0.000712s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:31+08:00 ] 113.57.183.42 POST /api.php/task/draw
+[ info ] www.dotgomedia.com/api.php/task/draw [运行时间：0.070727s][吞吐率：14.14req/s] [内存消耗：3,885.38kb] [文件加载：57]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000523s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.001453s ]
+[ sql ] [ SQL ] SELECT `task_id`,`title`,`limit_total_num`,`task_user_level`,`task_area`,`get_task_num`,`limit_user_num`,`task_money`,`task_cid`,`is_area` FROM `wld_task` WHERE  `task_id` = 26 LIMIT 1 [ RunTime:0.000537s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001085s ]
+[ sql ] [ SQL ] SELECT `member_class` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000474s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_send_task_log` [ RunTime:0.001098s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_send_task_log` WHERE  `task_id` = 26  AND `uid` = 83  AND `add_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' ORDER BY `id` DESC LIMIT 1 [ RunTime:0.000708s ]
+[ sql ] [ SQL ] INSERT INTO `wld_send_task_log` (`task_id` , `title` , `uid` , `task_money` , `add_time` , `task_cid` , `task_user_level` , `is_check`) VALUES (26 , '点动传媒' , 83 , 1 , '2019-01-21 13:47:31' , 3 , '1,2,3,4' , 0) [ RunTime:0.001013s ]
+[ sql ] [ SQL ] UPDATE `wld_task`  SET `get_task_num`=`get_task_num`+1  WHERE  `task_id` = 26 [ RunTime:0.002343s ]
+---------------------------------------------------------------
+[ 2019-01-21T13:47:34+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.071233s][吞吐率：14.04req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000887s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001537s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.001092s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.002366s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.001079s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001828s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000806s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001780s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000659s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001535s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000669s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001570s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000760s ]
+---------------------------------------------------------------
+[ 2019-01-21T15:22:53+08:00 ] 113.57.183.42 POST /api.php/home/notice
+[ info ] www.dotgomedia.com/api.php/home/notice [运行时间：0.048970s][吞吐率：20.42req/s] [内存消耗：3,341.96kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000521s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_notice` [ RunTime:0.001507s ]
+[ sql ] [ SQL ] SELECT `id`,`title`,`content`,`add_time` FROM `wld_notice` WHERE  `is_show` = 1 ORDER BY `id` DESC [ RunTime:0.000698s ]
+---------------------------------------------------------------
+[ 2019-01-21T15:22:53+08:00 ] 113.57.183.42 POST /api.php/home/play
+[ info ] www.dotgomedia.com/api.php/home/play [运行时间：0.073628s][吞吐率：13.58req/s] [内存消耗：3,294.74kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000511s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_banner` [ RunTime:0.001118s ]
+[ sql ] [ SQL ] SELECT `url`,`skip` FROM `wld_banner` WHERE  `is_show` = 1 ORDER BY `sort` DESC,`id` DESC [ RunTime:0.000582s ]
+---------------------------------------------------------------
+[ 2019-01-21T15:22:54+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.063303s][吞吐率：15.80req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000518s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001412s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000517s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001078s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000687s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001042s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000440s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001004s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000377s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001016s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000396s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001146s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000351s ]
+---------------------------------------------------------------
+[ 2019-01-21T15:22:54+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.075000s][吞吐率：13.33req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000537s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001476s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000489s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001182s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000649s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001141s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000484s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001240s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000531s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001136s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000534s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.000967s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000514s ]
+---------------------------------------------------------------
+[ 2019-01-21T15:40:16+08:00 ] 113.110.141.230 POST /api.php/login/send
+[ info ] www.dotgomedia.com/api.php/login/send [运行时间：0.057041s][吞吐率：17.53req/s] [内存消耗：3,957.66kb] [文件加载：56]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000850s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001519s ]
+[ sql ] [ SQL ] SELECT `uid`,`password` FROM `wld_member` WHERE  `phone` = '13510184282' LIMIT 1 [ RunTime:0.000858s ]
+---------------------------------------------------------------
+[ 2019-01-21T15:40:27+08:00 ] 113.110.141.230 POST /api.php/login/send
+[ info ] www.dotgomedia.com/api.php/login/send [运行时间：0.058427s][吞吐率：17.12req/s] [内存消耗：3,957.16kb] [文件加载：56]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000760s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001442s ]
+[ sql ] [ SQL ] SELECT `uid`,`password` FROM `wld_member` WHERE  `phone` = '13510184282' LIMIT 1 [ RunTime:0.000711s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:27:49+08:00 ] 113.57.183.42 POST /api.php/home/play
+[ info ] www.dotgomedia.com/api.php/home/play [运行时间：0.055937s][吞吐率：17.88req/s] [内存消耗：3,294.74kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001762s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_banner` [ RunTime:0.001463s ]
+[ sql ] [ SQL ] SELECT `url`,`skip` FROM `wld_banner` WHERE  `is_show` = 1 ORDER BY `sort` DESC,`id` DESC [ RunTime:0.000745s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:27:50+08:00 ] 113.57.183.42 POST /api.php/home/notice
+[ info ] www.dotgomedia.com/api.php/home/notice [运行时间：0.048300s][吞吐率：20.70req/s] [内存消耗：3,341.96kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000530s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_notice` [ RunTime:0.001299s ]
+[ sql ] [ SQL ] SELECT `id`,`title`,`content`,`add_time` FROM `wld_notice` WHERE  `is_show` = 1 ORDER BY `id` DESC [ RunTime:0.000729s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:27:50+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.061600s][吞吐率：16.23req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000561s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001433s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000513s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001125s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000652s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001175s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000428s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001084s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000388s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001106s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000416s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001144s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000422s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:27:50+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.067393s][吞吐率：14.84req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000608s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001515s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000557s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001215s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000637s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001194s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000550s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001069s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000552s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001103s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000461s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001138s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000549s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:27:52+08:00 ] 113.57.183.42 POST /api.php/pay/wallet
+[ info ] www.dotgomedia.com/api.php/pay/wallet [运行时间：0.056296s][吞吐率：17.76req/s] [内存消耗：3,286.71kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000969s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001546s ]
+[ sql ] [ SQL ] SELECT `balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000888s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001644s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 0 LIMIT 1 [ RunTime:0.000785s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:27:53+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.080280s][吞吐率：12.46req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001162s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.002560s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.001075s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.002065s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.001251s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001865s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000852s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001867s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000892s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001470s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000826s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001290s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000936s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:27:54+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.074104s][吞吐率：13.49req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000875s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001511s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000691s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.002208s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.001077s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001724s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000852s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001571s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000772s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001632s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000742s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001865s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000890s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:27:56+08:00 ] 113.57.183.42 POST /api.php/task/taskList
+[ info ] www.dotgomedia.com/api.php/task/taskList [运行时间：0.067215s][吞吐率：14.88req/s] [内存消耗：3,332.11kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000828s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task_classify` [ RunTime:0.001223s ]
+[ sql ] [ SQL ] SELECT `task_cid`,`name` FROM `wld_task_classify` ORDER BY `sort` ASC,`task_cid` DESC [ RunTime:0.000513s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.001500s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 3 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.001028s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 2 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.000788s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 4 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.000745s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:27:58+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.064370s][吞吐率：15.54req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000876s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001326s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000721s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001151s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000936s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001194s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000705s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001147s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000613s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001177s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000649s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001474s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000809s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:28:00+08:00 ] 113.57.183.42 POST /api.php/pay/wallet
+[ info ] www.dotgomedia.com/api.php/pay/wallet [运行时间：0.062475s][吞吐率：16.01req/s] [内存消耗：3,286.71kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000821s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001476s ]
+[ sql ] [ SQL ] SELECT `balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000728s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001407s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 0 LIMIT 1 [ RunTime:0.000894s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:28:11+08:00 ] 113.57.183.42 POST /api.php/pay/pull
+[ info ] www.dotgomedia.com/api.php/pay/pull [运行时间：0.064292s][吞吐率：15.55req/s] [内存消耗：3,287.87kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000874s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001546s ]
+[ sql ] [ SQL ] SELECT `balance`,`phone` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000755s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001226s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000713s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001260s ]
+[ sql ] [ SQL ] INSERT INTO `wld_deposit_log` (`uid` , `phone` , `money` , `add_time`) VALUES (83 , '17612737489' , 92 , '2019-01-21 16:28:11') [ RunTime:0.000851s ]
+[ sql ] [ SQL ] UPDATE `wld_member`  SET `balance`=`balance`-92  WHERE  `uid` = 83 [ RunTime:0.000748s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:28:16+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.077698s][吞吐率：12.87req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000755s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.002039s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000988s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.002638s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.001121s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001729s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000816s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001750s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000751s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001633s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000839s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001783s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000975s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:28:23+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.082583s][吞吐率：12.11req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000943s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001510s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000771s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001300s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000945s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001441s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000834s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001403s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000775s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001451s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000862s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001547s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000823s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:28:23+08:00 ] 113.57.183.42 POST /api.php/pay/wallet
+[ info ] www.dotgomedia.com/api.php/pay/wallet [运行时间：0.052439s][吞吐率：19.07req/s] [内存消耗：3,286.71kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000903s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001426s ]
+[ sql ] [ SQL ] SELECT `balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000726s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001282s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 0 LIMIT 1 [ RunTime:0.000769s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:28:24+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.080349s][吞吐率：12.45req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000894s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001697s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000854s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001600s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.001496s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001784s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000844s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001925s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000856s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001700s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000827s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.002048s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000795s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:28:29+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.070828s][吞吐率：14.12req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000812s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001538s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000726s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001275s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000853s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001179s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000654s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001189s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000707s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001468s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000699s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001444s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000703s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:28:34+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.074695s][吞吐率：13.39req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001011s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001645s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000853s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001667s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000988s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001446s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000928s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001660s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000800s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001648s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000802s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001817s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000770s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:28:45+08:00 ] 113.57.183.42 POST /api.php/home/play
+[ info ] www.dotgomedia.com/api.php/home/play [运行时间：0.049473s][吞吐率：20.21req/s] [内存消耗：3,294.74kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000508s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_banner` [ RunTime:0.001314s ]
+[ sql ] [ SQL ] SELECT `url`,`skip` FROM `wld_banner` WHERE  `is_show` = 1 ORDER BY `sort` DESC,`id` DESC [ RunTime:0.000539s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:28:45+08:00 ] 113.57.183.42 POST /api.php/home/notice
+[ info ] www.dotgomedia.com/api.php/home/notice [运行时间：0.065008s][吞吐率：15.38req/s] [内存消耗：3,341.96kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000743s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_notice` [ RunTime:0.001299s ]
+[ sql ] [ SQL ] SELECT `id`,`title`,`content`,`add_time` FROM `wld_notice` WHERE  `is_show` = 1 ORDER BY `id` DESC [ RunTime:0.000958s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:28:46+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.063797s][吞吐率：15.67req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000530s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001425s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000527s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001141s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000640s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001092s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000432s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001062s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000401s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001118s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000392s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001058s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000389s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:28:46+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.065071s][吞吐率：15.37req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000531s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001198s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000423s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.000972s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000513s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.000932s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000371s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.000932s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000315s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.000843s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000342s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001160s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000369s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:28:49+08:00 ] 113.57.183.42 POST /api.php/pay/wallet
+[ info ] www.dotgomedia.com/api.php/pay/wallet [运行时间：0.056572s][吞吐率：17.68req/s] [内存消耗：3,286.71kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000693s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001295s ]
+[ sql ] [ SQL ] SELECT `balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000535s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001181s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 0 LIMIT 1 [ RunTime:0.000789s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:28:56+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.073779s][吞吐率：13.55req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000810s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001436s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000991s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001845s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000990s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001574s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000808s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001728s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000802s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001575s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000744s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001696s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000920s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:29:01+08:00 ] 113.57.183.42 POST /api.php/member/getBank
+[ info ] www.dotgomedia.com/api.php/member/getBank [运行时间：0.053148s][吞吐率：18.82req/s] [内存消耗：3,326.55kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000886s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001588s ]
+[ sql ] [ SQL ] SELECT `user_name`,`bank_name`,`bank_branch_name`,`bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.001028s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:29:02+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.086249s][吞吐率：11.59req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001172s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.002130s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000885s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001975s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.001182s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001710s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000773s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.002033s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000994s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001545s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.001072s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001721s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000598s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:29:05+08:00 ] 113.57.183.42 POST /api.php/pay/wallet
+[ info ] www.dotgomedia.com/api.php/pay/wallet [运行时间：0.053589s][吞吐率：18.66req/s] [内存消耗：3,286.71kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001820s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001570s ]
+[ sql ] [ SQL ] SELECT `balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000794s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001372s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 0 LIMIT 1 [ RunTime:0.000910s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:29:05+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.077329s][吞吐率：12.93req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000891s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001623s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000756s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001276s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.001083s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.002376s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000873s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001571s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000773s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001738s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000801s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001650s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000953s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:29:08+08:00 ] 113.57.183.42 POST /api.php/task/taskList
+[ info ] www.dotgomedia.com/api.php/task/taskList [运行时间：0.053188s][吞吐率：18.80req/s] [内存消耗：3,332.11kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000866s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task_classify` [ RunTime:0.001462s ]
+[ sql ] [ SQL ] SELECT `task_cid`,`name` FROM `wld_task_classify` ORDER BY `sort` ASC,`task_cid` DESC [ RunTime:0.000657s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.001334s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 3 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.000828s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 2 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.000787s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 4 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.001047s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:29:09+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.078926s][吞吐率：12.67req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000940s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001462s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000800s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001330s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.001058s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001465s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000851s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001418s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000770s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001373s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.001002s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001769s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000806s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:29:10+08:00 ] 113.57.183.42 POST /api.php/task/appointTask
+[ info ] www.dotgomedia.com/api.php/task/appointTask [运行时间：0.062509s][吞吐率：16.00req/s] [内存消耗：3,871.48kb] [文件加载：57]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000774s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.001463s ]
+[ sql ] [ SQL ] SELECT `task_id`,`title`,`limit_total_num`,`get_task_num`,`task_user_level`,`task_money` FROM `wld_task` WHERE  `task_cid` = 4 ORDER BY `task_id` DESC [ RunTime:0.000929s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_send_task_log` [ RunTime:0.001288s ]
+[ sql ] [ SQL ] SELECT `task_id` FROM `wld_send_task_log` WHERE  `uid` = 83  AND `task_id` IN (29) [ RunTime:0.001021s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:29:13+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.072938s][吞吐率：13.71req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000818s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001644s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000802s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001387s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000891s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001218s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000733s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001535s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000775s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001433s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000768s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001568s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000770s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:18+08:00 ] 117.136.24.95 POST /api.php/home/play
+[ info ] www.dotgomedia.com/api.php/home/play [运行时间：0.063700s][吞吐率：15.70req/s] [内存消耗：3,294.70kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000430s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_banner` [ RunTime:0.001139s ]
+[ sql ] [ SQL ] SELECT `url`,`skip` FROM `wld_banner` WHERE  `is_show` = 1 ORDER BY `sort` DESC,`id` DESC [ RunTime:0.000431s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:18+08:00 ] 117.136.24.95 POST /api.php/home/notice
+[ info ] www.dotgomedia.com/api.php/home/notice [运行时间：0.054189s][吞吐率：18.45req/s] [内存消耗：3,342.35kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000516s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_notice` [ RunTime:0.001101s ]
+[ sql ] [ SQL ] SELECT `id`,`title`,`content`,`add_time` FROM `wld_notice` WHERE  `is_show` = 1 ORDER BY `id` DESC [ RunTime:0.000683s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:22+08:00 ] 117.136.24.95 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.066063s][吞吐率：15.14req/s] [内存消耗：3,927.73kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000524s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001320s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000445s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001258s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 134  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000537s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001092s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 134  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000418s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001012s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000426s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001133s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000393s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001000s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000397s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:22+08:00 ] 117.136.24.95 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.064388s][吞吐率：15.53req/s] [内存消耗：3,927.73kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000608s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001199s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000568s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001115s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 134  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000707s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.000965s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 134  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000480s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.000951s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000459s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001064s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000484s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001014s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000728s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:26+08:00 ] 117.136.24.95 POST /api.php/pay/wallet
+[ info ] www.dotgomedia.com/api.php/pay/wallet [运行时间：0.056913s][吞吐率：17.57req/s] [内存消耗：3,286.34kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000742s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001433s ]
+[ sql ] [ SQL ] SELECT `balance` FROM `wld_member` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000675s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.002061s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 134  AND `is_check` = 0 LIMIT 1 [ RunTime:0.000947s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:32+08:00 ] 117.136.24.95 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.071677s][吞吐率：13.95req/s] [内存消耗：3,927.73kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000790s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001606s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000748s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001165s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 134  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000758s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001173s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 134  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000664s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001823s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000846s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001595s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000638s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001523s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000674s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:33+08:00 ] 117.136.24.95 POST /api.php/task/historyLog
+[ info ] www.dotgomedia.com/api.php/task/historyLog [运行时间：0.051900s][吞吐率：19.27req/s] [内存消耗：3,327.20kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000998s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_send_task_log` [ RunTime:0.001686s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_send_task_log` WHERE  `uid` = 134  AND `is_check` = 0 ORDER BY `add_time` DESC LIMIT 0,10 [ RunTime:0.001228s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_send_task_log` WHERE  `uid` = 134  AND `is_check` = 0 LIMIT 1 [ RunTime:0.000901s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:35+08:00 ] 117.136.24.95 POST /api.php/task/historyLog
+[ info ] www.dotgomedia.com/api.php/task/historyLog [运行时间：0.056935s][吞吐率：17.56req/s] [内存消耗：3,327.20kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000826s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_send_task_log` [ RunTime:0.001392s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_send_task_log` WHERE  `uid` = 134  AND `is_check` = 2 ORDER BY `sub_time` DESC LIMIT 0,10 [ RunTime:0.001132s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_send_task_log` WHERE  `uid` = 134  AND `is_check` = 2 LIMIT 1 [ RunTime:0.000782s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:35+08:00 ] 117.136.24.95 POST /api.php/task/historyLog
+[ info ] www.dotgomedia.com/api.php/task/historyLog [运行时间：0.055971s][吞吐率：17.87req/s] [内存消耗：3,327.32kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000880s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_send_task_log` [ RunTime:0.001658s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_send_task_log` WHERE  `uid` = 134  AND `is_check` = 1 ORDER BY `check_time` DESC LIMIT 0,10 [ RunTime:0.001161s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_send_task_log` WHERE  `uid` = 134  AND `is_check` = 1 LIMIT 1 [ RunTime:0.001034s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:36+08:00 ] 117.136.24.95 POST /api.php/task/historyLog
+[ info ] www.dotgomedia.com/api.php/task/historyLog [运行时间：0.057140s][吞吐率：17.50req/s] [内存消耗：3,327.30kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001183s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_send_task_log` [ RunTime:0.001659s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_send_task_log` WHERE  `uid` = 134  AND `is_check` = 3 ORDER BY `check_time` DESC LIMIT 0,10 [ RunTime:0.001436s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_send_task_log` WHERE  `uid` = 134  AND `is_check` = 3 LIMIT 1 [ RunTime:0.000848s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:38+08:00 ] 117.136.24.95 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.072697s][吞吐率：13.76req/s] [内存消耗：3,927.73kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000831s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001493s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000978s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001918s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 134  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000805s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001654s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 134  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000691s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001714s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000784s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001726s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000766s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001559s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000731s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:41+08:00 ] 117.136.24.95 POST /api.php/pay/wallet
+[ info ] www.dotgomedia.com/api.php/pay/wallet [运行时间：0.054502s][吞吐率：18.35req/s] [内存消耗：3,286.34kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000874s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001471s ]
+[ sql ] [ SQL ] SELECT `balance` FROM `wld_member` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000651s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001356s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 134  AND `is_check` = 0 LIMIT 1 [ RunTime:0.000693s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:52+08:00 ] 117.136.24.95 POST /api.php/pay/pull
+[ info ] www.dotgomedia.com/api.php/pay/pull [运行时间：0.074685s][吞吐率：13.39req/s] [内存消耗：3,288.02kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001036s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001424s ]
+[ sql ] [ SQL ] SELECT `balance`,`phone` FROM `wld_member` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000627s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001315s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000779s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001396s ]
+[ sql ] [ SQL ] INSERT INTO `wld_deposit_log` (`uid` , `phone` , `money` , `add_time`) VALUES (134 , '15874640608' , 6 , '2019-01-21 16:30:52') [ RunTime:0.000935s ]
+[ sql ] [ SQL ] UPDATE `wld_member`  SET `balance`=`balance`-6  WHERE  `uid` = 134 [ RunTime:0.000809s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:56+08:00 ] 117.136.24.95 POST /api.php/pay/pull
+[ info ] www.dotgomedia.com/api.php/pay/pull [运行时间：0.054376s][吞吐率：18.39req/s] [内存消耗：3,272.74kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000920s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001407s ]
+[ sql ] [ SQL ] SELECT `balance`,`phone` FROM `wld_member` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000711s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:30:58+08:00 ] 117.136.24.95 POST /api.php/pay/pull
+[ info ] www.dotgomedia.com/api.php/pay/pull [运行时间：0.056166s][吞吐率：17.80req/s] [内存消耗：3,272.74kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000868s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001469s ]
+[ sql ] [ SQL ] SELECT `balance`,`phone` FROM `wld_member` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000841s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:31:01+08:00 ] 117.136.24.95 POST /api.php/pay/pull
+[ info ] www.dotgomedia.com/api.php/pay/pull [运行时间：0.050510s][吞吐率：19.80req/s] [内存消耗：3,272.74kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000835s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001491s ]
+[ sql ] [ SQL ] SELECT `balance`,`phone` FROM `wld_member` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000810s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:31:05+08:00 ] 117.136.24.95 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.076363s][吞吐率：13.10req/s] [内存消耗：3,927.73kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000926s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001570s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000834s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001753s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 134  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000903s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001390s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 134  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000768s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001521s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000819s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001587s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000835s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001573s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 134 LIMIT 1 [ RunTime:0.000806s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:40:27+08:00 ] 113.57.183.42 POST /api.php/home/notice
+[ info ] www.dotgomedia.com/api.php/home/notice [运行时间：0.054741s][吞吐率：18.27req/s] [内存消耗：3,341.96kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000830s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_notice` [ RunTime:0.001451s ]
+[ sql ] [ SQL ] SELECT `id`,`title`,`content`,`add_time` FROM `wld_notice` WHERE  `is_show` = 1 ORDER BY `id` DESC [ RunTime:0.000840s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:40:27+08:00 ] 113.57.183.42 POST /api.php/home/play
+[ info ] www.dotgomedia.com/api.php/home/play [运行时间：0.059890s][吞吐率：16.70req/s] [内存消耗：3,294.74kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000883s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_banner` [ RunTime:0.001487s ]
+[ sql ] [ SQL ] SELECT `url`,`skip` FROM `wld_banner` WHERE  `is_show` = 1 ORDER BY `sort` DESC,`id` DESC [ RunTime:0.000779s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:40:28+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.066784s][吞吐率：14.97req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000573s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001285s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000430s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001125s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000644s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001084s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000405s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001002s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000424s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.000996s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000404s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001006s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000363s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:40:28+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.067860s][吞吐率：14.74req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000594s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001304s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000444s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001116s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000645s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001163s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000554s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001234s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000409s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001035s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000382s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001041s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000391s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:40:33+08:00 ] 113.57.183.42 POST /api.php/pay/wallet
+[ info ] www.dotgomedia.com/api.php/pay/wallet [运行时间：0.056264s][吞吐率：17.77req/s] [内存消耗：3,286.71kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000869s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001534s ]
+[ sql ] [ SQL ] SELECT `balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000772s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001416s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 0 LIMIT 1 [ RunTime:0.000889s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:40:34+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.078292s][吞吐率：12.77req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000825s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001428s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000814s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001296s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000821s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001434s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000681s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001700s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000741s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001437s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000676s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001781s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000758s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:40:35+08:00 ] 113.57.183.42 POST /api.php/member/getBank
+[ info ] www.dotgomedia.com/api.php/member/getBank [运行时间：0.053996s][吞吐率：18.52req/s] [内存消耗：3,326.55kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000958s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001675s ]
+[ sql ] [ SQL ] SELECT `user_name`,`bank_name`,`bank_branch_name`,`bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000793s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:40:37+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.075221s][吞吐率：13.29req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000967s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001594s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000829s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001381s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000906s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001199s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000728s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001264s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000819s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001552s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000779s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001677s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.001168s ]
+---------------------------------------------------------------
+[ 2019-01-21T16:40:39+08:00 ] 113.57.183.42 POST /api.php/task/taskList
+[ info ] www.dotgomedia.com/api.php/task/taskList [运行时间：0.065403s][吞吐率：15.29req/s] [内存消耗：3,332.11kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000843s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task_classify` [ RunTime:0.001084s ]
+[ sql ] [ SQL ] SELECT `task_cid`,`name` FROM `wld_task_classify` ORDER BY `sort` ASC,`task_cid` DESC [ RunTime:0.000754s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.001643s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 3 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.001096s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 2 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.002002s ]
+[ sql ] [ SQL ] SELECT `task_id`,`task_money`,`title`,`limit_total_num`,`get_task_num` FROM `wld_task` WHERE  `task_cid` = 4 ORDER BY `task_id` DESC LIMIT 5 [ RunTime:0.000781s ]
+---------------------------------------------------------------
+[ 2019-01-21T21:35:10+08:00 ] 113.57.183.42 POST /api.php/home/notice
+[ info ] www.dotgomedia.com/api.php/home/notice [运行时间：0.058590s][吞吐率：17.07req/s] [内存消耗：3,341.96kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000959s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_notice` [ RunTime:0.001425s ]
+[ sql ] [ SQL ] SELECT `id`,`title`,`content`,`add_time` FROM `wld_notice` WHERE  `is_show` = 1 ORDER BY `id` DESC [ RunTime:0.001217s ]
+---------------------------------------------------------------
+[ 2019-01-21T21:35:11+08:00 ] 113.57.183.42 POST /api.php/home/play
+[ info ] www.dotgomedia.com/api.php/home/play [运行时间：0.050450s][吞吐率：19.82req/s] [内存消耗：3,294.74kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000533s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_banner` [ RunTime:0.001379s ]
+[ sql ] [ SQL ] SELECT `url`,`skip` FROM `wld_banner` WHERE  `is_show` = 1 ORDER BY `sort` DESC,`id` DESC [ RunTime:0.000780s ]
+---------------------------------------------------------------
+[ 2019-01-21T21:35:11+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.066290s][吞吐率：15.09req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000476s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001373s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000514s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001324s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000614s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001059s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000458s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001096s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000390s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001117s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000368s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001139s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000456s ]
+---------------------------------------------------------------
+[ 2019-01-21T21:35:11+08:00 ] 113.57.183.42 POST /api.php/member/index
+[ info ] www.dotgomedia.com/api.php/member/index [运行时间：0.096115s][吞吐率：10.40req/s] [内存消耗：3,928.49kb] [文件加载：58]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000444s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001435s ]
+[ sql ] [ SQL ] SELECT `phone`,`face`,`member_class`,`balance` FROM `wld_member` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000442s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.001173s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `uid` = 83  AND `is_check` = 1  AND `check_time` BETWEEN '2019-01-21 00:00:00' AND '2019-01-22 00:00:00' LIMIT 1 [ RunTime:0.000573s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_deposit_log` [ RunTime:0.001190s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_deposit_log` WHERE  `uid` = 83  AND `is_check` = 1 LIMIT 1 [ RunTime:0.000417s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_info` [ RunTime:0.001104s ]
+[ sql ] [ SQL ] SELECT `bank_card_num` FROM `wld_bank_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000434s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_bank_pay_info` [ RunTime:0.001105s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_bank_pay_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000369s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member_info` [ RunTime:0.001133s ]
+[ sql ] [ SQL ] SELECT `id` FROM `wld_member_info` WHERE  `uid` = 83 LIMIT 1 [ RunTime:0.000373s ]

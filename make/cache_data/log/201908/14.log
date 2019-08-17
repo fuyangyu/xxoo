@@ -1,0 +1,157 @@
+---------------------------------------------------------------
+[ 2019-08-14T16:27:23+08:00 ] 127.0.0.1 GET /make.php/task/ccc
+[ info ] www.make.com/make.php/task/ccc [运行时间：0.093625s][吞吐率：10.68req/s] [内存消耗：2,212.77kb] [文件加载：53]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001673s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.011681s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000857s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.012125s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000516s ]
+---------------------------------------------------------------
+[ 2019-08-14T16:27:30+08:00 ] 127.0.0.1 GET /make.php/
+[ info ] www.make.com/make.php/ [运行时间：0.121317s][吞吐率：8.24req/s] [内存消耗：2,139.20kb] [文件加载：52]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.011294s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.012612s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000373s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.012150s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000366s ]
+---------------------------------------------------------------
+[ 2019-08-14T16:27:30+08:00 ] 127.0.0.1 GET /make.php/index/main.html
+[ info ] www.make.com/make.php/index/main.html [运行时间：0.186710s][吞吐率：5.36req/s] [内存消耗：2,122.95kb] [文件加载：52]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.002471s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.016198s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000895s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.017135s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000654s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.020296s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_member` LIMIT 1 [ RunTime:0.000437s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_member` WHERE  `member_class` = 1 LIMIT 1 [ RunTime:0.000394s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_member` WHERE  `member_class` = 2 LIMIT 1 [ RunTime:0.000282s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_member` WHERE  `member_class` = 3 LIMIT 1 [ RunTime:0.000278s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_member` WHERE  `member_class` = 4 LIMIT 1 [ RunTime:0.000349s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_pay_log` [ RunTime:0.016441s ]
+[ sql ] [ SQL ] SELECT SUM(money) AS tp_sum FROM `wld_pay_log` WHERE  `pay_status` = 2 LIMIT 1 [ RunTime:0.000319s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_hire_log` [ RunTime:0.019339s ]
+[ sql ] [ SQL ] SELECT SUM(hire_money) AS tp_sum FROM `wld_hire_log` WHERE  `is_check` = 1 LIMIT 1 [ RunTime:0.001181s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_task` [ RunTime:0.018927s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_task` WHERE  `task_id` > 0 LIMIT 1 [ RunTime:0.000545s ]
+---------------------------------------------------------------
+[ 2019-08-14T16:27:35+08:00 ] 127.0.0.1 GET /make.php/Gate/index.html
+[ info ] www.make.com/make.php/Gate/index.html [运行时间：0.068540s][吞吐率：14.59req/s] [内存消耗：2,269.59kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001145s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.011397s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000346s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.011034s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000428s ]
+---------------------------------------------------------------
+[ 2019-08-14T16:27:35+08:00 ] 127.0.0.1 GET /make.php/gate/getIndexData.html?startTime=&endTime=&keywords=&limit=15&pageIndex=1&_=1565771255109
+[ info ] www.make.com/make.php/gate/getIndexData.html?startTime=&endTime=&keywords=&limit=15&pageIndex=1&_=1565771255109 [运行时间：0.113412s][吞吐率：8.82req/s] [内存消耗：2,387.25kb] [文件加载：57]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.003387s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.014751s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000638s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.014757s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000594s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_banner` [ RunTime:0.016646s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_banner` ORDER BY `id` DESC LIMIT 0,15 [ RunTime:0.000258s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_banner` LIMIT 1 [ RunTime:0.000196s ]
+---------------------------------------------------------------
+[ 2019-08-14T16:27:37+08:00 ] 127.0.0.1 GET /make.php/Gate/notice.html
+[ info ] www.make.com/make.php/Gate/notice.html [运行时间：0.066799s][吞吐率：14.97req/s] [内存消耗：2,269.13kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001058s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.012637s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000362s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.011999s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000440s ]
+---------------------------------------------------------------
+[ 2019-08-14T16:27:38+08:00 ] 127.0.0.1 GET /make.php/gate/getNoticeData.html?startTime=&endTime=&keywords=&limit=15&pageIndex=1&_=1565771257876
+[ info ] www.make.com/make.php/gate/getNoticeData.html?startTime=&endTime=&keywords=&limit=15&pageIndex=1&_=1565771257876 [运行时间：0.096651s][吞吐率：10.35req/s] [内存消耗：2,427.74kb] [文件加载：57]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.002441s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.012277s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.001024s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.012611s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000334s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_notice` [ RunTime:0.010733s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_notice` ORDER BY `id` DESC LIMIT 0,15 [ RunTime:0.000336s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_notice` LIMIT 1 [ RunTime:0.000918s ]
+---------------------------------------------------------------
+[ 2019-08-14T16:27:43+08:00 ] 127.0.0.1 GET /make.php/Gate/index.html
+[ info ] www.make.com/make.php/Gate/index.html [运行时间：0.094289s][吞吐率：10.61req/s] [内存消耗：2,143.14kb] [文件加载：52]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001186s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.016825s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.001137s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.015335s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000439s ]
+---------------------------------------------------------------
+[ 2019-08-14T16:27:43+08:00 ] 127.0.0.1 GET /make.php/gate/getIndexData.html?startTime=&endTime=&keywords=&limit=15&pageIndex=1&_=1565771263654
+[ info ] www.make.com/make.php/gate/getIndexData.html?startTime=&endTime=&keywords=&limit=15&pageIndex=1&_=1565771263654 [运行时间：0.088622s][吞吐率：11.28req/s] [内存消耗：2,387.25kb] [文件加载：57]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000903s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.013594s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000304s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.015059s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000458s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_banner` [ RunTime:0.013706s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_banner` ORDER BY `id` DESC LIMIT 0,15 [ RunTime:0.000215s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_banner` LIMIT 1 [ RunTime:0.000142s ]
+---------------------------------------------------------------
+[ 2019-08-14T16:51:16+08:00 ] 127.0.0.1 GET /make.php/gate/addBanner/id/3.html
+[ info ] www.make.com/make.php/gate/addBanner/id/3.html [运行时间：0.121318s][吞吐率：8.24req/s] [内存消耗：2,264.85kb] [文件加载：54]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.010846s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.012212s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000928s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.011863s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000496s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_banner` [ RunTime:0.012129s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_banner` WHERE  `id` = 3 LIMIT 1 [ RunTime:0.000344s ]
+---------------------------------------------------------------
+[ 2019-08-14T16:51:23+08:00 ] 127.0.0.1 GET /make.php/Gate/index.html
+[ info ] www.make.com/make.php/Gate/index.html [运行时间：0.086919s][吞吐率：11.50req/s] [内存消耗：2,143.14kb] [文件加载：52]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.010681s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.019842s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000387s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.012302s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000506s ]
+---------------------------------------------------------------
+[ 2019-08-14T16:51:23+08:00 ] 127.0.0.1 GET /make.php/gate/getIndexData.html?startTime=&endTime=&keywords=&limit=15&pageIndex=1&_=1565772683521
+[ info ] www.make.com/make.php/gate/getIndexData.html?startTime=&endTime=&keywords=&limit=15&pageIndex=1&_=1565772683521 [运行时间：0.094421s][吞吐率：10.59req/s] [内存消耗：2,387.25kb] [文件加载：57]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001081s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.012978s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000336s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.014402s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000467s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_banner` [ RunTime:0.014615s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_banner` ORDER BY `id` DESC LIMIT 0,15 [ RunTime:0.000352s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_banner` LIMIT 1 [ RunTime:0.000318s ]
+---------------------------------------------------------------
+[ 2019-08-14T19:14:47+08:00 ] 127.0.0.1 GET /make.php/Gate/make.html
+[ info ] www.make.com/make.php/Gate/make.html [运行时间：0.084405s][吞吐率：11.85req/s] [内存消耗：2,146.77kb] [文件加载：53]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.002166s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.012538s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.001211s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.014808s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000472s ]
+---------------------------------------------------------------
+[ 2019-08-14T19:14:50+08:00 ] 127.0.0.1 GET /make.php/Gate/notice.html
+[ info ] www.make.com/make.php/Gate/notice.html [运行时间：0.084661s][吞吐率：11.81req/s] [内存消耗：2,142.68kb] [文件加载：52]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.012364s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.023483s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000414s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.010575s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000463s ]
+---------------------------------------------------------------
+[ 2019-08-14T19:14:50+08:00 ] 127.0.0.1 GET /make.php/gate/getNoticeData.html?startTime=&endTime=&keywords=&limit=15&pageIndex=1&_=1565781290265
+[ info ] www.make.com/make.php/gate/getNoticeData.html?startTime=&endTime=&keywords=&limit=15&pageIndex=1&_=1565781290265 [运行时间：0.101519s][吞吐率：9.85req/s] [内存消耗：2,427.74kb] [文件加载：57]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001870s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.010408s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000352s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.013338s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000321s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_notice` [ RunTime:0.012777s ]
+[ sql ] [ SQL ] SELECT * FROM `wld_notice` ORDER BY `id` DESC LIMIT 0,15 [ RunTime:0.000407s ]
+[ sql ] [ SQL ] SELECT COUNT(*) AS tp_count FROM `wld_notice` LIMIT 1 [ RunTime:0.000505s ]
+---------------------------------------------------------------
+[ 2019-08-14T19:14:53+08:00 ] 127.0.0.1 GET /make.php/Gate/setting.html
+[ info ] www.make.com/make.php/Gate/setting.html [运行时间：0.066484s][吞吐率：15.04req/s] [内存消耗：2,271.03kb] [文件加载：55]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001136s ] mysql:host=127.0.0.1;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_group_access` [ RunTime:0.013153s ]
+[ sql ] [ SQL ] SELECT `AuthGroupAccess`.`uid`,`AuthGroupAccess`.`group_id`,`AuthGroup`.`title`,`AuthGroup`.`rules` FROM `wld_auth_group_access` `AuthGroupAccess` LEFT JOIN `wld_auth_group` `AuthGroup` ON `AuthGroupAccess`.`group_id`=`AuthGroup`.`id` WHERE  (  AuthGroupAccess.uid='1' and AuthGroup.status='1' ) [ RunTime:0.000291s ]
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_auth_rule` [ RunTime:0.010428s ]
+[ sql ] [ SQL ] SELECT `condition`,`name` FROM `wld_auth_rule` WHERE  `id` IN (1,2,3,4,5,6,7,8,9,13,27,14,15,16,17,18,19,28,20,21,22,23,24,25,26,29,10,11,12,30)  AND `status` = 1 [ RunTime:0.000455s ]

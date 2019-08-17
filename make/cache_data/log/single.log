@@ -1,0 +1,29 @@
+---------------------------------------------------------------
+[ 2018-11-21T18:42:43+08:00 ] 127.0.0.1 GET /index.php/index/index
+[ info ] make.com/index.php/index/index [运行时间：0.043456s][吞吐率：23.01req/s] [内存消耗：1,974.93kb] [文件加载：36]
+[ info ] [ LANG ] D:\wamp64\www\web\make\framework\lang\zh-cn.php
+[ info ] [ BIND ] 'index'
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'index',
+    1 => 'index',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => 'make.com',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+  'accept-encoding' => 'gzip, deflate',
+  'accept-language' => 'zh-CN,zh;q=0.9',
+  'cookie' => 'PHPSESSID=diuvitq9spp7f7uua1oi9ncmk5',
+)
+[ info ] [ PARAM ] array (
+)
+[ info ] [ RUN ] app\index\controller\Index->index[ D:\wamp64\www\web\make\application\index\controller\Index.php ]
+[ log ] 测试日志信息，这是警告级别，并且实时写入

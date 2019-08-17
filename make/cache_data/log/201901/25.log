@@ -1,0 +1,18 @@
+---------------------------------------------------------------
+[ 2019-01-25T12:32:30+08:00 ] 117.26.241.23 POST /api.php/index/getCode
+[ info ] www.dotgomedia.com/api.php/index/getCode [运行时间：0.378964s][吞吐率：2.64req/s] [内存消耗：3,149.63kb] [文件加载：50]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.001210s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_check_phone` [ RunTime:0.002405s ]
+[ sql ] [ SQL ] INSERT INTO `wld_check_phone` (`phone` , `sub_time` , `code` , `check_item` , `note_display_name`) VALUES ('13607503886' , 1548390750 , '8354' , '13607503886_8354_register' , '用户注册') [ RunTime:0.002410s ]
+---------------------------------------------------------------
+[ 2019-01-25T12:32:30+08:00 ] 117.26.241.23 POST /api.php/index/getCode
+[ info ] www.dotgomedia.com/api.php/index/getCode [运行时间：0.253941s][吞吐率：3.94req/s] [内存消耗：3,149.64kb] [文件加载：50]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000829s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_check_phone` [ RunTime:0.001376s ]
+[ sql ] [ SQL ] INSERT INTO `wld_check_phone` (`phone` , `sub_time` , `code` , `check_item` , `note_display_name`) VALUES ('13607503886' , 1548390750 , '5768' , '13607503886_5768_register' , '用户注册') [ RunTime:0.001929s ]
+---------------------------------------------------------------
+[ 2019-01-25T12:33:09+08:00 ] 117.26.241.23 POST /api.php/login/register
+[ info ] www.dotgomedia.com/api.php/login/register [运行时间：0.054883s][吞吐率：18.22req/s] [内存消耗：3,402.11kb] [文件加载：53]
+[ sql ] [ DB ] CONNECT:[ UseTime:0.000698s ] mysql:host=103.71.236.77;port=3306;dbname=tk_make;charset=utf8
+[ sql ] [ SQL ] SHOW COLUMNS FROM `wld_member` [ RunTime:0.001366s ]
+[ sql ] [ SQL ] SELECT `uid` FROM `wld_member` WHERE  `invite_code` = '576833' LIMIT 1 [ RunTime:0.000631s ]
