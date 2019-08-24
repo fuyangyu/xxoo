@@ -45,7 +45,7 @@ class Home extends Base
     {
         try{
             if ($this->request->isPost()) {
-                $data = Db::name('notice')->where(['is_show' => 1])->field('id,title,content,add_time')->order(['id'=>'desc'])->limit(2)->select();
+                $data = Db::name('notice')->where(['is_show' => 1])->field('id,title,content,add_time')->order(['sort'=>'desc'])->limit(2)->select();
                 $data = $data ? $data : [];
                 return json($this->outJson(1,'获取成功',$data));
             } else {
@@ -57,14 +57,14 @@ class Home extends Base
     }
 
     /**
-     * 首页弹窗公告
+     * 公告列表
      * @return \think\response\Json
      */
-    public function noticeIndex()
+    public function noticeList()
     {
         try{
             if ($this->request->isPost()) {
-                $data = Db::name('notice')->where(['is_show' => 1,'is_index' => 1])->field('id,title,content,add_time')->order(['id'=>'desc'])->find();
+                $data = Db::name('notice')->where(['is_show' => 1])->field('id,title,content,add_time')->order(['sort'=>'desc'])->select();
                 $data = $data ? $data : [];
                 return json($this->outJson(1,'获取成功',$data));
             } else {
@@ -74,6 +74,7 @@ class Home extends Base
             return json($this->outJson(0,'服务器响应失败'));
         }
     }
+
 
     /**
      * 获取指定id公告具体信息
@@ -254,6 +255,10 @@ class Home extends Base
         return ['status' => 1,'msg' => $dir_name . $filename];
     }
 
+    /**
+     * 检测时候有已读消息
+     * @return \think\response\Json
+     */
     public function messageStatus(){
         $uid = $this->request->param('uid',1);
         $message = Db::name('message_log')->where(['uid' => $uid,'status' => 1])->order('id desc')->find();
@@ -262,13 +267,13 @@ class Home extends Base
     }
 
     /**
-     * 消息列表
+     * 消息列表(同时修改未读消息为已读)
      * @return \think\response\Json
      */
     public function messageList(){
         $data = array();
         $page = $this->request->param('page',1); //页数
-        $uid = $this->request->param('uid',1); //页数
+        $uid = $this->request->param('uid',1);
         $limit = 10;    //每页数量
         $start = 0;     //开始位置
         if ($page > 1) {
@@ -276,6 +281,9 @@ class Home extends Base
         }
         $sql = "SELECT * FROM wld_message_log where uid = $uid ORDER BY id DESC LIMIT {$start},{$limit};";
         $data = Db::query($sql);
+        if($page == 1) { //更新所有消息状态为已读
+            Db::name('message_log')->where('uid', $uid)->update(['status' => 2]);
+        }
         return json($this->outJson(1,'成功',$data));
     }
 

@@ -369,7 +369,7 @@ class Member extends Base
     }
 
     /**
-     * 寻找当前用户id 父级服务中心等级的个数
+     * 寻找当前用户id 父级服务中心等级的个数 (未调用)
      * @param int $uid 用户Id
      * @param int $num 取几代
      * @param array $user_parents_uid 当期父类id属于服务中心的数组

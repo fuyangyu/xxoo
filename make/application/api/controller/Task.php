@@ -120,6 +120,38 @@ class Task extends Base
     }
 
 
+    /**
+     * 任务列表
+     * @return \think\response\Json
+     */
+    public function taskList(){
+        $data = array();
+        $page = $this->request->param('page',1); //页数
+        $uid = $this->request->param('uid');
+        $is_check = $this->request->param('is_check',-1); // 1：审核通过 0：领取  2：待审核 3：审核失败',
+        if($is_check == 0){ //待提交
+            $where = ' and l.is_check = '.$is_check;
+        }elseif($is_check == 2){    //审核中
+            $where = ' and l.is_check ='.$is_check;
+        }elseif($is_check == 3){    //审核失败
+            $where = ' and l.is_check ='.$is_check;
+        }elseif($is_check == 1){    //已完成
+            $where = ' and l.is_check ='.$is_check;
+        }else{
+            $where = ''; //全部
+        }
+        $limit = 10;    //每页数量
+        $start = 0;     //开始位置
+        if ($page > 1) {
+            $start = ($page-1) * $limit;
+        }
+        $sql = "SELECT t.task_icon,l.title,l.task_money,l.add_time,l.sub_time,l.is_check,l.failure_msg FROM
+                wld_send_task_log as l LEFT JOIN wld_task t ON l.task_id =  t.task_id WHERE l.uid = $uid $where
+                ORDER BY l.id DESC LIMIT {$start},{$limit};";
+        $data = Db::query($sql);
+        p($data);die;
+        return json($this->outJson(1,'成功',$data));
+    }
 
 
     /**
@@ -317,7 +349,7 @@ class Task extends Base
                 $task_id = $this->request->param('task_id',0,'intval'); //23;
                 $task_screenshot = $this->request->param('task_screenshot');    //'/uploads/assignment/20190119/201901195c42c50bf15eb.jpg';
                 $model = new \app\api\model\Task();
-                $data = $model->subTask(374, $task_id, $task_screenshot);
+                $data = $model->subTask($this->uid, $task_id, $task_screenshot);
                 return json($data);
             } else {
                 return json($this->outJson(500,'非法操作'));
@@ -337,7 +369,7 @@ class Task extends Base
     }
 
     /**
-     * 获取用户领取任务的历史记录
+     * 获取用户领取任务的历史记录(未调用)
      * @return \think\response\Json
      */
     public function historyLog()
@@ -402,7 +434,7 @@ class Task extends Base
     }
 
     /**
-     * 获取任务规则描述+图片
+     * 获取任务规则描述+图片（未调用）
      * @return \think\response\Json
      */
     public function ruleDes()

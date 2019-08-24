@@ -89,14 +89,34 @@ class Base extends Controller
      * 获取用户手机号码
      * @return mixed
      */
-    protected function getUserPhone()
+    protected function getUserPhone($uid =-1)
     {
-        return Db::name('member')->where(['uid' => $this->uid])->value('phone');
+        return Db::name('member')->where(['uid' => $uid])->value('phone');
     }
 
     //添加消息
     protected function insertMessage($data = array()){
 
         return Db::name('message_log')->insert($data);
+    }
+
+    /**获取用户团队数据
+     * @param int $uid
+     * @return array
+     */
+    protected function getUserTeam($uid=-1){
+        set_time_limit(0);
+        ini_set("memory_limit","500");
+        $data = array();
+        $user = Db::name('member')->where(['invite_uid' => $uid])->field('uid,nick_name,phone,face,member_class,invite_time')->select();
+        if(!empty($user)) {
+            $data = array_merge($data, $user);
+            foreach ($user as $value) {
+                $arr = $this->getUserTeam($value['uid']);
+                $data = array_merge($data,$arr);
+
+            }
+        }
+        return $data;
     }
 }

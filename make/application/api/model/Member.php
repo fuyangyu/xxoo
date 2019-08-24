@@ -37,7 +37,7 @@ class Member extends Base
     public function getuserInfo($uid){
 
         $uid = !empty($uid)?$uid:-1;
-        $sql = "select m.phone,m.face,m.invite_uid,i.nick_name,i.province,i.city FROM `wld_member` as m LEFT JOIN wld_member_info as i ON m.uid = i.uid WHERE m.uid = {$uid};";
+        $sql = "select m.phone,m.face,m.invite_uid,m.nick_name,i.province,i.city FROM `wld_member` as m LEFT JOIN wld_member_info as i ON m.uid = i.uid WHERE m.uid = {$uid};";
         $data = Db::query($sql);
         if($data[0]['invite_uid']) {
             $invite_phone = Db::name('member')->where(['uid' => $data[0]['invite_uid']])->value('phone');
@@ -156,7 +156,7 @@ class Member extends Base
     }
 
     /**
-     * 获取团队下线会员数
+     * 获取团队下线会员数 (未调用)
      * @param $uid
      * @param int $page
      * @param int $limit
@@ -347,7 +347,8 @@ class Member extends Base
                 'password' => cp_encryption_password($data['password']),
                 'invite_uid' => $data['invite_uid'],
                 'member_class' => 1,//普通会员
-                'add_time' => date('Y-m-d H:i:s')
+                'add_time' => date('Y-m-d H:i:s'),
+                'invite_time' => $data['invite_time'] ,
             ]);
 
             //添加用户地址

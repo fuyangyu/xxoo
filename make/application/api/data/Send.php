@@ -22,6 +22,9 @@ class Send
             'api_member_index', 'api_member_userinfo', 'api_member_userinfoactio', 'api_member_nicknameactio', 'api_member_setnickname',
             'api_member_inviteactio', 'api_member_setinvite', 'api_member_upface',
 
+            //我的
+            'api_member_user','api_member_userdirectrecord','api_member_userearnings','api_member_userearningslog','api_member_userearningspool',
+
             //会员充值
             'api_pay_membercenter','api_pay_privilegetaskmore','api_pay_chargepay',
 
@@ -30,7 +33,7 @@ class Send
 
             //任务
             'api_task_findtask', 'api_task_uptaskfile', 'api_task_subtask', 'api_task_task','api_task_taskmore','api_task_draw','api_task_tasknotice',
-            'api_task_taskNoticemore',
+            'api_task_taskNoticemore','api_task_tasklist',
 
             //消息
             'api_home_messagestatus'

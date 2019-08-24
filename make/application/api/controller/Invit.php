@@ -21,7 +21,7 @@ class Invit extends Base
            $user = Db::name('member')->where('uid',$uid)->field('phone,member_brokerage_money,channel_money');
            if($user){
                $data['invit_phone'] = $user['phone'];   //推荐人手机 (邀请注册时用)
-               $data['invit_earnings'] = $user['member_brokerage_money'] + $user['channel_money'];
+               $data['invit_earnings'] = $user['member_brokerage_money'] + $user['channel_money']; //累计收益
            }
            //获取邀请人数据
            $data['invit'] = $invit = Db::name('member')->field('phone,invite_uid,nick_name,face,member_class,balance')->where('invite_uid',$uid)->order('add_time','desc')->select();
@@ -31,8 +31,7 @@ class Invit extends Base
                //邀请轮播数据
               $data['invit_carousel'] = array_slice($invit,0,15);
            }
-           //累计收益
-//           $data['invit_earnings'] = Db::name('member')->where('uid',$uid)->value('balance');
+
            return json($this->outJson(1,'成功',$data));
 
        } catch (\Exception $e){

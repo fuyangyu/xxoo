@@ -457,6 +457,8 @@ class Task extends Base
 
     public function recursionService($uid=0,&$data=array())
     {
+        set_time_limit(0);
+        ini_set("memory_limit","-1"); //不限制内存
         if (count($data) != 2) {
             $user = Db::name('member')->where(['uid' => $uid, 'member_class' => 4])->field('uid,invite_uid')->find();
             if ($user) {

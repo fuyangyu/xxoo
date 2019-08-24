@@ -113,9 +113,11 @@ class Login extends Base
                 // 验证邀请码(用户手机号) 1:invite_phone指注册时邀请人号码
                 if (empty($data['invite_phone'])) {
                     $data['invite_uid'] = $data['invite_phone'] = 0;
+                    $data['invite_time'] = 0;
                 }else {
                     $data['invite_uid'] = $check = Db::name('member')->where(['phone' => trim($data['invite_phone'])])->value('uid');
                     if (!$check) return json($this->outJson(0,'推荐人不存在哦！'));
+                    $data['invite_time'] = date('Y-m-d H:i:s');
                 }
 
                 // 验证该号码是否已经被注册

@@ -62,9 +62,18 @@ class Pay extends Base
     {
         try{
             if ($this->request->isPost()) {
-                $balance = Db::name('member')->where(['uid' => $this->uid])->value('balance');
-                $frost_money = Db::name('hire_log')->where(['uid' => $this->uid,'is_check' => 0])->sum('hire_money');
-                return json($this->outJson(1,'获取成功',['use_money' => $balance, 'frost_money' => $frost_money]));
+                $data = array();
+                $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+                $money = Db::name('member')->where(['uid' => $uid])->filed('withdraw_money,have_withdrawal_money,member_brokerage_money,task_money,channel_money,static_money')->find();
+                if($money) {
+                    //可提现金额
+                    $data['balance_money'] = $money['member_brokerage_money']+$money['task_money']+$money['channel_money']+$money['static_money']-$money['withdraw_money']-$money['have_withdrawal_money'];
+                    //提现中
+                    $data['balance_money'] = $money['have_withdrawal_money'];
+                    //已提现
+                    $data['balance_money'] = $money['withdraw_money'];
+                }
+                return json($this->outJson(1,'获取成功',$data));
             } else {
                 return json($this->outJson(500,'非法操作'));
             }
@@ -191,11 +200,11 @@ class Pay extends Base
         }
         //专属VIP任务 获取比本身会员高一级的任务
         $model = new \app\api\model\Member();
-        if($task_user_level = 2){
+        if($task_user_level == 2){
             $user_level = '2,3,4';
-        }elseif($task_user_level = 3){
+        }elseif($task_user_level == 3){
             $user_level = '3,4';
-        }elseif($task_user_level = 4){
+        }elseif($task_user_level == 4){
             $user_level = '4';
         }
         $level_task = $model->memberTaskMore($user_level,1,5);
@@ -221,11 +230,11 @@ class Pay extends Base
         $task_user_level = $this->request->param('task_user_level');    //滑动停留会员等级
         //专属VIP任务 获取比本身会员高一级的任务
         $model = new \app\api\model\Member();
-        if($task_user_level = 2){
+        if($task_user_level == 2){
             $user_level = '2,3,4';
-        }elseif($task_user_level = 3){
+        }elseif($task_user_level == 3){
             $user_level = '3,4';
-        }elseif($task_user_level = 4){
+        }elseif($task_user_level == 4){
             $user_level = '4';
         }
         $data = $model->memberTaskMore($user_level,$page,15);
