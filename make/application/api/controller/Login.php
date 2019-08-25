@@ -52,7 +52,7 @@ class Login extends Base
                         $token = \auth\Token::instance()->getAccessToken($checkPhone['uid'],$checkPhone['nick_name']);
                         //验证会员到期时间存储消息
                         $expire = 60*60*24*30;
-                        $vip_end = strtotime($$checkPhone['vip_end_time']) - time();
+                        $vip_end = strtotime($checkPhone['vip_end_time']) - time();
                         if($expire < $vip_end){
                             $end_time = sprintf('%d', floor($vip_end / 86400));
                             $this->insertMessage([
@@ -61,7 +61,7 @@ class Login extends Base
                                 'add_time' => date('Y-m-d H:i:s')
                             ]);
                         }
-                        return json($this->outJson(1, '登录成功', ['token' => $token['data']]));
+                        return json($this->outJson(1, '登录成功', $token['data']));
                     }
                 }else {
                     $model = new \app\api\model\Member();
@@ -69,7 +69,7 @@ class Login extends Base
                     if($result['status'] == 1){
                         //验证会员到期时间存储消息
                         $expire = 60*60*24*30;
-                        $vip_end = strtotime($$checkPhone['vip_end_time']) - time();
+                        $vip_end = strtotime($checkPhone['vip_end_time']) - time();
                         if($expire < $vip_end){
                             $end_time = sprintf('%d', floor($vip_end / 86400));
                             $this->insertMessage([
@@ -87,12 +87,6 @@ class Login extends Base
         } catch (\Exception $e){
             return json($this->outJson(0,'服务器响应失败'));
         }
-    }
-
-    // 用户注册页
-    public function registration()
-    {
-        return $this->fetch('demo');
     }
 
 
@@ -129,11 +123,6 @@ class Login extends Base
                     return json($this->outJson(0,'请选择所在地！'));
                 }
 
-                 //验证短信验证码
-//                $bool = $this->checkPhoneCode(trim($data['phone']), trim($data['code']), 'register');
-//                if (!$bool) return json($this->outJson(0,'短信验证码错误'));
-
-
                 // 验证通过后 写库
                 $model = new \app\api\model\Member();
                 $result = $model->sendReg($data);
@@ -164,16 +153,12 @@ class Login extends Base
             return json($this->outJson(0,$validate->getError()));
         }
         //验证短信验证码
-        $bool = $this->checkPhoneCode(trim($data['phone']), trim($data['code']), 'register');
-        if (!$bool) return json($this->outJson(0,'短信验证码错误'));
+        $bool = $this->checkPhoneCode(trim($data['phone']), trim($data['code']),trim($data['scene']));
+        if (!$bool){
+            return json($this->outJson(0,'短信验证码错误'));
+        }
+        return json($this->outJson(1,'短信验证成功'));
     }
-
-    // 找回密码页
-    public function findation()
-    {
-        return $this->fetch('demo');
-    }
-
 
     /**
      * 找回密码
@@ -188,10 +173,6 @@ class Login extends Base
                 if (!$vdata = $validate->scene('find')->check($data)) {
                     return json($this->outJson(0,$validate->getError()));
                 }
-                // 验证短信验证码
-                $bool = $this->checkPhoneCode(trim($data['phone']), trim($data['code']), 'find');
-                if (!$bool) return json($this->outJson(0,'短信验证码错误'));
-
                 $model = new \app\api\model\Member();
                 $result = $model->sendFind($data);
                 return json($result);
@@ -229,15 +210,8 @@ class Login extends Base
     {
         try{
             if ($this->request->isPost()) {
-                $id = $this->request->param('id');
-                $level = $this->request->param('level');
-                if($id == 0 && $level == 1){ //获取省
-                    $data = \app\api\data\Area::instance()->getProvinceData($id,$level);
-                }
-                if($id != 0 && $level == 2){ //获取市
-                    $data = \app\api\data\Area::instance()->getCityData($id,$level);
-                }
-
+                $data['province'] = \app\api\data\Area::instance()->getProvinceData();
+                $data['city'] = \app\api\data\Area::instance()->getCityAllData();
                 return json($this->outJson(1,'获取成功',$data));
             } else {
                 return json($this->outJson(500,'非法操作'));

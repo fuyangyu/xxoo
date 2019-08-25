@@ -23,14 +23,15 @@ class Member extends Validate
         'password.min'  => '密码不能小于6个字符',
         'confirm_password.require' => '确认密码不能为空',
         'confirm_password.confirm' => '密码和确认密码输入不一致',
-        'region' => '请选择所在地！',
+        'province' => '请选择所在地！',
+        'city' => '请选择所在地！',
     ];
 
     protected $scene = [
         'login' => ['phone','password'], //默认登陆
         'VerifyLogin' => ['phone'], //验证码登陆
-        'find' => ['phone','password','code'],
-        'register' => ['phone','code','password','confirm_password','region'],
+        'find' => ['phone','password'],
+        'register' => ['phone','code','password','province','city'],
 //        'register' => ['phone','code','password','confirm_password','invite_phone'],
     ];
 

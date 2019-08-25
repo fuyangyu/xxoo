@@ -6,22 +6,6 @@ use think\Db;
 
 class Member extends Base
 {
-    // 个人中心（暂时不用）
-    public function index()
-    {
-        try{
-            if ($this->request->isPost()) {
-                $model = new \app\api\model\Member();
-                $data = $model->getIndexData($this->uid);
-                return json($this->outJson(1,'获取成功',$data));
-            } else {
-                return json($this->outJson(500,'非法操作'));
-            }
-        } catch (\Exception $e) {
-            return json($this->outJson(0,'服务器响应失败' . $e->getMessage()));
-        }
-    }
-
 
     //个人信息渲染页
     public function userInfoActio(){
@@ -45,8 +29,8 @@ class Member extends Base
         try{
             if ($this->request->isPost()) {
                 $data = array();
-                $uid = $this->request->param('uid');
-                if(!$uid || $this->uid) return json($this->outJson(2,'未登录'));
+                $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+                if(!$uid) return json($this->outJson(2,'未登录'));
                 //用户信息
                 $data['user'] = Db::name('member')->where('uid',$uid)->field('nick_name,face,member_class,vip_end_time')->find();
                 //直推人数
@@ -85,8 +69,8 @@ class Member extends Base
      */
     public function userTeamNum(){
         if($this->request->isPost()) {
-            $uid = $this->request->param('uid');
-            if(!$uid || $this->uid) return json($this->outJson(2,'未登录'));
+            $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+            if(!$uid) return json($this->outJson(2,'未登录'));
             if(Cache::get('team'.$uid)) {
                 $num = Cache::get('team'.$uid);
             }else{
@@ -107,8 +91,8 @@ class Member extends Base
      */
     public function userDirectRecord(){
 
-        $uid = $this->request->param('uid');
-        if(!$uid || $this->uid) return json($this->outJson(2,'未登录'));
+        $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+        if(!$uid) return json($this->outJson(2,'未登录'));
         $user = Db::name('member')->where('invite_uid',$uid)->field('nick_name,phone,face,member_class,invite_time')->select();
         if($user){
             $model = new \app\api\model\Member();
@@ -125,8 +109,8 @@ class Member extends Base
      * @return \think\response\Json
      */
     public function userTeamRecord(){
-        $uid = $this->request->param('uid');
-        if(!$uid || $this->uid) return json($this->outJson(2,'未登录'));
+        $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+        if(!$uid) return json($this->outJson(2,'未登录'));
         if(Cache::get('team'.$uid)) {
             $data = Cache::get('team'.$uid);
         }else{
@@ -456,57 +440,7 @@ class Member extends Base
     }
 
 
-
-    // 绑定银行卡
-    public function bank()
-    {
-        try{
-            if ($this->request->isPost()) {
-                $checkData = $this->request->param();
-                $status = $this->request->param('status',1);
-                $validate = new \app\api\validate\Bank();
-                if (!$vdata = $validate->scene('bank')->check($checkData)) {
-                    return json($this->outJson(0,$validate->getError()));
-                }
-                /*$code = $this->request->param('code');
-                // 验证短信验证码
-                $bool = $this->checkPhoneCode($this->getUserPhone(), trim($code), 'band');
-                if (!$bool) return json($this->outJson(0,'短信验证码错误'));*/
-
-                $insert = [
-                    'user_name' => trim($checkData['user_name']),
-                    'bank_name' => trim($checkData['bank_name']),
-                    'bank_branch_name' => trim($checkData['bank_branch_name']),
-                    'bank_card_num' => trim($checkData['bank_card_num']),
-                    'uid' => $this->uid,
-                    'add_time' => date('Y-m-d H:i:s')
-                ];
-                if ($status == 1) {
-                	$is_check = Db::name('bank_info')->where(['uid' => $this->uid])->value('id');
-					if ($is_check) return json($this->outJson(0,'提交方式错误'));
-                    // 新增
-                    $id = Db::name('bank_info')->insertGetId($insert);
-                    if ($id) {
-                        return json($this->outJson(1,'操作成功'));
-                    } else {
-                        return json($this->outJson(0,'操作失败'));
-                    }
-                } else {
-                    // 修改
-                    unset($insert['uid']);
-                    unset($insert['add_time']);
-                    Db::name('bank_info')->where(['uid' => $this->uid])->update($insert);
-                    return json($this->outJson(1,'操作成功'));
-                }
-            } else {
-                return json($this->outJson(500,'非法操作'));
-            }
-        } catch (\Exception $e) {
-            return json($this->outJson(0,'服务器响应失败'));
-        }
-    }
-
-    // 绑定支付银行卡
+    // 绑定支付银行卡(未调用)
     public function payBank()
     {
         try{
@@ -549,96 +483,6 @@ class Member extends Base
                     Db::name('bank_pay_info')->where(['uid' => $this->uid])->update($insert);
                     return json($this->outJson(1,'操作成功'));
                 }
-            } else {
-                return json($this->outJson(500,'非法操作'));
-            }
-        } catch (\Exception $e) {
-            return json($this->outJson(0,'服务器响应失败'));
-        }
-    }
-
-    /**
-     * 获取用户的银行卡信息
-     * @return \think\response\Json
-     */
-    public function getBank()
-    {
-        try{
-            if ($this->request->isPost()) {
-                $type = $this->request->param('type',1);
-                if ($type == 1) {
-                    // 提现
-                    $data = Db::name('bank_info')
-                        ->where(['uid' => $this->uid])
-                        ->field('user_name,bank_name,bank_branch_name,bank_card_num')
-                        ->find();
-                    $data = $data ? $data : [];
-                } else {
-                    // 充值
-                    $data = Db::name('bank_pay_info')
-                        ->where(['uid' => $this->uid])
-                        ->field('user_name,bank_name,bank_branch_name,bank_card_num,phone,id_card_num')
-                        ->find();
-                    $data = $data ? $data : [];
-                }
-                return json($this->outJson(1,'获取成功',$data));
-            } else {
-                return json($this->outJson(500,'非法操作'));
-            }
-        } catch (\Exception $e){
-            return json($this->outJson(0,'服务器响应失败'));
-        }
-    }
-
-    /**
-     * 获取银行列表
-     * @return \think\response\Json
-     */
-    public function getBankInfo()
-    {
-        try{
-            if ($this->request->isPost()) {
-                return json($this->outJson(1,'获取成功',config('code.bank_info')));
-            } else {
-                return json($this->outJson(500,'非法操作'));
-            }
-        } catch (\Exception $e) {
-            return json($this->outJson(0,'服务器响应失败'));
-        }
-    }
-
-    /**
-     * 我的团队 - 获取下线会员级别数量-【TODO 已废弃】
-     * @return \think\response\Json
-     */
-    public function getUserChildTeamNum()
-    {
-        try{
-            if ($this->request->isPost()) {
-                $model = new \app\api\model\Member();
-                $data = $model->getUserChildTeamInfo($this->uid,1);
-                return json($this->outJson(1, '获取成功',$data));
-            } else {
-                return json($this->outJson(500,'非法操作'));
-            }
-        } catch (\Exception $e) {
-            return json($this->outJson(0,'服务器响应失败'));
-        }
-    }
-
-    /**
-     * 我的团队 - 获取某个级别会员的具体下线用户信息-【TODO 已废弃】
-     * @return \think\response\Json
-     */
-    public function getUserChildTeam()
-    {
-        try{
-            if ($this->request->isPost()) {
-                $level = $this->request->param('level');
-                if (!in_array($level,[1,2,3])) return json($this->outJson(0, '请求参数错误'));
-                $model = new \app\api\model\Member();
-                $data = $model->getUserChildTeamInfo($this->uid,2, $level);
-                return json($this->outJson(1, '获取成功',$data));
             } else {
                 return json($this->outJson(500,'非法操作'));
             }

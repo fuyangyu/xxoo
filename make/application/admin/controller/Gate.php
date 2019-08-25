@@ -231,6 +231,8 @@ class Gate extends AdminBase
         $data['investment_mobile'] = isset($data['investment_mobile']) ? $data['investment_mobile'] : '';
         $data['official_mobile'] = isset($data['official_mobile']) ? $data['official_mobile'] : '';
         $data['service_time'] = isset($data['service_time']) ? $data['service_time'] : '';
+        $data['service_weixin'] = isset($data['service_weixin']) ? $data['service_weixin'] : '';
+        $data['service_email'] = isset($data['service_email']) ? $data['service_email'] : '';
         if ($this->request->isAjax()) {
             $insert = array_merge($data,$this->request->param());
             cp_setCacheFile('system',$insert);

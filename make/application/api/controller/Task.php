@@ -6,34 +6,64 @@ class Task extends Base
 
     /**
      * 当前任务
+     * is_start 是否开始 0 未开始 1 开始
      * @return \think\response\Json
      */
     public function task(){
         $data = array();
-        $task_cid = $this->request->param('task_cid');  //任务分区参数
-        if(empty($task_cid)){   //首次进入不传任务分区的参数
+//        $task_cid = $this->request->param('task_cid');  //任务分区参数
+//        if(empty($task_cid)){   //首次进入不传任务分区的参数
             //任务区
             $data['classify'] = Db::name('task_classify')
                 ->order(['sort' => 'asc', 'task_cid' => 'desc'])
                 ->field('task_cid,name')
                 ->select();
             if($data['classify']){
-                $task_cid = $data['classify'][0]['task_cid'];
-            }
-        }
-        //当天任务
-        $sql = "SELECT task_id,title,task_icon,is_area,task_user_level,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num FROM wld_task
-                WHERE start_time < unix_timestamp(now()) AND status = 1 AND task_cid = {$task_cid}
-                ORDER BY start_time DESC LIMIT 5;";
-        $task = Db::query($sql);
-        if(!empty($task)){
-            foreach($task as &$v){
-                if($v['is_area'] == 1){
-                    $v['task_area'] = json_decode($v['task_area'],true)['city'];
+                foreach($data['classify'] as $k =>$v){
+                    //当前任务
+                    $sql = "SELECT task_id,title,task_icon,is_area,task_user_level,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num,(limit_total_num-get_task_num) as authentic_num,1 as is_start FROM wld_task
+                            WHERE start_time < unix_timestamp(now()) AND status = 1 AND task_cid = {$v['task_cid']}
+                            ORDER BY start_time DESC LIMIT 5;";
+                    $data['task'][$v['task_cid']] = Db::query($sql);
+                    foreach($data['task'][$v['task_cid']] as $key => &$value){
+                        if($value['is_area'] == 1){
+                            $value['task_area'] = json_decode($value['task_area'],true)['city'];
+                        }
+                        $value['task_icon'] = $this->request->domain().$value['task_icon'];
+                        if($this->uid){
+                            $logId = Db::name('send_task_log')->where(['uid'=>$this->uid,'task_id'=>$value['task_id']])->where('is_check','in',[0,2])->find();
+                            $member_classs = Db::name('member')->where('uid',$this->uid)->value('member_class');
+                            if($logId){
+                                $data['task'][$v['task_cid']][$key]['status'] = 1;    //已经领取
+                            }
+                            $data['task'][$v['task_cid']][$key]['member_classs'] = $member_classs;
+                        }
+                    }
+                    //任务预告
+                    $noticeSql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money,0 as is_start FROM wld_task
+                                  WHERE start_time > unix_timestamp(now()) AND status = 1 AND task_cid = {$v['task_cid']}
+                                  ORDER BY start_time ASC LIMIT 4;";
+                    $data['notice'][$v['task_cid']] = Db::query($noticeSql);
+                    if(!empty($data['notice'][$v['task_cid']])){
+                        foreach($data['notice'][$v['task_cid']] as &$vas){
+                            if($vas['is_area'] == 1){
+                                $vas['task_area'] = json_decode($vas['task_area'],true)['city'];
+                            }
+                            $vas['task_icon'] = $this->request->domain().$vas['task_icon'];
+                        }
+                    }
                 }
             }
+
+
+        //收入榜
+        $moneySql = "SELECT (member_brokerage_money+task_money+channel_money+static_money) as moeny_sum,face,nick_name FROM wld_member ORDER BY (member_brokerage_money+task_money+channel_money+static_money) DESC LIMIT 5;";
+        $data['money'] = Db::query($moneySql);
+        if($data['money']){
+            foreach($data['money'] as &$item){
+                $item['face'] = $this->request->domain().$item['face'];
+            }
         }
-        $data['task'] = $task;
         return json($this->outJson(1,'成功',$data));
     }
 
@@ -51,14 +81,23 @@ class Task extends Base
             if ($page > 1) {
                 $start = ($page-1) * $limit;
             }
-            $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num FROM wld_task
+            $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num,(limit_total_num-get_task_num) as authentic_num,1 as is_start FROM wld_task
                     WHERE start_time < unix_timestamp(now()) AND status = 1 AND task_cid = {$task_cid}
                     ORDER BY start_time DESC LIMIT {$start},{$limit};";
             $task = Db::query($sql);
             if(!empty($task)){
-                foreach($task as &$v){
+                foreach($task as $k => &$v){
                     if($v['is_area'] == 1){
                         $v['task_area'] = json_decode($v['task_area'],true)['city'];
+                    }
+                    $v['task_icon'] = $this->request->domain().$v['task_icon'];
+                    if($this->uid){
+                        $logId = Db::name('send_task_log')->where('uid',$this->uid)->find();
+                        $member_classs = Db::name('member')->where('uid',$this->uid)->value('member_class');
+                        if($logId){
+                            $task[$k]['status'] = 1;    //已经领取
+                        }
+                        $task[$k]['member_classs'] = $member_classs;
                     }
                 }
             }
@@ -72,13 +111,14 @@ class Task extends Base
 
     /**
      * 任务预告
+     * is_start 是否开始 0 未开始 1 开始
      *  @return \think\response\Json
      */
-    public function taskNotice(){
+/*    public function taskNotice(){
 
         $data = array();
         //当天任务
-        $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money FROM wld_task
+        $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money,0 as is_start FROM wld_task
                 WHERE start_time > unix_timestamp(now()) AND status = 1
                 ORDER BY start_time ASC LIMIT 4;";
         $data = Db::query($sql);
@@ -87,26 +127,29 @@ class Task extends Base
                 if($v['is_area'] == 1){
                     $v['task_area'] = json_decode($v['task_area'],true)['city'];
                 }
+                $v['task_icon'] = $this->request->domain().$v['task_icon'];
             }
         }
         return json($this->outJson(1,'成功',$data));
-    }
+    }*/
 
     /**
      * 任务预告更多请求
+     * is_start 是否开始 0 未开始 1 开始
      * @return \think\response\Json
      */
 
     public function taskNoticeMore(){
         $data = array();
         $page = $this->request->param('page',1); //页数
+        $task_cid = $this->request->param('task_cid');  //任务分区参数
         $limit = 10;    //每页数量
         $start = 0;     //开始位置
         if ($page > 1) {
             $start = ($page-1) * $limit;
         }
-        $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money FROM wld_task
-                    WHERE start_time > unix_timestamp(now()) AND status = 1
+        $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money,0 as is_start FROM wld_task
+                    WHERE start_time > unix_timestamp(now()) AND status = 1 AND task_cid = {$task_cid}
                     ORDER BY start_time ASC LIMIT {$start},{$limit};";
         $data = Db::query($sql);
         if(!empty($data)){
@@ -114,6 +157,7 @@ class Task extends Base
                 if($v['is_area'] == 1){
                     $v['task_area'] = json_decode($v['task_area'],true)['city'];
                 }
+                $v['task_icon'] = $this->request->domain().$v['task_icon'];
             }
         }
         return json($this->outJson(1,'成功',$data));

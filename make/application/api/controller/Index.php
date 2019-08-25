@@ -34,7 +34,7 @@ class Index extends Controller
                     $check_item = $phone . '_' . $randCode . '_' . $scene;
                     $display_name = '找回密码';
                     break;
-                case 'band':
+                case 'bank':
                     $check_item = $phone . '_' . $randCode . '_' . $scene;
                     $display_name = '绑定银行卡';
                     break;
@@ -42,6 +42,16 @@ class Index extends Controller
                     if (!$checkPhone) return json($this->outJson(0,'该手机号还未注册'));
                     $check_item = $phone . '_' . $randCode . '_' . $scene;
                     $display_name = '验证码登陆';
+                    break;
+                case 'alipay':
+                    if (!$checkPhone) return json($this->outJson(0,'该手机号还未注册'));
+                    $check_item = $phone . '_' . $randCode . '_' . $scene;
+                    $display_name = '添加支付宝账号';
+                    break;
+                case 'withdraw':
+                    if (!$checkPhone) return json($this->outJson(0,'该手机号还未注册'));
+                    $check_item = $phone . '_' . $randCode . '_' . $scene;
+                    $display_name = '设置提现密码';
                     break;
             }
             if (!$check_item) return json($this->outJson(0,'短信场景不存在'));

@@ -8,9 +8,11 @@ return array (
   'member_img' => '/uploads/member/20181210/648d5530c6b1abca038b9c141abbcb8f.jpg',
   'make_des' => '进入首页“点动会员”，选择会员级别并完成支付@进入首页“任务中心”，领取广告任务@按照任务需求，发布任务到指定媒介渠道@进入个人中心，点击“提交任务”@系统审核完成后，该笔任务完成',
   'make_img' => '/uploads/banner/20181213/7031cfdff6f888137e50801e57ae695f.jpg',
-  'service_mobile' => '135 4546 5859',
-  'investment_mobile' => '135 1041 5119',
-  'official_mobile' => '135 4546 5859',
+  'service_mobile' => '13545465859',
+  'investment_mobile' => '13510415119',
+  'official_mobile' => '13545465859',
   'service_time' => '9:00-18:00',
+  'service_weixin' => '17610619619',
+  'service_email' => 'nidaye@qq.com',
 );
 ?>

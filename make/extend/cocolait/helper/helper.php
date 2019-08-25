@@ -564,3 +564,47 @@ if (!function_exists('cp_get_client_ip')) {
     }
 }
 
+
+if (!function_exists('cp_substr_cut')) {
+    /**
+     * 只保留字符串首尾字符，隐藏中间用*代替（两个字符时只显示第一个）
+     * @param string $user_name 姓名
+     * @return string 格式化后的姓名
+     */
+    function cp_substr_cut($user_name){
+        $strlen   = mb_strlen($user_name, 'utf-8');
+        $firstStr   = mb_substr($user_name, 0, 1, 'utf-8');
+        $lastStr   = mb_substr($user_name, -1, 1, 'utf-8');
+        return $strlen == 2 ? $firstStr . str_repeat('*', mb_strlen($user_name, 'utf-8') - 1) : $firstStr . str_repeat("*", $strlen - 2) . $lastStr;
+    }
+}
+
+
+
+if (!function_exists('cp_func_substr_replace')) {
+    /**
+     * 隐藏部分字符串
+     * # 此方法多用于手机号码或身份证号、银行卡号的中间部分数字的隐藏
+     * @param $start 前面显示的数量
+     * @param $length 替换字符转的数量
+     */
+    function cp_func_substr_replace($str, $replacement = '*', $start = 1, $length = 3)
+    {
+        $len = mb_strlen($str, 'utf-8');
+        if ($len > intval($start + $length)) {
+            $str1 = mb_substr($str, 0, $start, 'utf-8');
+            $str2 = mb_substr($str, intval($start + $length), NULL, 'utf-8');
+        } else {
+            $str1 = mb_substr($str, 0, 1, 'utf-8');
+            $str2 = mb_substr($str, $len - 1, 1, 'utf-8');
+            $length = $len - 2;
+        }
+        $new_str = $str1;
+        for ($i = 0; $i < $length; $i++) {
+            $new_str .= $replacement;
+        }
+        $new_str .= $str2;
+        return $new_str;
+    }
+
+}

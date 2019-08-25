@@ -16,6 +16,9 @@ class Send
             //登陆注册
             'api_login_login', 'api_login_register', 'api_login_findps', 'api_login_loginout', 'api_login_registration', 'api_login_logination',
             'api_login_findation', 'api_login_getarea', 'api_login_verifier',
+            //首页
+            'api_home_play','api_home_notice','api_home_noticeidfind','api_home_showtask','api_home_showtaskmore','api_home_official',
+            'api_home_showcharge',
             //短信发送
             'api_index_getcode',
             //用户信息
@@ -25,15 +28,18 @@ class Send
             //我的
             'api_member_user','api_member_userdirectrecord','api_member_userearnings','api_member_userearningslog','api_member_userearningspool',
 
+            //我的钱包
+            'api_pay_addalipay','api_pay_bankverify','api_pay_wallet','api_pay_withdraw',
+
             //会员充值
-            'api_pay_membercenter','api_pay_privilegetaskmore','api_pay_chargepay',
+            'api_pay_membercenter','api_pay_privilegetaskmore','api_pay_chargepay','api_pay_getbank',
 
             //邀请好友
             'api_invit_index',
 
             //任务
             'api_task_findtask', 'api_task_uptaskfile', 'api_task_subtask', 'api_task_task','api_task_taskmore','api_task_draw','api_task_tasknotice',
-            'api_task_taskNoticemore','api_task_tasklist',
+            'api_task_tasknoticemore','api_task_tasklist',
 
             //消息
             'api_home_messagestatus'

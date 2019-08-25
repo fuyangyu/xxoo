@@ -79,170 +79,7 @@ class Member extends Base
         return $data;
     }
 
-    /**
-     * 获取用户个人资料 (暂未调用)
-     * @param $uid
-     * @return array|false|\PDOStatement|string|\think\Model
-     */
-    public function getMemberInfo($uid)
-    {
-        $phone = $this->where(['uid' => $uid])->value('phone');
-        $old = Db::name('member_info')
-                ->where(['uid' => $uid])
-                ->field('true_name,province,city,address,district')
-                ->find();
-        if ($old) {
-            $old['phone'] = $phone;
-            return $old;
-        } else {
-            $data = [
-                'true_name' => '',
-                'province' => '',
-                'city' => '',
-                'district' => '',
-                'address' => '',
-                'phone' => $phone
-            ];
-            return $data;
-        }
-    }
 
-    /**
-     * 获取我的团队 等级会员的个数 以及 那个会员级别具体信息 【已废弃】
-     * @param $uid
-     * @param $status
-     * @param int $level
-     * @return array
-     */
-    public function getUserChildTeamInfo($uid, $status, $level = 1)
-    {
-        if ($status == 1) {
-            // 获取每个会员级别的数量
-            $data = Db::query("SELECT * FROM wld_member WHERE `parent_level_1` = {$uid} OR `parent_level_2` = {$uid} OR `parent_level_3` = {$uid} ORDER BY `uid` DESC");
-            $temp = [
-                'user_level_1_total' => 0,
-                'user_level_2_total' => 0,
-                'user_level_3_total' => 0
-            ];
-            foreach ($data as $v) {
-                if ($v['parent_level_1'] == $uid) {
-                    $temp['user_level_1_total']++;
-                }
-                if ($v['parent_level_2'] == $uid) {
-                    $temp['user_level_2_total']++;
-                }
-                if ($v['parent_level_3'] == $uid) {
-                    $temp['user_level_3_total']++;
-                }
-            }
-            return $temp;
-        } else {
-            // 获取每个会员级别的下线用户
-            $data = [];
-            switch ($level) {
-                case 1:
-                    $data = Db::name('member')->field('phone,member_class,face,add_time')->where(['parent_level_1' => $uid])->select();
-                    break;
-                case 2:
-                    $data = Db::name('member')->field('phone,member_class,face,add_time')->where(['parent_level_2' => $uid])->select();
-                    break;
-                case 3:
-                    $data = Db::name('member')->field('phone,member_class,face,add_time')->where(['parent_level_3' => $uid])->select();
-                    break;
-            }
-            $res = $this->sendUserClass($data);
-            return $res;
-        }
-    }
-
-    /**
-     * 获取团队下线会员数 (未调用)
-     * @param $uid
-     * @param int $page
-     * @param int $limit
-     * @return array
-     */
-    public function getUserChildTeams($uid, $page = 1, $limit = 15)
-    {
-        $start = 0;
-        if ($page != 1) {
-            $start = ($page-1) * $limit;
-        }
-        $limits = $start . "," . $limit;
-        $data = Db::query("SELECT * FROM wld_member WHERE `parent_level_1` = {$uid} OR `parent_level_2` = {$uid} OR `parent_level_3` = {$uid} OR `parents` = {$uid} ORDER BY `uid` DESC LIMIT {$limits}");
-        // 查询总记录数
-        $total = Db::query("SELECT count(*) as total FROM wld_member WHERE `parent_level_1` = {$uid} OR `parent_level_2` = {$uid} OR `parent_level_3` = {$uid} OR `parents` = {$uid}");
-        $pageNum = 0;
-        // 计算总页数
-        if (isset($total[0]['total']) && $total[0]['total'] > 0) {
-            $pageNum = ceil($total[0]['total'] / $limit);
-        }
-        $result = [];
-        if ($data) {
-            foreach ($data as $k => $v) {
-                if (!$v['face']) {
-                    $result[$k]['face'] = $this->appDefaultFace;
-                }
-                $result[$k]['member_class'] = $this->getMemberClassAttr($v['member_class']);
-                $result[$k]['phone'] = $v['phone'];
-                $result[$k]['add_time'] = $v['add_time'];
-            }
-        }
-        return $this->outJson(1,'获取成功',['result' => $result, 'page_total' => $pageNum]);
-    }
-
-    /**
-     * 处理每个级别会员下线的个数和具体用户信息 【已废弃】
-     * @param $data
-     * @return array
-     */
-    protected function sendUserClass($data)
-    {
-        $init = [
-            'level_1' => [
-                'total' => 0,
-                'user_info' => []
-            ],
-            'level_2' => [
-                'total' => 0,
-                'user_info' => []
-            ],
-            'level_3' => [
-                'total' => 0,
-                'user_info' => []
-            ],
-        ];
-        if ($data) {
-            foreach ($data as $v) {
-                if ($v['member_class'] == 1) {
-                    // 普通会员
-                    $init['level_1']['total']++;
-                    array_push($init['level_1']['user_info'],$v);
-                }
-                if ($v['member_class'] == 2) {
-                    // 普通VIP
-                    $init['level_2']['total']++;
-                    array_push($init['level_2']['user_info'],$v);
-                }
-                if ($v['member_class'] == 3) {
-                    // 高级VIP
-                    $init['level_3']['total']++;
-                    array_push($init['level_3']['user_info'],$v);
-                }
-            }
-        }
-        foreach ($init as $k => $v) {
-            if ($v['total'] > 0) {
-                foreach ($v['user_info'] as $k2 => $v2) {
-                    if (!$v2['face']) {
-                        $init[$k]['user_info'][$k2]['face'] = $this->appDefaultFace;
-                    }
-                    $init[$k]['user_info'][$k2]['member_class'] = $this->getMemberClassAttr($v2['member_class']);
-                }
-            }
-        }
-        return $init;
-    }
 
     /**
      * 用户个人资料新增和更新(暂时没用)
@@ -301,12 +138,12 @@ class Member extends Base
         $password = $data['password'];
         $check = Db::name('member')->where(['phone' => $phone])->field('uid,password,nick_name')->find();
         if (!$check) return $this->outJson(0,'用户名或者密码错误');
-        if ($check['password'] != cp_encryption_password($password)) {
+        if ($check['password'] != $password) {
             return $this->outJson(0,'用户名或者密码错误');
         }
         $token = \auth\Token::instance()->getAccessToken($check['uid'],$check['nick_name']);
 
-        return $this->outJson(1,'登录成功',['data' => $token['data']]);
+        return $this->outJson(1,'登录成功', $token['data']);
     }
 
     /**
@@ -321,9 +158,8 @@ class Member extends Base
         $password = $data['password'];
         $uid = Db::name('member')->where(['phone' => $phone])->value('uid');
         if (!$uid) return $this->outJson(0,'该手机号码未注册');
-        $bool = Db::name('member')->where(['uid' => $uid])->update([
-            'password' => cp_encryption_password($password)
-        ]);
+        $sql = "update wld_member set password = '{$password}' where uid= {$uid}";
+        $bool = Db::execute($sql);
         if ($bool) {
             return $this->outJson(1,'修改成功');
         } else {
@@ -344,7 +180,7 @@ class Member extends Base
             // 注册新用户
             $uid = Db::name('member')->insertGetId([
                 'phone' => trim($data['phone']),
-                'password' => cp_encryption_password($data['password']),
+                'password' => $data['password'],
                 'invite_uid' => $data['invite_uid'],
                 'member_class' => 1,//普通会员
                 'add_time' => date('Y-m-d H:i:s'),
@@ -371,7 +207,7 @@ class Member extends Base
                     // 提交事务
                     Db::commit();
                     $token = \auth\Token::instance()->getAccessToken($uid);
-                    return $this->outJson(1, '注册成功', ['token' => $token['data']]);
+                    return $this->outJson(1, '注册成功', $token);
                 } else {
                     Db::rollback();
                     return $this->outJson(0, '注册失败');

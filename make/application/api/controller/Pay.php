@@ -4,34 +4,103 @@ use think\Db;
 class Pay extends Base
 {
     /**
-     * 提现申请
+     * 我的钱包
      * @return \think\response\Json
      */
-    public function pull()
+    public function wallet()
     {
         try{
             if ($this->request->isPost()) {
-                $money = trim($this->request->param('money'));
-                if (!$money) return json($this->outJson(0,'请求参数不完整'));
-                $old = Db::name('member')->where(['uid' => $this->uid])->field('balance,phone')->find();
-                // 检测可用余额
-                if ($money > $old['balance']) {
-                    return json($this->outJson(0,'金额不能超过最大可提现余额'));
+                $data = array();
+                $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+                $money = Db::name('member')->where(['uid' => $uid])->field('withdraw_money,have_withdrawal_money,member_brokerage_money,task_money,channel_money,static_money,withdrawal_password')->find();
+                if($money) {
+                    //可提现金额
+                    $data['can_money'] = $money['member_brokerage_money']+$money['task_money']+$money['channel_money']+$money['static_money']-$money['withdraw_money']-$money['have_withdrawal_money'];
+                    //提现中
+                    $data['have_withdrawal_money'] = $money['have_withdrawal_money'];
+                    //已提现
+                    $data['withdraw_money'] = $money['withdraw_money'];
                 }
-                // 检测银行卡绑定信息
-                $check = Db::name('bank_info')->where(['uid' => $this->uid])->value('id');
-                if(!$check) return json($this->outJson(0,'未绑定银行卡信息无法进行提现'));
+                $data['withdrawal_password'] = !empty($money['withdrawal_password'])?1:0;
+                $alipay = Db::name('alipay_info')->where('uid',$uid)->find();
+                $data['alipay'] = !empty($alipay)?1:0;
+                $bank = Db::name('bank_info')->where('uid',$uid)->find();
+                $data['bank'] = !empty($bank)?1:0;
+
+                return json($this->outJson(1,'获取成功',$data));
+            } else {
+                return json($this->outJson(500,'非法操作'));
+            }
+        } catch(\Exception $e){
+            return json($this->outJson(0,'服务器响应失败'));
+        }
+    }
+
+    /**我的钱包-提现页验证
+     * @return \think\response\Json
+     */
+    public function withdrawShow(){
+        $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+        $alipay = Db::name('alipay_info')->where('uid',$uid)->find();
+        $bank = Db::name('bank_info')->where('uid',$uid)->find();
+        if(!$alipay || !$bank){
+            return json($this->outJson(0,'请先完善提现银行卡或提现支付宝'));
+        }
+        $money = Db::name('member')->where(['uid' => $uid])->field('withdraw_money,have_withdrawal_money,member_brokerage_money,task_money,channel_money,static_money,withdrawal_password')->find();
+        //可提现金额
+        $data['can_money'] = $money['member_brokerage_money']+$money['task_money']+$money['channel_money']+$money['static_money']-$money['withdraw_money']-$money['have_withdrawal_money'];
+        if($bank){
+            $data['tacitly'] = 1;
+        }elseif($alipay){
+            $data['tacitly'] = 2;
+        }
+        return json($this->outJson(1,'获取成功',$data));
+    }
+
+    public function withdraw(){
+        try{
+            if ($this->request->isPost()) {
+//                $this->uid = 374;
+                $money = trim($this->request->param('money'));
+                $type = $this->request->param('type'); //提现方式 1银行卡 2支付宝
+                $password = trim($this->request->param('password'));
+                if (!$money || !$type || !$password) return json($this->outJson(0,'请求参数不完整'));
+                $member = Db::name('member')->where(['uid' => $this->uid])->field('withdraw_money,have_withdrawal_money,member_brokerage_money,task_money,channel_money,static_money,withdrawal_password,phone')->find();
+                //可提现金额
+                $can_money = $member['member_brokerage_money']+$member['task_money']+$member['channel_money']+$member['static_money']-$member['withdraw_money']-$member['have_withdrawal_money'];
+                // 检测可用余额
+                if ($money > $can_money) {
+                    return json($this->outJson(0,'您输入的提现金额高于账户余额！'));
+                }
+                if ($money > 5000) {
+                    return json($this->outJson(0,'最高提现金额应小于50000'));
+                }
+                if ($money < 50) {
+                    return json($this->outJson(0,'最低提现金额不能小于50'));
+                }
+                if(!$money['withdrawal_password']){
+                    return json($this->outJson(0,'您的提现密码还未设置，请先设置提现密码！'));
+                }
+                if($money['withdrawal_password'] != $password){
+                    return json($this->outJson(0,'密码错误'));
+                }
+                $sever_money = $money*0.05; //手续费
+                $real_money = $money-$sever_money;
                 $insert = [
                     'uid' => $this->uid,
-                    'phone' => $old['phone'],
-                    'money' => $money,
+                    'phone' => $member['phone'],
+                    'deposit_money' => $money,
+                    'sever_money' => $money*0.05,
+                    'real_money' => $real_money,
+                    'type' => $type,
                     'add_time' => date('Y-m-d H:i:s')
                 ];
                 // 启动事务
                 Db::startTrans();
                 try{
                     $id = Db::name('deposit_log')->insertGetId($insert);
-                    $id2 = Db::name('member')->where(['uid' => $this->uid])->setDec('balance',$money);
+                    $id2 = Db::name('member')->where(['uid' => $this->uid])->setInc('withdraw_money',$real_money);
                     if ($id && $id2) {
                         // 提交事务
                         Db::commit();
@@ -55,29 +124,183 @@ class Pay extends Base
     }
 
     /**
-     * 我的钱包
+     * 添加/修改支付宝账号
+     * @return \think\response\Json
+     * @throws \think\Exception
+     */
+    public function addAlipay(){
+        $aliPay = $this->request->param();
+        $alipay_info = Db::name('alipay_info')->where('uid',$aliPay['uid'])->find();
+        $data = [
+            'alipay' => $aliPay['alipay'],
+            'real_name' => $aliPay['real_name'],
+            'time' => date('Y-m-d H:i:h'),
+        ];
+        if($alipay_info){   //修改
+            $id = Db::name('alipay_info')->where('uid',$aliPay['uid'])->update($data);
+            if($id){
+                return json($this->outJson(0,'修改成功',$id));
+            }else{
+                return json($this->outJson(1,'修改失败'));
+            }
+        }else{  //新增
+            $data['uid'] = $aliPay['uid'];
+            $id = Db::name('alipay_info')->insertGetId($data);
+            if($id){
+                return json($this->outJson(0,'添加成功',$id));
+            }else{
+                return json($this->outJson(1,'修改失败'));
+            }
+        }
+    }
+
+    /**
+     * 提现密码设置
      * @return \think\response\Json
      */
-    public function wallet()
+    public function withdrawalPassword(){
+        $uid = $this->request->param('uid');
+        $withdrawal = $this->request->param('withdrawal_password');
+        if(strlen($withdrawal) != 6){
+            return json($this->outJson(1,'密码规则错误'));
+        }
+        $id = Db::name('member')->where('uid',$uid)->setField('withdrawal_password',$withdrawal);
+        if($id){
+            return json($this->outJson(0,'设置成功',$id));
+        }else{
+            return json($this->outJson(1,'设置失败'));
+        }
+
+    }
+
+    /**
+     * 银行卡设置验证
+     * @return \think\response\Json
+     */
+    public function bankVerify(){
+        try{
+
+            $checkData = [
+                'bank_phone' => '13760387593',
+                'id_card' => '430703199006188349',
+                'bank_account' => '6217852000011282020',
+                'user_name' => '刘佩',
+            ];
+                //$this->request->param();
+            $validate = new \app\api\validate\Bank();
+            if (!$vdata = $validate->scene('all')->check($checkData)) {
+                return json($this->outJson(0,$validate->getError()));
+            }
+            $host = "http://b4bankcard.market.alicloudapi.com";
+            $path = "/bank4Check";
+            $method = "GET";
+            $appcode = "64d63b3687e943bd8734efd661a7981c";
+            $headers = array();
+            array_push($headers, "Authorization:APPCODE " . $appcode);
+            $querys = "accountNo={$checkData['bank_account']}&idCard={$checkData['id_card']}&mobile={$checkData['bank_phone']}&name={$checkData['user_name']}";
+            $bodys = "";
+            $url = $host . $path . "?" . $querys;
+
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($curl, CURLOPT_FAILONERROR, false);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_HEADER, false);
+            //curl_setopt($curl, CURLOPT_HEADER, true); 如不输出json, 请打开这行代码，打印调试头部状态码。
+            //状态码: 200 正常；400 URL无效；401 appCode错误； 403 次数用完； 500 API网管错误
+            if (1 == strpos("$".$host, "https://"))
+            {
+                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+            }
+            $out_put = json_decode(curl_exec($curl),true);
+            if($out_put['status'] != 01){
+                return json($this->outJson($out_put['status'],$out_put['msg']));
+            }
+            return json($this->outJson(1,'验证成功'));
+//            $data = [
+//                'bank_name'=>$out_put['bank'],
+//                'bank_phone'=>$out_put['mobile'],
+//            ];
+//            return json($this->outJson($out_put['status'],$out_put['msg'],$data));
+         } catch (\Exception $e) {
+            return json($this->outJson(0,'服务器响应失败'));
+        }
+    }
+
+    /**
+     * 设置银行卡
+     * @return \think\response\Json
+     * @throws \think\Exception
+     */
+    public function bankSet(){
+        $checkData =$this->request->param();
+// [
+//            'bank_phone' => '13760387593',
+//            'id_card' => '430703199006188349',
+//            'bank_account' => '6217852000011282020',
+//            'user_name' => '刘佩',
+//        ];
+        $validate = new \app\api\validate\Bank();
+        if (!$vdata = $validate->scene('all')->check($checkData)) {
+            return json($this->outJson(0,$validate->getError()));
+        }
+        $bool = $this->checkPhoneCode(trim($checkData['bank_phone']), trim($checkData['code']),!empty(trim($checkData['scene'])?trim($checkData['scene']):'bank'));
+        if(!$bool){
+            return json($this->outJson(0,'短信验证码错误'));
+        }
+        $bank = [
+                'bank_phone' => trim($checkData['bank_phone']),
+                'user_name' => trim($checkData['user_name']),
+                'bank_name' => trim($checkData['bank']),
+                'id_card' => trim($checkData['id_card']),
+                'bank_account' => trim($checkData['bank_account']),
+                'add_time' => date('Y-m-d H:i:s')
+            ];
+        $bank_info = Db::name('bank_info')->where('uid',$this->uid)->find();
+        if($bank_info){ //修改
+            $id = Db::name('bank_info')->where('uid',$this->uid)->update($bank);
+            if($id){
+                return json($this->outJson(1,'修改成功',$id));
+            }else{
+                return json($this->outJson(0,'修改失败'));
+            }
+        }else{  //新增
+            $bank['uid'] = $this->uid;
+            $id = Db::name('bank_info')->insertGetId($bank);
+            if($id){
+                return json($this->outJson(1,'设置成功',$id));
+            }else{
+                return json($this->outJson(0,'修改失败'));
+            }
+        }
+    }
+
+    /**
+     * 获取用户的银行卡信息
+     * @return \think\response\Json
+     */
+    public function getBank()
     {
         try{
             if ($this->request->isPost()) {
-                $data = array();
-                $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
-                $money = Db::name('member')->where(['uid' => $uid])->filed('withdraw_money,have_withdrawal_money,member_brokerage_money,task_money,channel_money,static_money')->find();
-                if($money) {
-                    //可提现金额
-                    $data['balance_money'] = $money['member_brokerage_money']+$money['task_money']+$money['channel_money']+$money['static_money']-$money['withdraw_money']-$money['have_withdrawal_money'];
-                    //提现中
-                    $data['balance_money'] = $money['have_withdrawal_money'];
-                    //已提现
-                    $data['balance_money'] = $money['withdraw_money'];
+                $data = Db::name('bank_info')
+                    ->where(['uid' => $this->uid])
+                    ->field('user_name,id_card,bank_account,bank_name,bank_phone')
+                    ->find();
+                if($data){
+                    $data['user_name'] = cp_substr_cut($data['user_name']);
+                    $data['id_card'] = cp_func_substr_replace($data['id_card'],'*',4,10);
+                    $data['bank_account'] = cp_func_substr_replace($data['bank_account'],'*',4,11);
+                    $data['bank_phone'] = cp_func_substr_replace($data['bank_phone'],'*',3,4);
                 }
                 return json($this->outJson(1,'获取成功',$data));
             } else {
                 return json($this->outJson(500,'非法操作'));
             }
-        } catch(\Exception $e){
+        } catch (\Exception $e){
             return json($this->outJson(0,'服务器响应失败'));
         }
     }

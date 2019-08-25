@@ -45,7 +45,7 @@ class Home extends Base
     {
         try{
             if ($this->request->isPost()) {
-                $data = Db::name('notice')->where(['is_show' => 1])->field('id,title,content,add_time')->order(['sort'=>'desc'])->limit(2)->select();
+                $data = Db::name('notice')->where(['is_show' => 1])->field('id,title,add_time')->order(['sort'=>'desc'])->limit(2)->select();
                 $data = $data ? $data : [];
                 return json($this->outJson(1,'获取成功',$data));
             } else {
@@ -104,8 +104,14 @@ class Home extends Base
     {
         try{
             if ($this->request->isPost()) {
+                $data = array();
                 $data = Db::name('banner')->where(['is_show' => 1])->field('url,skip')->order(['sort'=>'desc','id'=>'desc'])->select();
-                $data = $data ? $data : [];
+                if(!empty($data)){
+                    foreach($data as &$v){
+                        $v['url'] = $this->request->domain().$v['url'];
+                    }
+                }
+
                 return json($this->outJson(1,'获取成功',$data));
             } else {
                 return json($this->outJson(500,'非法操作'));
@@ -128,7 +134,9 @@ class Home extends Base
                     'service_mobile' => isset($fileData['service_mobile']) ? $fileData['service_mobile'] : '',
                     'investment_mobile' => isset($fileData['investment_mobile']) ? $fileData['investment_mobile'] : '',
                     'official_mobile' => isset($fileData['official_mobile']) ? $fileData['official_mobile'] : '',
-                    'service_time' => isset($fileData['service_time']) ? $fileData['service_time'] : ''
+                    'service_time' => isset($fileData['service_time']) ? $fileData['service_time'] : '',
+                    'service_weixin' => isset($fileData['service_weixin']) ? $fileData['service_weixin'] : '',
+                    'service_email' => isset($fileData['service_email']) ? $fileData['service_email'] : ''
                 ];
                 return json($this->outJson(1,'获取成功',$res));
             } else {
@@ -154,8 +162,11 @@ class Home extends Base
                 $data['serve_money'] = isset($fileData['serve_money']) ? $fileData['serve_money'] : '';
 
                 //点动会员数据记录
-                $sql = "SELECT m.nick_name,m.face,b.type,b.task_money,b.add_time FROM wld_brokerage_log as b LEFT JOIN wld_member as m ON b.uid = m.uid AND b.type in(1,4) ORDER BY b.id DESC LIMIT 4;";
+                $sql = "SELECT b.uid,m.nick_name,m.face,b.type,b.task_money,b.add_time,m.member_class FROM wld_brokerage_log as b INNER JOIN wld_member as m ON b.uid = m.uid AND b.type in(1,4) ORDER BY b.id DESC LIMIT 4;";
                 $task = Db::query($sql);
+                foreach($task as &$v){
+                    $v['face'] = $this->request->domain().$v['face'];
+                }
                 $data['task'] = $task;
                 return json($this->outJson(1,'获取成功',$data));
             } else {
@@ -274,7 +285,7 @@ class Home extends Base
         $data = array();
         $page = $this->request->param('page',1); //页数
         $uid = $this->request->param('uid',1);
-        $limit = 10;    //每页数量
+        $limit = 1;    //每页数量
         $start = 0;     //开始位置
         if ($page > 1) {
             $start = ($page-1) * $limit;
@@ -289,20 +300,31 @@ class Home extends Base
 
     /**
      * 精选任务
+     * is_start 是否开始 0 未开始 1 开始
      * @return \think\response\Json
      */
     public function showTask(){
         $task = array();
         //精选任务
-        $sql = "SELECT task_id,title,task_icon,is_area,task_user_level,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num FROM wld_task
+        $sql = "SELECT task_id,title,task_icon,is_area,task_user_level,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num,(limit_total_num-get_task_num) as authentic_num,1 as is_start FROM wld_task
                 WHERE start_time < unix_timestamp(now()) AND status = 1
                 ORDER BY start_time DESC LIMIT 5;";
         $task = Db::query($sql);
         if(!empty($task)){
-            foreach($task as &$v){
+            foreach($task as $k=> &$v){
                 if($v['is_area'] == 1){
                     $v['task_area'] = json_decode($v['task_area'],true)['city'];
                 }
+                $v['task_icon'] = $this->request->domain().$v['task_icon'];
+                if($this->uid){
+                    $logId = Db::name('send_task_log')->where(['uid'=>$this->uid,'task_id'=>$v['task_id']])->where('is_check','in',[0,2])->find();
+                    $member_classs = Db::name('member')->where('uid',$this->uid)->value('member_class');
+                    if($logId){
+                        $task[$k]['status'] = 1;    //已经领取
+                    }
+                    $task[$k]['member_classs'] = $member_classs;
+                }
+                $v['task_user_level'] = explode(',',$v['task_user_level']);
             }
         }
         return json($this->outJson(1,'成功',$task));
@@ -310,6 +332,7 @@ class Home extends Base
 
     /**
      * 首页精选任务更多
+     * is_start 是否开始 0 未开始 1 开始
      * @return \think\response\Json
      */
     public function showTaskMore(){
@@ -321,15 +344,25 @@ class Home extends Base
             if ($page > 1) {
                 $start = ($page-1) * $limit;
             }
-            $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num FROM wld_task
+            $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money,task_user_level,(taks_fixation_num+get_task_num) as rap_num,(limit_total_num-get_task_num) as authentic_num,1 as is_start FROM wld_task
                     WHERE start_time < unix_timestamp(now()) AND status = 1
                     ORDER BY start_time DESC LIMIT {$start},{$limit};";
             $task = Db::query($sql);
             if(!empty($task)){
-                foreach($task as &$v){
+                foreach($task as $k => &$v){
                     if($v['is_area'] == 1){
                         $v['task_area'] = json_decode($v['task_area'],true)['city'];
                     }
+                    $v['task_icon'] = $this->request->domain().$v['task_icon'];
+                    if($this->uid){
+                        $logId = Db::name('send_task_log')->where(['uid'=>$this->uid,'task_id'=>$v['task_id']])->where('is_check','in',[0,2])->find();
+                        $member_classs = Db::name('member')->where('uid',$this->uid)->value('member_class');
+                        if($logId){
+                            $task[$k]['status'] = 1;    //已经领取
+                        }
+                        $task[$k]['member_classs'] = $member_classs;
+                    }
+                    $v['task_user_level'] = explode(',',$v['task_user_level']);
                 }
             }
             return json($this->outJson(1,'成功',$task));

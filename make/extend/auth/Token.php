@@ -42,10 +42,10 @@ class Token{
                     'nick_name' => $nick_name,
                 ];
                 Cache::set('token',$fileData,0);
-                return $this->outJson(1,'获取token成功',['data' => $fileData[$user_id]]);
+                return $this->outJson(1,'获取token成功',$fileData[$user_id]);
             } else {
                 // 存在缓存的情况
-                return $this->outJson(1,'获取token成功',['data' => $fileData[$user_id]]);
+                return $this->outJson(1,'获取token成功',$fileData[$user_id]);
             }
         } else {
             // 不存在的情况
@@ -57,7 +57,7 @@ class Token{
                 'nick_name' => $nick_name,
             ];
             Cache::set('token',$fileData,0);
-            return $this->outJson(1,'获取token成功',['token' => $fileData[$user_id]]);
+            return $this->outJson(1,'获取token成功',$fileData[$user_id]);
         }
     }
 
@@ -114,7 +114,7 @@ class Token{
      */
     public function rmAccessToken($token)
     {
-        if (!$token) return $this->outJson(0,'缺少token参数！');
+        if (!$token) return $this->outJson(1001,'缺少token参数！');
         $fileData = Cache::get('token');
         $status = false;
         foreach ($fileData as $k => $v) {
@@ -140,7 +140,7 @@ class Token{
     protected function outJson($code = 0, $msg = '', $data = [])
     {
         return [
-            "status" => (string) $code,
+            "status" => $code,
             "msg" =>  $msg,
             "data" => $data
         ];

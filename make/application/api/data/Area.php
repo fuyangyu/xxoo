@@ -134,9 +134,28 @@ class Area
         }
         return array_values($province);
     }
+    /**
+     * 获取所有的市
+     * @param $id
+     * @return array
+     */
+    public function getCityAllData()
+    {
+        $data = $this->getCacheFile('area');
+        $city = [];
+        foreach ($data as $k => $v) {
+            if ($v['level'] == 2) {
+                $city[$k]['id'] = $v['id'];
+                $city[$k]['pid'] = $v['pid'];
+                $city[$k]['name'] = $v['name'];
+                $city[$k]['level'] = $v['level'];
+            }
+        }
+        return array_values($city);
+    }
 
     /**
-     * 获取市区
+     * 获取省对应的市区
      * @param $id
      * @return array
      */
