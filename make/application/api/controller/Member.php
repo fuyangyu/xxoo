@@ -18,7 +18,7 @@ class Member extends Base
         $data = Db::name('member')->field('phone,nick_name')->where(['uid' => $uid])->find();
         $nickname = !empty($data['nick_name'])?$data['nick_name']:$data['phone'];
 
-        return $this->fetch('demo',['nickname'=>$nickname]);
+        return json($this->outJson(1,'获取成功',$nickname));
     }
 
     /**

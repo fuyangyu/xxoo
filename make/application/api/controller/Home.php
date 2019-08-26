@@ -326,8 +326,9 @@ class Home extends Base
                 }
                 $v['task_user_level'] = explode(',',$v['task_user_level']);
             }
+            return json($this->outJson(1,'成功',$task));
         }
-        return json($this->outJson(1,'成功',$task));
+        return json($this->outJson(0,'失败'));
     }
 
     /**
