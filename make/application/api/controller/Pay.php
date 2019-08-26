@@ -58,15 +58,20 @@ class Pay extends Base
         return json($this->outJson(1,'获取成功',$data));
     }
 
+    /**
+     * 提现
+     * @return \think\response\Json
+     */
     public function withdraw(){
         try{
             if ($this->request->isPost()) {
-//                $this->uid = 374;
+                $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+                if(!$uid) return json($this->outJson(0,'参数错误'));
                 $money = trim($this->request->param('money'));
                 $type = $this->request->param('type'); //提现方式 1银行卡 2支付宝
                 $password = trim($this->request->param('password'));
                 if (!$money || !$type || !$password) return json($this->outJson(0,'请求参数不完整'));
-                $member = Db::name('member')->where(['uid' => $this->uid])->field('withdraw_money,have_withdrawal_money,member_brokerage_money,task_money,channel_money,static_money,withdrawal_password,phone')->find();
+                $member = Db::name('member')->where(['uid' => $uid])->field('withdraw_money,have_withdrawal_money,member_brokerage_money,task_money,channel_money,static_money,withdrawal_password,phone')->find();
                 //可提现金额
                 $can_money = $member['member_brokerage_money']+$member['task_money']+$member['channel_money']+$member['static_money']-$member['withdraw_money']-$member['have_withdrawal_money'];
                 // 检测可用余额
@@ -88,7 +93,7 @@ class Pay extends Base
                 $sever_money = $money*0.05; //手续费
                 $real_money = $money-$sever_money;
                 $insert = [
-                    'uid' => $this->uid,
+                    'uid' => $uid,
                     'phone' => $member['phone'],
                     'deposit_money' => $money,
                     'sever_money' => $money*0.05,
@@ -100,7 +105,7 @@ class Pay extends Base
                 Db::startTrans();
                 try{
                     $id = Db::name('deposit_log')->insertGetId($insert);
-                    $id2 = Db::name('member')->where(['uid' => $this->uid])->setInc('withdraw_money',$real_money);
+                    $id2 = Db::name('member')->where(['uid' => $uid])->setInc('withdraw_money',$real_money);
                     if ($id && $id2) {
                         // 提交事务
                         Db::commit();
@@ -121,6 +126,57 @@ class Pay extends Base
         } catch(\Exception $e){
             return json($this->outJson(0,'服务器响应失败'));
         }
+    }
+
+    /**
+     * 提现记录
+     * @return \think\response\Json
+     */
+    public function withdrawLog(){
+        $uid = $this->request->param('uid');
+        if(!$uid) return json($this->outJson(0,'参数错误'));
+        $sql = "SELECT id,uid,add_time,real_money,type,depos_status, CASE depos_status WHEN 1 THEN '提现中' WHEN 2 THEN '成功' WHEN 3 THEN '提现失败' END AS status_show FROM wld_deposit_log WHERE uid = {$uid};";
+        $log = Db::query($sql);
+        if(!empty($log)){
+            foreach($log as $k=>$v){
+                if($v['type'] == 1){
+                    $bank = Db::name('bank_info')->where('uid',$v['uid'])->field('bank_name,bank_account')->find();
+                    $log[$k]['account'] = $bank['bank_name'].'('.substr($bank['bank_account'],-4).')';
+                }
+                if($v['type'] == 2){
+                    $alipay = Db::name('alipay_info')->where('uid',$v['uid'])->value('alipay');
+                    $log[$k]['account'] = $alipay;
+                }
+                $log[$k]['account'] = '';
+            }
+            return json($this->outJson(1,'获取成功',$log));
+        }
+        return json($this->outJson(1,'获取失败',$log));
+    }
+
+    /**
+     * 提现详情
+     * @return \think\response\Json
+     */
+    public function withdrawDetails(){
+        $id = $this->request->param('id');
+        if(!$id) return json($this->outJson('0','参数错误'));
+        $log = Db::name('deposit_log')->where('uid',$id)->field('id,uid,add_time,deposit_money,sever_money,depos_status')->find();
+        if(!empty($log)){
+            foreach($log as $k=>$v){
+                if($v['type'] == 1){
+                    $bank = Db::name('bank_info')->where('uid',$v['uid'])->field('bank_name,bank_account')->find();
+                    $log[$k]['account'] = $bank['bank_name'].'('.substr($bank['bank_account'],-4).')';
+                }
+                if($v['type'] == 2){
+                    $alipay = Db::name('alipay_info')->where('uid',$v['uid'])->value('alipay');
+                    $log[$k]['account'] = $alipay;
+                }
+                $log[$k]['account'] = '';
+            }
+            return json($this->outJson(1,'获取成功',$log));
+        }
+        return json($this->outJson(0,'获取失败',$log));
     }
 
     /**
@@ -237,6 +293,7 @@ class Pay extends Base
      */
     public function bankSet(){
         $checkData =$this->request->param();
+        $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
 // [
 //            'bank_phone' => '13760387593',
 //            'id_card' => '430703199006188349',
@@ -259,9 +316,9 @@ class Pay extends Base
                 'bank_account' => trim($checkData['bank_account']),
                 'add_time' => date('Y-m-d H:i:s')
             ];
-        $bank_info = Db::name('bank_info')->where('uid',$this->uid)->find();
+        $bank_info = Db::name('bank_info')->where('uid',$uid)->find();
         if($bank_info){ //修改
-            $id = Db::name('bank_info')->where('uid',$this->uid)->update($bank);
+            $id = Db::name('bank_info')->where('uid',$uid)->update($bank);
             if($id){
                 return json($this->outJson(1,'修改成功',$id));
             }else{
@@ -285,9 +342,10 @@ class Pay extends Base
     public function getBank()
     {
         try{
+            $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
             if ($this->request->isPost()) {
                 $data = Db::name('bank_info')
-                    ->where(['uid' => $this->uid])
+                    ->where(['uid' => $uid])
                     ->field('user_name,id_card,bank_account,bank_name,bank_phone')
                     ->find();
                 if($data){
@@ -312,8 +370,9 @@ class Pay extends Base
     public function pushPayLog()
     {
         try{
+            $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
             if ($this->request->isPost()) {
-                $data = Db::name('pay_log')->where(['uid' => $this->uid])->field('money,pay_status,add_time,pay_time')->select();
+                $data = Db::name('pay_log')->where(['uid' => $uid])->field('money,pay_status,add_time,pay_time')->select();
                 $res = [];
                 if ($data) {
                     foreach ($data as $k => $v) {

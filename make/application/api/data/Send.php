@@ -29,7 +29,7 @@ class Send
             'api_member_user','api_member_userdirectrecord','api_member_userearnings','api_member_userearningslog','api_member_userearningspool',
 
             //我的钱包
-            'api_pay_addalipay','api_pay_bankverify','api_pay_wallet','api_pay_withdraw',
+            'api_pay_addalipay','api_pay_bankverify','api_pay_wallet','api_pay_withdraw','api_pay_withdrawlog',
 
             //会员充值
             'api_pay_membercenter','api_pay_privilegetaskmore','api_pay_chargepay','api_pay_getbank',
