@@ -292,9 +292,9 @@ class Task extends Base
     {
         try{
             if ($this->request->isPost()) {
-                $uid = !$this->request->param('uid')?$this->request->param('uid'):$this->uid; //374;
+                $uid = $this->request->param('uid');//374;
                 $task_id = $this->request->param('task_id',0); //23;
-                if (!$task_id) return json($this->outJson(0,'请求参数不完整'));
+                if (!$task_id || !$uid) return json($this->outJson(0,'请求参数不完整'));
 
                 $model = new \app\api\model\Task();
                 $data = $model->drawTask($uid, $task_id);
