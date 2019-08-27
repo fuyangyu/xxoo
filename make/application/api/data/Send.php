@@ -22,17 +22,17 @@ class Send
             //短信发送
             'api_index_getcode','api_index_rule',
             //用户信息
-            'api_member_index', 'api_member_userinfo', 'api_member_userinfoactio', 'api_member_nicknameactio', 'api_member_setnickname',
-            'api_member_inviteactio', 'api_member_setinvite', 'api_member_upface',
+//            'api_member_index', 'api_member_userinfo', 'api_member_userinfoactio', 'api_member_nicknameactio', 'api_member_setnickname',
+//            'api_member_inviteactio', 'api_member_setinvite', 'api_member_upface',
 
             //我的
-            'api_member_user','api_member_userdirectrecord','api_member_userearnings','api_member_userearningslog','api_member_userearningspool',
-
+//            'api_member_user','api_member_userdirectrecord','api_member_userearnings','api_member_userearningslog','api_member_userearningspool',
+//            'api_member_userteamnum',
             //我的钱包
-            'api_pay_addalipay','api_pay_bankverify','api_pay_wallet','api_pay_withdraw','api_pay_withdrawlog',
+//            'api_pay_addalipay','api_pay_bankverify','api_pay_wallet','api_pay_withdraw','api_pay_withdrawlog',
 
             //会员充值
-            'api_pay_membercenter','api_pay_privilegetaskmore','api_pay_chargepay','api_pay_getbank',
+//            'api_pay_membercenter','api_pay_privilegetaskmore','api_pay_chargepay','api_pay_getbank',
 
             //邀请好友
             'api_invit_index',

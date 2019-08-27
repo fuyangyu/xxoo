@@ -33,7 +33,7 @@ class Member extends Base
                 $uid = $this->request->param('uid');
                 if(!$uid) return json($this->outJson(0,'参数错误'));
                 //用户信息
-                $data['user'] = Db::name('member')->where('uid',$uid)->field('nick_name,face,member_class,vip_end_time')->find();
+                $data['user'] = Db::name('member')->where('uid',$uid)->field('nick_name,face,member_class,vip_end_time,phone')->find();
                 //直推人数
                 $data['directNum'] = Db::name('member')->where('invite_uid',$uid)->count();
 
@@ -69,20 +69,17 @@ class Member extends Base
      * @return \think\response\Json
      */
     public function userTeamNum(){
-        if($this->request->isPost()) {
-            $uid = $this->request->param('uid');
-            if(!$uid) return json($this->outJson(0,'参数错误'));if(!$uid) return json($this->outJson(0,'参数错误'));
-            if(Cache::get('team'.$uid)) {
-                $num = Cache::get('team'.$uid);
-            }else{
-                $data = $this->getUserTeam($uid);
-                $num = count($data);
-                Cache::set('team'.$uid,$num,86400);
-            }
-            return json($this->outJson(1,'获取成功',$num));
+
+        $uid = $this->request->param('uid');
+        if(!$uid) return json($this->outJson(0,'参数错误'));
+        if(Cache::get('team'.$uid)) {
+            $num = Cache::get('team'.$uid);
         }else{
-            return json($this->outJson(500,'非法操作'));
+            $data = $this->getUserTeam($uid);
+            $num = count($data);
+            Cache::set('team'.$uid,$num,86400);
         }
+        return json($this->outJson(1,'获取成功',$num));
 
     }
 
@@ -365,6 +362,7 @@ class Member extends Base
             if(!$uid) return json($this->outJson(0,'参数错误'));
             $model = new \app\api\model\Member();
             $data = $model->getuserInfo($uid);
+            p($data);die;
             if($data){
                 return json($this->outJson(1,'获取成功',$data));
             }else{
