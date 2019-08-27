@@ -362,7 +362,6 @@ class Member extends Base
             if(!$uid) return json($this->outJson(0,'参数错误'));
             $model = new \app\api\model\Member();
             $data = $model->getuserInfo($uid);
-            p($data);die;
             if($data){
                 return json($this->outJson(1,'获取成功',$data));
             }else{
