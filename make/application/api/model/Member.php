@@ -37,14 +37,15 @@ class Member extends Base
     public function getuserInfo($uid){
 
         $uid = !empty($uid)?$uid:-1;
-        $sql = "select m.phone,m.face,m.invite_uid,m.nick_name,i.province,i.city FROM `wld_member` as m LEFT JOIN wld_member_info as i ON m.uid = i.uid WHERE m.uid = {$uid};";
-        $data = Db::query($sql);
-        if($data[0]['invite_uid']) {
-            $invite_phone = Db::name('member')->where(['uid' => $data[0]['invite_uid']])->value('phone');
+        $data = Db::name('member')->alias('m')->join('member_info i','m.uid = i.uid')->where('m.uid',$uid)->field('m.phone,m.face,m.invite_uid,m.nick_name,i.province,i.city')->find();
+        if($data['invite_uid']) {
+            $invite_phone = Db::name('member')->where(['uid' => $data['invite_uid']])->value('phone');
             $data['invite_phone'] = !empty($invite_phone) ? $invite_phone : 0;
         }else{
             $data['invite_phone'] =  0;
         }
+        $data['province_name'] = Db::name('region')->where('id',$data['province'])->value('name');
+        $data['city_name'] = Db::name('region')->where('id',$data['city'])->value('name');
         return $data;
     }
 

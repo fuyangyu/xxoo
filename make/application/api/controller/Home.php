@@ -7,31 +7,36 @@ use think\Response;
 class Home extends Base
 {
     // 推广二维码
-    public function index()
+    public function qrCode()
     {
         try{
-            if ($this->request->isPost()) {
-                $old = Db::name('member')->where(['uid' => $this->uid])->field('invite_img,invite_code')->find();
+//            if ($this->request->isPost()) {
+                $uid = 374;
+                    //$this->request->param('uid');
+                if(!$uid) return json($this->outJson(0,'参数错误'));
+                $old = Db::name('member')->where(['uid' => $uid])->field('invite_img,phone,face')->find();
                 if ($old['invite_img']) {
-                    $old['url'] = $this->request->domain() . "/index.php/index/register/code/" . $old['invite_code'] . ".html";
-                    return json($this->outJson(1,'获取成功',$old));
+//                    $old['url'] = $this->request->domain() . "/index.php/index/register/code/" . $old['phone'] . ".html";
+//                    $old['url'] = 'https://www.baidu.com?phone='.$old['phone'];
+                    $data = $this->request->domain().$old['invite_img'];
+                    return json($this->outJson(1,'获取成功',$data));
                 } else {
-                    $url = $this->request->domain() . "/index.php/index/register/code/" . $old['invite_code'] . ".html";
-                    $logo = './uploads/qrcode/dp_logo.png';
+//                    $url = $this->request->domain() . "/index.php/index/register/code/" . $old['phone'] . ".html";
+                    $url = 'https://www.baidu.com?phone='.$old['phone'];
+                    $logo = '.'.$old['face'];
                     $filename = uniqid() . ".png";
                     $msg = $this->createQrCodeImg($url,$filename, 200, $logo,50);
                     if (!$msg['status']) return json($msg);
                     $data = [
-                        'invite_img' => substr($msg['msg'],1),
-                        'invite_code' => $old['invite_code'],
-                        'url' => $url
+                        'invite_img' => $this->request->domain().substr($msg['msg'],1),
+//                        'url' => $url
                     ];
-                    Db::name('member')->where(['uid' => $this->uid])->setField('invite_img',substr($msg['msg'],1));
+                    Db::name('member')->where(['uid' => $uid])->setField('invite_img',substr($msg['msg'],1));
                     return json($this->outJson(1,'获取成功',$data));
                 }
-            } else {
-                return json($this->outJson(500,'非法操作'));
-            }
+//            } else {
+//                return json($this->outJson(500,'非法操作'));
+//            }
         } catch (\Exception $e){
             return json($this->outJson(0,'服务器响应失败'));
         }

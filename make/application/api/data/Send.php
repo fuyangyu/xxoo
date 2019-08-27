@@ -18,12 +18,12 @@ class Send
             'api_login_findation', 'api_login_getarea', 'api_login_verifier',
             //首页
             'api_home_play','api_home_notice','api_home_noticeidfind','api_home_showtask','api_home_showtaskmore','api_home_official',
-            'api_home_showcharge',
+            'api_home_showcharge','api_home_qrcode',
             //短信发送
-            'api_index_getcode',
+            'api_index_getcode','api_index_rule',
             //用户信息
-  /*          'api_member_index', 'api_member_userinfo', 'api_member_userinfoactio', 'api_member_nicknameactio', 'api_member_setnickname',
-            'api_member_inviteactio', 'api_member_setinvite', 'api_member_upface',*/
+            'api_member_index', 'api_member_userinfo', 'api_member_userinfoactio', 'api_member_nicknameactio', 'api_member_setnickname',
+            'api_member_inviteactio', 'api_member_setinvite', 'api_member_upface',
 
             //我的
             'api_member_user','api_member_userdirectrecord','api_member_userearnings','api_member_userearningslog','api_member_userearningspool',

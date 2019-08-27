@@ -71,7 +71,7 @@ class Member extends Base
     public function userTeamNum(){
         if($this->request->isPost()) {
             $uid = $this->request->param('uid');
-            if(!$uid) return json($this->outJson(0,'参数错误'));
+            if(!$uid) return json($this->outJson(0,'参数错误'));if(!$uid) return json($this->outJson(0,'参数错误'));
             if(Cache::get('team'.$uid)) {
                 $num = Cache::get('team'.$uid);
             }else{

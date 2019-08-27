@@ -143,4 +143,20 @@ class Index extends Controller
         curl_close($ch);
         return $response;
     }
+
+    /**
+     * 规则
+     * @return \think\response\Json
+     */
+    public function rule(){
+        $data = array();
+        //推荐佣金规则
+        $data['recommend'] = Db::name('allot_log')->where('charge_type',1)->select();
+        //渠道佣金规则
+        $data['channel'] = Db::name('allot_log')->where('charge_type',2)->select();
+        $fileData = cp_getCacheFile('system');
+        $data['service_mobile'] = isset($fileData['service_mobile']) ? $fileData['service_mobile'] : '';
+
+        return json($this->outJson(1,'获取成功',$data));
+    }
 }
