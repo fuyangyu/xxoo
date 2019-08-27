@@ -22,8 +22,8 @@ class Send
             //短信发送
             'api_index_getcode',
             //用户信息
-            'api_member_index', 'api_member_userinfo', 'api_member_userinfoactio', 'api_member_nicknameactio', 'api_member_setnickname',
-            'api_member_inviteactio', 'api_member_setinvite', 'api_member_upface',
+  /*          'api_member_index', 'api_member_userinfo', 'api_member_userinfoactio', 'api_member_nicknameactio', 'api_member_setnickname',
+            'api_member_inviteactio', 'api_member_setinvite', 'api_member_upface',*/
 
             //我的
             'api_member_user','api_member_userdirectrecord','api_member_userearnings','api_member_userearningslog','api_member_userearningspool',

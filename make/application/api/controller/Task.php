@@ -274,9 +274,10 @@ class Task extends Base
     {
         try{
             $tid = $this->request->param('tid',0,'intval');
+            $uid = $this->request->param('uid');
             if (!$tid) return json($this->outJson(0,'请求参数不完整'));
             $model = new \app\api\model\Task();
-            $data = $model->getFindData($tid,$this->uid);
+            $data = $model->getFindData($tid,$uid);
             return json($this->outJson(1,'获取成功',$data));
 
         } catch(\Exception $e){
@@ -391,9 +392,10 @@ class Task extends Base
         try{
             if ($this->request->isPost()) {
                 $task_id = $this->request->param('task_id',0,'intval'); //23;
+                $uid = $this->request->param('uid');
                 $task_screenshot = $this->request->param('task_screenshot');    //'/uploads/assignment/20190119/201901195c42c50bf15eb.jpg';
                 $model = new \app\api\model\Task();
-                $data = $model->subTask($this->uid, $task_id, $task_screenshot);
+                $data = $model->subTask($uid, $task_id, $task_screenshot);
                 return json($data);
             } else {
                 return json($this->outJson(500,'非法操作'));

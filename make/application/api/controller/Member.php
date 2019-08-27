@@ -14,7 +14,8 @@ class Member extends Base
 
     //设置昵称渲染页
     public function nicknameActio(){
-        $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+        $uid = $this->request->param('uid');
+        if(!$uid) return json($this->outJson(0,'参数错误'));
         $data = Db::name('member')->field('phone,nick_name')->where(['uid' => $uid])->find();
         $nickname = !empty($data['nick_name'])?$data['nick_name']:$data['phone'];
 
@@ -29,8 +30,8 @@ class Member extends Base
         try{
             if ($this->request->isPost()) {
                 $data = array();
-                $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
-                if(!$uid) return json($this->outJson(2,'未登录'));
+                $uid = $this->request->param('uid');
+                if(!$uid) return json($this->outJson(0,'参数错误'));
                 //用户信息
                 $data['user'] = Db::name('member')->where('uid',$uid)->field('nick_name,face,member_class,vip_end_time')->find();
                 //直推人数
@@ -69,8 +70,8 @@ class Member extends Base
      */
     public function userTeamNum(){
         if($this->request->isPost()) {
-            $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
-            if(!$uid) return json($this->outJson(2,'未登录'));
+            $uid = $this->request->param('uid');
+            if(!$uid) return json($this->outJson(0,'参数错误'));
             if(Cache::get('team'.$uid)) {
                 $num = Cache::get('team'.$uid);
             }else{
@@ -91,8 +92,8 @@ class Member extends Base
      */
     public function userDirectRecord(){
 
-        $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
-        if(!$uid) return json($this->outJson(2,'未登录'));
+        $uid = $this->request->param('uid');
+        if(!$uid) return json($this->outJson(0,'参数错误'));
         $user = Db::name('member')->where('invite_uid',$uid)->field('nick_name,phone,face,member_class,invite_time')->select();
         if($user){
             $model = new \app\api\model\Member();
@@ -100,8 +101,9 @@ class Member extends Base
                 $value['phone'] = cp_replace_phone($value['phone']);
                 $value['member_class'] = $model->getMemberClassAttr($value['member_class']);
             }
+            return json($this->outJson(1,'获取成功',$user));
         }
-        return json($this->outJson(1,'获取成功',$user));
+        return json($this->outJson(0,'获取失败'));
     }
 
     /**
@@ -109,8 +111,8 @@ class Member extends Base
      * @return \think\response\Json
      */
     public function userTeamRecord(){
-        $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
-        if(!$uid) return json($this->outJson(2,'未登录'));
+        $uid = $this->request->param('uid');
+        if(!$uid) return json($this->outJson(0,'参数错误'));
         if(Cache::get('team'.$uid)) {
             $data = Cache::get('team'.$uid);
         }else{
@@ -123,8 +125,9 @@ class Member extends Base
                 $value['phone'] = cp_replace_phone($value['phone']);
                 $value['member_class'] = $model->getMemberClassAttr($value['member_class']);
             }
+            return json($this->outJson(1,'获取成功',$data));
         }
-        return json($this->outJson(1,'获取成功',$data));
+        return json($this->outJson(0,'获取失败'));
     }
 
     /**
@@ -132,8 +135,8 @@ class Member extends Base
      * @return \think\response\Json
      */
     public function userEarnings(){
-        $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
-        if(!$uid) return json($this->outJson(2,'未登录'));
+        $uid = $this->request->param('uid');
+        if(!$uid) return json($this->outJson(0,'参数错误'));
         $money = Db::name('member')->where('uid',$uid)->field('member_class,member_brokerage_money,task_money,channel_money,static_money')->find();
         if($money) {
             //累计收益
@@ -147,12 +150,12 @@ class Member extends Base
      * @return \think\response\Json
      */
     public function userEarningsLog(){
-        $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+        $uid = $this->request->param('uid');
+        if(!$uid) return json($this->outJson(0,'参数错误'));
         $ms = $this->request->param('ms',0);    //时间
         $type = $this->request->param('type',0);    //0默认是全部
         $page = $this->request->param('page',1); //页数
         $where = '';
-        if(!$uid) return json($this->outJson(2,'未登录'));
         $limit = 10;    //每页数量
         $start = 0;     //开始位置
         if ($page > 1) {
@@ -288,7 +291,6 @@ class Member extends Base
         }
         $currentLogSql = "SELECT * FROM wld_current_log WHERE date_format(grant_time, '%Y-%m') = date_format(now(), '%Y-%m');";
         $data['current_log'] = Db::query($currentLogSql);
-        p($data);die;
         return json($this->outJson(1,'获取成功',$data));
 
     }
@@ -299,7 +301,8 @@ class Member extends Base
      */
     public function setNickname(){
         try{
-            $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+            $uid = $this->request->param('uid');
+            if(!$uid) return json($this->outJson(0,'参数错误'));
             $nickname = trim($this->request->param('nickname'));
             $data = Db::name('member')->where('uid',$uid)->setField('nick_name',$nickname);
             if($data){
@@ -325,8 +328,10 @@ class Member extends Base
      */
     public function setInvite(){
         try{
-            $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+            $uid = $this->request->param('uid');
             $phone = trim($this->request->param('phone'));
+            if(!$uid || $phone) return json($this->outJson(0,'参数错误'));
+
             //获取填写推荐人uid
             $imvite_uid = Db::name('member')->where('phone',$phone)->value('uid');
             if(!$imvite_uid) return json($this->outJson(0,'推荐人不存在'));
@@ -356,7 +361,8 @@ class Member extends Base
      */
     public function userInfo(){
         try{
-            $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+            $uid = $this->request->param('uid');
+            if(!$uid) return json($this->outJson(0,'参数错误'));
             $model = new \app\api\model\Member();
             $data = $model->getuserInfo($uid);
             if($data){
@@ -376,7 +382,8 @@ class Member extends Base
         try{
             if ($this->request->isPost()) {
                 $picture = trim($this->request->param('picture'));
-                if (!$picture) return json($this->outJson(0,'请求参数不完整'));
+                $uid = $this->request->param('uid');
+                if (!$picture || $uid) return json($this->outJson(0,'请求参数不完整'));
                 //# dataURI base_64 编码上传 手机端常用方式
                 $rootPath = './uploads/face/' . date('Ymd');
                 $target = $rootPath . "/" . date('Ymd') . uniqid() . ".jpg" ;
@@ -386,7 +393,7 @@ class Member extends Base
                 $img = base64_decode($picture);
                 if (file_put_contents($target, $img)){
                     $face = substr($target,1);
-                    $int = Db::name('member')->where(['uid' => $this->uid])->setField('face',$face);
+                    $int = Db::name('member')->where(['uid' => $uid])->setField('face',$face);
                     if ($int) {
                         return json($this->outJson(1,'上传成功',['face' => $face]));
                     } else {
@@ -394,42 +401,6 @@ class Member extends Base
                     }
                 } else {
                     return json($this->outJson(0,'上传失败'));
-                }
-            } else {
-                return json($this->outJson(500,'非法操作'));
-            }
-        } catch (\Exception $e) {
-            return json($this->outJson(0,'服务器响应失败'));
-        }
-    }
-
-
-    // 个人资料 (暂未调用)
-    public function info()
-    {
-        try{
-            if ($this->request->isPost()) {
-                $status = $this->request->param('status');
-                $data = [
-                    'true_name' => $this->request->param('true_name',''),
-                    'province' => $this->request->param('province',''),
-                    'city' => $this->request->param('city',''),
-                    'district' => $this->request->param('district',''),
-                    'address' => $this->request->param('address',''),
-                ];
-                $model = new \app\api\model\Member();
-                if ($status == 1) {
-                    // 获取资料
-                    $data = $model->getMemberInfo($this->uid);
-                    return json($this->outJson(1,'获取成功',$data));
-                } else {
-                    // 保存
-                    $bool = $model->setStoreMemberInfo($this->uid,$data);
-                    if ($bool) {
-                        return json($this->outJson(1,'操作成功'));
-                    } else {
-                        return json($this->outJson(1,'操作失败'));
-                    }
                 }
             } else {
                 return json($this->outJson(500,'非法操作'));
@@ -492,26 +463,6 @@ class Member extends Base
     }
 
     /**
-     * 我的团队 - 获取下线会员级别数量 （未调用）
-     * @return \think\response\Json
-     */
-    public function getUserChildTeams()
-    {
-        try{
-            if ($this->request->isPost()) {
-                $model = new \app\api\model\Member();
-                $page = $this->request->param('page',1,'intval');
-                $data = $model->getUserChildTeams($this->uid,$page,10);
-                return json($data);
-            } else {
-                return json($this->outJson(500,'非法操作'));
-            }
-        } catch (\Exception $e) {
-            return json($this->outJson(0,'服务器响应失败'));
-        }
-    }
-
-    /**
      * 服务中心升级申请
      * @return \think\response\Json
      */
@@ -521,15 +472,16 @@ class Member extends Base
             if ($this->request->isPost()) {
                 $phone = $this->request->param('phone');
                 $name = $this->request->param('name');
+                $uid = $this->request->param('uid');
                 $content = $this->request->param('content');
-                if (!$phone || !$content) return json($this->outJson(0, '请求参数错误'));
+                if (!$phone || !$content || $uid) return json($this->outJson(0, '请求参数错误'));
                 if (!cp_isMobile($phone)) return json($this->outJson(0, '手机号码格式错误'));
                 if (!$name) return json($this->outJson(0, '申请人姓名不能为空'));
                 if (!$content) return json($this->outJson(0, '申请的理由不能为空'));
-                $check  = Db::name('member_serve')->where(['uid' => $this->uid])->value('id');
+                $check  = Db::name('member_serve')->where(['uid' => $uid])->value('id');
                 if ($check) return json($this->outJson(0, '您已经申请过了,不要重复申请'));
                 $insert = [
-                    'uid' => $this->uid,
+                    'uid' => $uid,
                     'phone' => $phone,
                     'name' => trim($name),
                     'content' => trim($content),
