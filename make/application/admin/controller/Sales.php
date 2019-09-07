@@ -112,4 +112,32 @@ class Sales extends AdminBase
             ]);
         }
     }
+
+    /**
+     * 设置静态收益人数
+     * @return mixed
+     */
+    public function staticEarningsNum()
+    {
+        $data = cp_getCacheFile('system');
+        $data['vip_num'] = isset($data['vip_num']) ? $data['vip_num'] : '';
+        $data['svip_num'] = isset($data['svip_num']) ? $data['svip_num'] : '';
+        $data['serve_num'] = isset($data['serve_num']) ? $data['serve_num'] : '';
+
+        if ($this->request->isAjax()) {
+            $insert = array_merge($data,$this->request->param());
+            cp_setCacheFile('system',$insert);
+            return $this->outJson(0,'操作成功');
+        } else {
+            return $this->fetch('index',[
+                'crumbs'=>[
+                    ['url' => $this->entranceUrl . "/index/main",'name'=>'首页'],
+                    ['url' => '','name'=>'分销配置']
+                ],
+                'userLevel' => $this->userLevel(2),
+                'business' => $this->getBusiness(),
+                'data' => $data
+            ]);
+        }
+    }
 }

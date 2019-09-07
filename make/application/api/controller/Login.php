@@ -40,8 +40,10 @@ class Login extends Base
                 if (!$vdata = $validate->scene($code)->check($data)) {
                     return json($this->outJson(0,$validate->getError()));
                 }
-                $checkPhone = Db::name('member')->where(['phone' => trim($data['phone'])])->field('uid,nick_name,vip_end_time')->find();
+                $checkPhone = Db::name('member')->where(['phone' => trim($data['phone'])])->field('uid,nick_name,vip_end_time,member_class')->find();
                 if (!$checkPhone) return json($this->outJson(0,'该手机号还未注册'));
+                $city = Db::name('member_info')->where('uid',$checkPhone['uid'])->value('city');
+                $data['city_name'] = Db::name('region')->where('id',$city)->value('name');
                 //不同登陆流程
                 if(!empty($data['code'])){
                     //验证短信验证码
@@ -49,7 +51,7 @@ class Login extends Base
                     if (!$bool){
                         return json($this->outJson(0,'短信验证码错误'));
                     }else {
-                        $token = \auth\Token::instance()->getAccessToken($checkPhone['uid'],$checkPhone['nick_name']);
+                        $token = \auth\Token::instance()->getAccessToken($checkPhone['uid'],$checkPhone['nick_name'],$data['city_name'],$checkPhone['member_class']);
                         //验证会员到期时间存储消息
                         $expire = 60*60*24*30;
                         $vip_end = strtotime($checkPhone['vip_end_time']) - time();
@@ -107,7 +109,7 @@ class Login extends Base
                 // 验证邀请码(用户手机号) 1:invite_phone指注册时邀请人号码
                 if (empty($data['invite_phone'])) {
                     $data['invite_uid'] = $data['invite_phone'] = 0;
-                    $data['invite_time'] = 0;
+                    $data['invite_time'] = '0000-00-00 00:00:00';
                 }else {
                     $data['invite_uid'] = $check = Db::name('member')->where(['phone' => trim($data['invite_phone'])])->value('uid');
                     if (!$check) return json($this->outJson(0,'推荐人不存在哦！'));
@@ -122,7 +124,8 @@ class Login extends Base
                 if(empty($data['province']) || empty($data['city'])){
                     return json($this->outJson(0,'请选择所在地！'));
                 }
-
+                //获取城市名称
+                $data['city_name'] = Db::name('region')->where('id',$data['city'])->value('name');
                 // 验证通过后 写库
                 $model = new \app\api\model\Member();
                 $result = $model->sendReg($data);

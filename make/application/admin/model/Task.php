@@ -47,6 +47,11 @@ class Task extends Base
                 if ($v['is_area'] == 0) {
                     $data[$k]['task_area'] = '全国';
                 }
+                if($v['status'] == 1){
+                    $data[$k]['status_name'] = '上架';
+                }elseif($v['status'] == 2){
+                    $data[$k]['status_name'] = '已下架';
+                }
                 if (isset($cate[$v['task_cid']])) {
                     $data[$k]['class_name'] = $cate[$v['task_cid']];
                 } else {
@@ -274,7 +279,7 @@ class Task extends Base
             'task_icon'=> !empty($data['task_icon'])?$data['task_icon']:'',   //任务图标
             'task_step' =>!empty($data['task_step'])?$data['task_step']:'', //任务步骤
             'taks_fixation_num' => !empty($data['taks_fixation_num'])?$data['taks_fixation_num']:0, //任务领取固定增值
-            'start_time' => !empty($data['start_time'])?$data['start_time']:time(),    //任务开始时间
+            'start_time' => !empty($data['start_time'])?strtotime($data['start_time']):time(),    //任务开始时间
 //            'limit_user_num' => trim($data['limit_user_num']),
             'limit_total_num' => trim($data['limit_total_num']),
             'task_area' => json_encode($task_area),
@@ -472,5 +477,9 @@ class Task extends Base
                 return $data;
             }
         }
+    }
+
+    public function getService($uid = array()){
+
     }
 }

@@ -11,7 +11,7 @@ class Task extends Base
      */
     public function task(){
         $data = array();
-//        $task_cid = $this->request->param('task_cid');  //任务分区参数
+        $uid = $this->request->param('uid');
 //        if(empty($task_cid)){   //首次进入不传任务分区的参数
             //任务区
             $data['classify'] = Db::name('task_classify')
@@ -29,13 +29,14 @@ class Task extends Base
                         if($value['is_area'] == 1){
                             $value['task_area'] = json_decode($value['task_area'],true)['city'];
                         }
-                        $value['task_icon'] = $this->request->domain().$value['task_icon'];
-                        if($this->uid){
-                            $logId = Db::name('send_task_log')->where(['uid'=>$this->uid,'task_id'=>$value['task_id']])->where('is_check','in',[0,2])->find();
-                            $member_classs = Db::name('member')->where('uid',$this->uid)->value('member_class');
-                            if($logId){
-                                $data['task'][$v['task_cid']][$key]['status'] = 1;    //已经领取
-                            }
+                        if($value['task_icon']){
+                            $value['task_icon'] = $this->request->domain().$value['task_icon'];
+                        }
+                        $value['task_user_level'] = explode(',',$value['task_user_level']);
+                        if($uid){
+                            $is_check = Db::name('send_task_log')->where(['uid'=>$uid,'task_id'=>$value['task_id']])->order('id','desc')->limit(1)->value('is_check');
+                            $member_classs = Db::name('member')->where('uid',$uid)->value('member_class');
+                            $data['task'][$v['task_cid']][$key]['is_check'] = $is_check;
                             $data['task'][$v['task_cid']][$key]['member_classs'] = $member_classs;
                         }
                     }
@@ -49,7 +50,10 @@ class Task extends Base
                             if($vas['is_area'] == 1){
                                 $vas['task_area'] = json_decode($vas['task_area'],true)['city'];
                             }
-                            $vas['task_icon'] = $this->request->domain().$vas['task_icon'];
+                            if($vas['task_icon']){
+                                $vas['task_icon'] = $this->request->domain().$vas['task_icon'];
+                            }
+
                         }
                     }
                 }
@@ -57,11 +61,14 @@ class Task extends Base
 
 
         //收入榜
-        $moneySql = "SELECT (member_brokerage_money+task_money+channel_money+static_money) as moeny_sum,face,nick_name FROM wld_member ORDER BY (member_brokerage_money+task_money+channel_money+static_money) DESC LIMIT 5;";
+        $moneySql = "SELECT (member_brokerage_money+task_money+channel_money+static_money) as moeny_sum,face,nick_name,phone FROM wld_member ORDER BY (member_brokerage_money+task_money+channel_money+static_money) DESC LIMIT 5;";
         $data['money'] = Db::query($moneySql);
         if($data['money']){
             foreach($data['money'] as &$item){
-                $item['face'] = $this->request->domain().$item['face'];
+                if($item['face']){
+                    $item['face'] = $this->request->domain().$item['face'];
+                }
+
             }
         }
         return json($this->outJson(1,'成功',$data));
@@ -74,6 +81,7 @@ class Task extends Base
     public function taskMore(){
         if ($this->request->isPost()) {
             $data = array();
+            $uid = $this->request->param('uid'); //页数
             $page = $this->request->param('page',1); //页数
             $task_cid = $this->request->param('task_cid');  //任务分区参数
             $limit = 10;    //每页数量
@@ -91,12 +99,10 @@ class Task extends Base
                         $v['task_area'] = json_decode($v['task_area'],true)['city'];
                     }
                     $v['task_icon'] = $this->request->domain().$v['task_icon'];
-                    if($this->uid){
-                        $logId = Db::name('send_task_log')->where('uid',$this->uid)->find();
-                        $member_classs = Db::name('member')->where('uid',$this->uid)->value('member_class');
-                        if($logId){
-                            $task[$k]['status'] = 1;    //已经领取
-                        }
+                    if($uid){
+                        $is_check = Db::name('send_task_log')->where(['uid'=>$uid,'task_id'=>$v['task_id']])->order('id','desc')->limit(1)->value('is_check');
+                        $member_classs = Db::name('member')->where('uid',$uid)->value('member_class');
+                        $task[$k]['is_check'] = $is_check;
                         $task[$k]['member_classs'] = $member_classs;
                     }
                 }
@@ -189,11 +195,15 @@ class Task extends Base
         if ($page > 1) {
             $start = ($page-1) * $limit;
         }
-        $sql = "SELECT t.task_icon,l.title,l.task_money,l.add_time,l.sub_time,l.is_check,l.failure_msg FROM
+        $sql = "SELECT t.task_icon,l.title,l.task_money,l.add_time,l.sub_time,l.is_check,l.failure_msg,t.task_id FROM
                 wld_send_task_log as l LEFT JOIN wld_task t ON l.task_id =  t.task_id WHERE l.uid = $uid $where
                 ORDER BY l.id DESC LIMIT {$start},{$limit};";
         $data = Db::query($sql);
-        p($data);die;
+        foreach($data as &$v){
+            if(!empty($v['task_icon'])){
+                $v['task_icon'] = $this->request->domain().$v['task_icon'];
+            }
+        }
         return json($this->outJson(1,'成功',$data));
     }
 
@@ -273,11 +283,17 @@ class Task extends Base
     public function findTask()
     {
         try{
-            $tid = $this->request->param('tid',0,'intval');
+            $tid = $this->request->param('tid');
             $uid = $this->request->param('uid');
-            if (!$tid) return json($this->outJson(0,'请求参数不完整'));
+            if (!$tid || !$uid) return json($this->outJson(0,'请求参数不完整'));
             $model = new \app\api\model\Task();
             $data = $model->getFindData($tid,$uid);
+            if(!empty($data['task_rule_img'])){
+                $data['task_rule_img'] = $this->request->domain().$data['task_rule_img'];
+            }
+            foreach($data['img'] as &$v){
+                $v = $this->request->domain().$v;
+            }
             return json($this->outJson(1,'获取成功',$data));
 
         } catch(\Exception $e){
@@ -359,21 +375,18 @@ class Task extends Base
     {
         try{
             if ($this->request->isPost()) {
-                $task_screenshot = $this->request->param('task_screenshot');
-                if (!$task_screenshot) return json($this->outJson(0,'请求参数不完整'));
-                //# dataURI base_64 编码上传 手机端常用方式
-                $rootPath = './uploads/assignment/' . date('Ymd');
-                $target = $rootPath . "/" . date('Ymd') . uniqid() . ".jpg" ;
-                if (!file_exists($rootPath)) {
-                    cp_directory($rootPath);
-                }
-                $img = base64_decode($task_screenshot);
-                if (file_put_contents($target, $img)){
-                    $file_img = substr($target,1);
-                    return json($this->outJson(1,'上传成功',['img' => $file_img]));
-                } else {
-                    return json($this->outJson(0,'上传失败'));
-                }
+                $file = request()->file('task_screenshot');
+//                $id = $this->request->param('id');
+                if (!$file) return json($this->outJson(0,'请求参数不完整'));
+                    $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads'. DS .'assignment');
+//                    $int = Db::name('send_task_log')->where(['id' => $id])->setField('img',$path.DS.$getSaveName);
+                    if ($info) {
+                        $path = '/uploads'. DS .'assignment';
+                        $getSaveName = str_replace("\\","/",$info->getSaveName());
+                        return json($this->outJson(1,'上传成功',['task_screenshot' => $this->request->domain().$path.DS.$getSaveName]));
+                    } else {
+                        return json($this->outJson(0,'上传失败'));
+                    }
             } else {
                 return json($this->outJson(500,'非法操作'));
             }
@@ -391,11 +404,13 @@ class Task extends Base
     {
         try{
             if ($this->request->isPost()) {
-                $task_id = $this->request->param('task_id',0,'intval'); //23;
+                $task_id = $this->request->param('task_id'); //23;
                 $uid = $this->request->param('uid');
+                $id = $this->request->param('id'); //任务记录id
                 $task_screenshot = $this->request->param('task_screenshot');    //'/uploads/assignment/20190119/201901195c42c50bf15eb.jpg';
+                if (!$id || !$task_id || !$uid || !$task_screenshot) return json($this->outJson(0,'请求参数不完整'));
                 $model = new \app\api\model\Task();
-                $data = $model->subTask($uid, $task_id, $task_screenshot);
+                $data = $model->subTask($id,$uid, $task_id, $task_screenshot);
                 return json($data);
             } else {
                 return json($this->outJson(500,'非法操作'));

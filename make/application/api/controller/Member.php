@@ -33,27 +33,43 @@ class Member extends Base
                 $uid = $this->request->param('uid');
                 if(!$uid) return json($this->outJson(0,'参数错误'));
                 //用户信息
-                $data['user'] = Db::name('member')->where('uid',$uid)->field('nick_name,face,member_class,vip_end_time,phone')->find();
+                $user = Db::name('member')->where('uid',$uid)->field('nick_name,face,member_class,vip_end_time,phone,withdrawal_password,member_brokerage_money,task_money,channel_money,static_money,withdraw_money,have_withdrawal_money')->find();
                 //直推人数
                 $data['directNum'] = Db::name('member')->where('invite_uid',$uid)->count();
 
-                $money = Db::name('member')->where('uid',$uid)->field('member_brokerage_money,task_money,channel_money,static_money,withdraw_money,have_withdrawal_money')->find();
-                if($money) {
+//                $money = Db::name('member')->where('uid',$uid)->field('member_brokerage_money,task_money,channel_money,static_money,withdraw_money,have_withdrawal_money')->find();
+                if($user) {
                     //累计收益
-                    $data['total_money'] = $money['member_brokerage_money']+$money['task_money']+$money['channel_money']+$money['static_money'];
+                    $data['total_money'] = sprintf("%.2f",$user['member_brokerage_money']+$user['task_money']+$user['channel_money']+$user['static_money']);
                     //我的余额
-                    $data['balance_money'] = $data['total_money'] - $money['withdraw_money'] - $money['have_withdrawal_money'];
+                    $data['balance_money'] = sprintf("%.2f",$data['total_money'] - $user['withdraw_money'] - $user['have_withdrawal_money']);
+                    //是否设置密码
+                    $data['password'] = !empty($user['withdrawal_password'])?1:0;
+
+                    $data['user']['nick_name'] = $user['nick_name'];
+                    if(!empty($user['face'])){
+                        $data['user']['face'] = $this->request->domain().$user['face'];
+                    }
+                    $data['user']['member_class'] = $user['member_class'];
+                    $data['user']['vip_end_time'] = $user['vip_end_time'];
+                    $data['user']['phone'] = $user['phone'];
                 }
                 //待提交 审核中 已驳回
                 $taskSql = "SELECT
                             SUM(CASE WHEN is_check = 0 THEN 1 ELSE 0 END) as stay_task,
                             SUM(CASE WHEN is_check = 2 THEN 1 ELSE 0 END) as halfway_task,
                             SUM(CASE when is_check = 3 THEN 1 ELSE 0 END) as reject_task
-                            FROM wld_send_task_log ";
+                            FROM wld_send_task_log WHERE uid={$uid}";
                 $task = Db::query($taskSql);
                 $data['stay_task'] = $task[0]['stay_task'];    //待提交数量
                 $data['halfway_task'] = $task[0]['halfway_task'];  //审核中数量
                 $data['reject_task'] = $task[0]['reject_task'];    //已驳回数量
+
+                //是否设置了银行卡
+                $alipay = Db::name('alipay_info')->where('uid',$uid)->find();
+                $bank = Db::name('bank_info')->where('uid',$uid)->find();
+                $data['alipay'] = $alipay?1:0;
+                $data['bank'] = $bank?1:0;
 
                 return json($this->outJson(1,'获取成功',$data));
             } else {
@@ -72,12 +88,13 @@ class Member extends Base
 
         $uid = $this->request->param('uid');
         if(!$uid) return json($this->outJson(0,'参数错误'));
-        if(Cache::get('team'.$uid)) {
-            $num = Cache::get('team'.$uid);
+        if($team = Cache::get('teamData'.$uid)) {
+            $num =count($team);
         }else{
-            $data = $this->getUserTeam($uid);
+            $user = Db::name('member')->field('uid,nick_name,phone,face,member_class,invite_time,invite_uid')->select();
+            $data = $this->GetTeamMember($user,$uid);
             $num = count($data);
-            Cache::set('team'.$uid,$num,86400);
+            Cache::set('teamData'.$uid,$data,86400);
         }
         return json($this->outJson(1,'获取成功',$num));
 
@@ -90,17 +107,24 @@ class Member extends Base
     public function userDirectRecord(){
 
         $uid = $this->request->param('uid');
+        $page = $this->request->param('page',1); //页数
+        $limit = 10;    //每页数量
+        $start = 0;     //开始位置
+        if ($page > 1) {
+            $start = ($page-1) * $limit;
+        }
         if(!$uid) return json($this->outJson(0,'参数错误'));
-        $user = Db::name('member')->where('invite_uid',$uid)->field('nick_name,phone,face,member_class,invite_time')->select();
+        $user = Db::name('member')->where('invite_uid',$uid)->field('uid,nick_name,phone,face,member_class,invite_time')->limit($start,$limit)->select();
         if($user){
-            $model = new \app\api\model\Member();
             foreach($user as &$value){
                 $value['phone'] = cp_replace_phone($value['phone']);
-                $value['member_class'] = $model->getMemberClassAttr($value['member_class']);
+                $value['invite_time'] = date("Y-m-d",strtotime($value['invite_time']));
+                if(!empty($value['face'])){
+                    $value['face'] = $this->request->domain().$value['face'];
+                }
             }
-            return json($this->outJson(1,'获取成功',$user));
         }
-        return json($this->outJson(0,'获取失败'));
+        return json($this->outJson(1,'获取成功',$user));
     }
 
     /**
@@ -109,20 +133,34 @@ class Member extends Base
      */
     public function userTeamRecord(){
         $uid = $this->request->param('uid');
-        if(!$uid) return json($this->outJson(0,'参数错误'));
-        if(Cache::get('team'.$uid)) {
-            $data = Cache::get('team'.$uid);
-        }else{
-            $data = $this->getUserTeam($uid);
-            Cache::set('team'.$uid,$data,86400);
+        $page = $this->request->param('page',1); //页数
+        $limit = 10;    //每页数量
+        $start = 0;     //开始位置
+        if ($page > 1) {
+            $start = ($page-1) * $limit;
         }
-        if(!empty($data)){
-            $model = new \app\api\model\Member();
-            foreach($data as &$value){
-                $value['phone'] = cp_replace_phone($value['phone']);
-                $value['member_class'] = $model->getMemberClassAttr($value['member_class']);
-            }
+        if(!$uid) return json($this->outJson(0,'参数错误'));
+        $team = Cache::get('teamData'.$uid);
+        if($team) {
+            $data = array_slice($team,$start,$limit);
             return json($this->outJson(1,'获取成功',$data));
+        }else{
+            $user = Db::name('member')->field('uid,nick_name,phone,face,member_class,invite_time,invite_uid')->select();
+            $team = $this->GetTeamMember($user,$uid);
+            if(!empty($team)){
+                foreach($team as &$value){
+                    $value['phone'] = cp_replace_phone($value['phone']);
+                    $value['invite_time'] = date('Y-m-d',strtotime($value['invite_time']));
+                    if(!empty($value['face'])){
+                        $value['face'] = $this->request->domain().$value['face'];
+                    }
+                }
+                Cache::set('teamData'.$uid,$team,86400);
+                $data = array_slice($team,$start,$limit);
+
+                return json($this->outJson(1,'获取成功',$data));
+            }
+
         }
         return json($this->outJson(0,'获取失败'));
     }
@@ -137,7 +175,7 @@ class Member extends Base
         $money = Db::name('member')->where('uid',$uid)->field('member_class,member_brokerage_money,task_money,channel_money,static_money')->find();
         if($money) {
             //累计收益
-            $money['total_money'] = $money['member_brokerage_money']+$money['task_money']+$money['channel_money']+$money['static_money'];
+            $money['total_money'] = sprintf("%.2f",$money['member_brokerage_money']+$money['task_money']+$money['channel_money']+$money['static_money']);
         }
         return json($this->outJson(1,'获取成功',$money));
     }
@@ -168,58 +206,46 @@ class Member extends Base
             $sql = "SELECT * FROM wld_channel_log WHERE uid=$uid $date ORDER BY id LIMIT $start,$limit;";
             $log = Db::query($sql);
             if(!empty($log)){
-                foreach($log as $k => $v){
+                foreach($log as $k => &$v){
                     $log[$k]['html'] = $v['channel_time'].'会员静态收益';
                 }
             }
+
         }else {
-            $condition = " (l.uid = $uid OR l.uid_one = $uid OR l.uid_two = $uid OR l.serve_uid_one = $uid OR l.serve_uid_two = $uid)";
+            $where .= ' uid ='.$uid;
             if($type == 1){ //推荐佣金
-                $where = ' and l.type in(1,2,3)';
+                $where .= ' and type in(1,2,3) and brokerage_type = 1';
             }
             if($type == 2){ //任务收入
-                $where = ' and l.type = 4';
-                $condition = ' l.uid ='.$uid;
+                $where .= ' and type = 4 and brokerage_type = 2';
             }
             if($type == 3){ //渠道佣金
-                $where = ' and l.type = 4';
+                $where .= ' and type = 4 and brokerage_type = 3';
             }
 
             if(!empty($ms)){
-                $date =" and DATE_FORMAT(l.add_time, '%Y-%c') = '$ms'";
+                $date =" and DATE_FORMAT(add_time, '%Y-%c') = '$ms'";
             }else{
                 $date = '';
             }
 
-            $sql = "SELECT * FROM wld_brokerage_log AS l WHERE $condition $date $where ORDER BY l.id LIMIT $start,$limit;";
+            $sql = "SELECT * FROM wld_brokerage_log WHERE {$where} {$date} ORDER BY id LIMIT $start,$limit;";
             $log = Db::query($sql);
-            $phone = $this->getUserPhone($uid); //获取用户手机
-            $str_phoone = cp_replace_phone($phone);
+//            $phone = $this->getUserPhone($uid); //获取用户手机
+//            $str_phoone = cp_replace_phone($phone);
             if(!empty($log)){
                 foreach ($log as $key => $item) {
-                    if($item['type'] == 4 && $item['uid'] == $uid){ //判断任务收入显示内容
+                    if($item['type'] == 4 && $item['brokerage_type'] == 2){ //判断任务收入显示内容
                         $title = Db::name('task')->where(['task_id' => $item['tid']])->value('title');
                         $log[$key]['html'] = '完成“'.$title.'”获得任务收入';
-                        $log[$key]['show_money'] = $item['task_money'];
-                    }elseif($item['type'] == 4 && $item['uid'] != $uid){    //判断推荐佣金显示内容
-                        $log[$key]['html'] = '用户'.$str_phoone.'完成任务获得渠道佣金';
-                    }elseif(in_array($item['type'],[1,2,3])){   //判断推荐会员显示内容
-                        $log[$key]['html'] = '用户'.$str_phoone.'成为会员获得推荐佣金';
+//                        $log[$key]['show_money'] = $item['money'];
+                    }elseif($item['type'] == 4 && $item['brokerage_type'] == 3){    //判断推荐佣金显示内容
+                        $phone = Db::name('member')->where(['uid' => $item['sid']])->value('phone');
+                        $log[$key]['html'] = '用户'.cp_replace_phone($phone).'完成任务获得渠道佣金';
+                    }elseif(in_array($item['type'],[1,2,3]) && $item['brokerage_type'] == 1){   //判断推荐会员显示内容
+                        $phone = Db::name('member')->where(['uid' => $item['sid']])->value('phone');
+                        $log[$key]['html'] = '用户'.cp_replace_phone($phone).'成为会员获得推荐佣金';
                     }
-                    //获取显示金额
-                    if ($item['uid_one'] == $uid) {
-                        $log[$key]['show_money'] = $item['one_money'];
-
-                    } elseif ($item['uid_two'] == $uid) {
-                        $log[$key]['show_money'] = $item['two_money'];
-
-                    } elseif ($item['serve_uid_one'] == $uid) {
-                        $log[$key]['show_money'] = $item['serve_one_money'];
-
-                    } elseif ($item['serve_uid_two'] == $uid) {
-                        $log[$key]['show_money'] = $item['serve_two_money'];
-                    }
-
                 }
 
             }
@@ -327,20 +353,22 @@ class Member extends Base
         try{
             $uid = $this->request->param('uid');
             $phone = trim($this->request->param('phone'));
-            if(!$uid || $phone) return json($this->outJson(0,'参数错误'));
+            if(!$uid || !$phone) return json($this->outJson(0,'参数错误'));
 
             //获取填写推荐人uid
-            $imvite_uid = Db::name('member')->where('phone',$phone)->value('uid');
-            if(!$imvite_uid) return json($this->outJson(0,'推荐人不存在'));
+            $invite = Db::name('member')->where('phone',$phone)->field('uid,invite_uid')->find();
+            if(!$invite) return json($this->outJson(0,'推荐人不存在'));
+            //推荐人不能是已推荐的用户
+            if($invite['invite_uid'] == $uid) return json($this->outJson(0,'推荐人不能是已推荐的用户'));
             //获取当前用户是否有推荐人
             $former_uid = Db::name('member')->where('uid',$uid)->value('invite_uid');
             if($former_uid) return json($this->outJson(0,'已有推荐人'));
+            $member = new \app\api\model\Member();
+            $resParent = $member->getInviteCodeParentUid($invite['uid']);
             //修改推荐人
-            $mem = [
-                'invite_uid' => $imvite_uid,
-                'invite_time' => date('Y-m-d H:i:s')
-            ];
-            $data = Db::name('member')->where('uid',$uid)->update($mem);
+            $resParent['invite_uid'] = $invite['uid'];
+            $resParent['invite_time'] = date('Y-m-d H:i:s');
+            $data = Db::name('member')->where('uid',$uid)->update($resParent);
             if($data){
                 return json($this->outJson(1,'修改成功'));
             }else{
@@ -362,6 +390,9 @@ class Member extends Base
             if(!$uid) return json($this->outJson(0,'参数错误'));
             $model = new \app\api\model\Member();
             $data = $model->getuserInfo($uid);
+            if(!empty($data['face'])){
+                $data['face'] = $this->request->domain().$data['face'];
+            }
             if($data){
                 return json($this->outJson(1,'获取成功',$data));
             }else{
@@ -378,27 +409,19 @@ class Member extends Base
     {
         try{
             if ($this->request->isPost()) {
-                $picture = trim($this->request->param('picture'));
+                $file = request()->file('picture');
                 $uid = $this->request->param('uid');
-                if (!$picture || $uid) return json($this->outJson(0,'请求参数不完整'));
-                //# dataURI base_64 编码上传 手机端常用方式
-                $rootPath = './uploads/face/' . date('Ymd');
-                $target = $rootPath . "/" . date('Ymd') . uniqid() . ".jpg" ;
-                if (!file_exists($rootPath)) {
-                    cp_directory($rootPath);
-                }
-                $img = base64_decode($picture);
-                if (file_put_contents($target, $img)){
-                    $face = substr($target,1);
-                    $int = Db::name('member')->where(['uid' => $uid])->setField('face',$face);
+                if (!$file || !$uid) return json($this->outJson(0,'请求参数不完整'));
+                $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads'. DS .'face');
+                    $path = '/uploads'. DS .'face';
+                    $getSaveName = str_replace("\\","/",$info->getSaveName());
+                    $int = Db::name('member')->where(['uid' => $uid])->setField('face',$path.DS.$getSaveName);
                     if ($int) {
-                        return json($this->outJson(1,'上传成功',['face' => $face]));
+                        return json($this->outJson(1,'上传成功',['face' => $this->request->domain().$path.DS.$getSaveName]));
                     } else {
                         return json($this->outJson(0,'上传失败'));
                     }
-                } else {
-                    return json($this->outJson(0,'上传失败'));
-                }
+
             } else {
                 return json($this->outJson(500,'非法操作'));
             }
@@ -470,18 +493,39 @@ class Member extends Base
                 $phone = $this->request->param('phone');
                 $name = $this->request->param('name');
                 $uid = $this->request->param('uid');
-                $content = $this->request->param('content');
-                if (!$phone || !$content || $uid) return json($this->outJson(0, '请求参数错误'));
+                if (!$phone || !$uid) return json($this->outJson(0, '请求参数错误'));
                 if (!cp_isMobile($phone)) return json($this->outJson(0, '手机号码格式错误'));
                 if (!$name) return json($this->outJson(0, '申请人姓名不能为空'));
-                if (!$content) return json($this->outJson(0, '申请的理由不能为空'));
-                $check  = Db::name('member_serve')->where(['uid' => $uid])->value('id');
+                $check  = Db::name('member_serve')->where(['uid' => $uid,'status'=>1])->find();
                 if ($check) return json($this->outJson(0, '您已经申请过了,不要重复申请'));
+                $member_class = Db::name('member')->where('uid',$uid)->value('member_class');
+                $fileData = cp_getCacheFile('system');
+                $acommon_money = isset($fileData['common_money']) ? $fileData['common_money'] : '200';
+                $expert_money = isset($fileData['expert_money']) ? $fileData['expert_money'] : '1000';
+                $serve_money = isset($fileData['serve_money']) ? $fileData['serve_money'] : '10000';
+                switch($member_class){
+                    case 1:
+                        $amount = $serve_money;
+                        break;
+                    case 2:
+                        $amount = $serve_money - $acommon_money;
+                        break;
+                    case 3:
+                        $amount = $serve_money - $expert_money;
+                        break;
+                    case 4:
+                        $amount = $serve_money;
+                        break;
+                    default:
+                        $amount = $serve_money;
+
+                }
                 $insert = [
                     'uid' => $uid,
                     'phone' => $phone,
                     'name' => trim($name),
-                    'content' => trim($content),
+                    'status' => 1,
+                    'amount' => $amount,
                     'add_time' => date('Y-m-d H:i:s')
                 ];
                 // 启动事务

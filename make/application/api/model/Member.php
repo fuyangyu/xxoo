@@ -137,12 +137,12 @@ class Member extends Base
     {
         $phone = trim($data['phone']);
         $password = $data['password'];
-        $check = Db::name('member')->where(['phone' => $phone])->field('uid,password,nick_name')->find();
+        $check = Db::name('member')->where(['phone' => $phone])->field('uid,password,nick_name,member_class')->find();
         if (!$check) return $this->outJson(0,'用户名或者密码错误');
         if ($check['password'] != $password) {
             return $this->outJson(0,'用户名或者密码错误');
         }
-        $token = \auth\Token::instance()->getAccessToken($check['uid'],$check['nick_name']);
+        $token = \auth\Token::instance()->getAccessToken($check['uid'],$check['nick_name'],$data['city_name'],$check['member_class']);
 
         return $this->outJson(1,'登录成功', $token['data']);
     }
@@ -159,8 +159,9 @@ class Member extends Base
         $password = $data['password'];
         $uid = Db::name('member')->where(['phone' => $phone])->value('uid');
         if (!$uid) return $this->outJson(0,'该手机号码未注册');
-        $sql = "update wld_member set password = '{$password}' where uid= {$uid}";
-        $bool = Db::execute($sql);
+//        $sql = "update wld_member set password = '{$password}' where uid= {$uid}";
+//        $bool = Db::execute($sql);
+        $bool = Db::name('member')->where('uid',$uid)->setField('password',$password);
         if ($bool) {
             return $this->outJson(1,'修改成功');
         } else {
@@ -207,20 +208,20 @@ class Member extends Base
                 if ($bool) {
                     // 提交事务
                     Db::commit();
-                    $token = \auth\Token::instance()->getAccessToken($uid);
+                    $token = \auth\Token::instance()->getAccessToken($uid,'',$data['city_name'],1);
                     return $this->outJson(1, '注册成功', $token);
                 } else {
                     Db::rollback();
-                    return $this->outJson(0, '注册失败');
+                    return $this->outJson(2, '注册失败');
                 }
             }else {
                 Db::rollback();
-                return $this->outJson(0, '注册失败');
+                return $this->outJson(3, '注册失败');
             }
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
-            return $this->outJson(0,'注册失败',['debug' => $e->getMessage()]);
+            return $this->outJson(4,'注册失败',['debug' => $e->getMessage()]);
         }
     }
 
@@ -267,10 +268,10 @@ class Member extends Base
         if ($page > 1) {
             $start = ($page-1) * $limit;
         }
-        $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num FROM wld_task
+        $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num,1 as is_start FROM wld_task
                     WHERE start_time < unix_timestamp(now()) AND status = 1 AND task_user_level IN ($user_level)
                     ORDER BY add_time DESC LIMIT {$start},{$limit};";
         $task = Db::query($sql);
-        return $this->outJson(1,'成功',$task);
+        return $task;
     }
 }

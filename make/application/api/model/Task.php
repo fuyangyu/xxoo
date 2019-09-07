@@ -194,10 +194,10 @@ class Task extends Base
             }
         }
         //任务驳回原因
-        $msg = Db::name('send_task_log')->where(['task_id'=>$tid,'is_check'=>3,'uid'=>$uid])->value('failure_msg');
-        if(!empty($msg)){
-            $temp['failure_msg'] = $msg;
-        }
+        $task_log = Db::name('send_task_log')->where(['task_id'=>$tid,'uid'=>$uid])->field('failure_msg,id')->find();
+        $temp['failure_msg'] = $task_log['failure_msg'];
+        $temp['task_log_id'] = $task_log['id'];
+
         return $temp;
     }
 
@@ -212,8 +212,8 @@ class Task extends Base
     public function drawTask($uid, $tid)
     {
         $check = Db::name('task')
-                ->where(['task_id' => $tid,'statu' => 1])
-                ->field('task_id,title,limit_total_num,task_user_level,task_area,get_task_num,limit_user_num,task_money,task_cid,task_user_level,is_area')
+                ->where(['task_id' => $tid,'status' => 1])
+                ->field('task_id,title,limit_total_num,task_user_level,task_area,get_task_num,task_money,task_cid,task_user_level,is_area')
                 ->find();
 
         // 判断任务库存
@@ -238,7 +238,7 @@ class Task extends Base
                 if ($check['task_area']) {
                     $area = json_decode($check['task_area'],true);
                     // 验证是否在同一个区域
-                    if ($area['prov_id'] != $info['province'] && ($area['City_id'] != $info['City']) ){
+                    if ($area['prov_id'] != $info['province'] && ($area['city_id'] != $info['city']) ){
                         return $this->outJson(0,'您的所属区域与该任务不匹配，无法进行领取!');
                     }
                 }
@@ -333,9 +333,9 @@ class Task extends Base
      * @param $img
      * @return array
      */
-    public function subTask($uid, $task_id, $img)
+    public function subTask($id,$uid, $task_id, $img)
     {
-        $old = Db::name('send_task_log')->where(['task_id' => $task_id, 'uid' => $uid,'is_check' => 0])->field('id,is_check,add_time')->find();
+        $old = Db::name('send_task_log')->where(['id'=>$id,'task_id' => $task_id, 'uid' => $uid])->where('is_check','in',[0,3])->field('id,is_check,add_time')->find();
         if (!$old) return $this->outJson(0, '参数不合法');
 //        if($old['add_time']+86400 > time()) return $this->$this->outJson(0,'需要提供24小时以后的截图');
 //        if ($old['is_check'] == 2) return $this->outJson(0, '该任务已经提交,耐心等待平台审核');

@@ -33,4 +33,25 @@ class Base extends Model
         ];
 
     }
+
+    // 获取器
+    protected function getMemberClassAttr($value)
+    {
+        $html = '';
+        switch ($value) {
+            case 1:
+                $html = '普通会员';
+                break;
+            case 2:
+                $html = 'VIP';
+                break;
+            case 3:
+                $html = '高级VIP';
+                break;
+            case 4:
+                $html = '服务中心';
+                break;
+        }
+        return $html;
+    }
 }

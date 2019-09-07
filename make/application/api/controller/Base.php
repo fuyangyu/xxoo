@@ -112,8 +112,8 @@ class Base extends Controller
      * @return array
      */
     protected function getUserTeam($uid=-1){
-        set_time_limit(0);
-        ini_set("memory_limit","500");
+//        set_time_limit(0);
+//        ini_set('memory_limit','500M');
         $data = array();
         $user = Db::name('member')->where(['invite_uid' => $uid])->field('uid,nick_name,phone,face,member_class,invite_time')->select();
         if(!empty($user)) {
@@ -126,4 +126,45 @@ class Base extends Controller
         }
         return $data;
     }
+
+    /*
+    *2.获取某个会员的无限下级方法  非递归方法
+    *$members是所有会员数据表,$mid是用户的id
+    */
+    function GetTeamMember($members,$uid) {
+        $Teams=array();//最终结果
+        $mids=array($uid);//第一次执行时候的用户id
+        do {
+            $othermids=array();
+            $state=false;
+            foreach ($mids as $valueone) {
+                foreach ($members as $key => $valuetwo) {
+                    if($valuetwo['invite_uid']==$valueone){
+                        $Teams[]=$valuetwo;//找到我的下级立即添加到最终结果中
+                        $othermids[]=$valuetwo['uid'];//将我的下级id保存起来用来下轮循环他的下级
+                        unset($members[$key]);//从所有会员中删除他
+                        $state=true;
+                    }
+                }
+            }
+            $mids=$othermids;//foreach中找到的我的下级集合,用来下次循环
+        } while ($state==true);
+        return $Teams;
+    }
+
+    public function getTeam($members,$uid){
+        set_time_limit(0);
+        ini_set('memory_limit','500M');
+        $arr=array();
+        if(is_array($members)){
+            foreach($members as $k => $v){
+                if($uid == $v['invite_uid']){
+                    $arr[]=$v;
+                    $arr = array_merge($arr,$this->getTeam($members,$v['uid']));
+                }
+            }
+        }
+        return $arr;
+    }
+
 }

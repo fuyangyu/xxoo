@@ -12,7 +12,8 @@ class Pay extends Base
         try{
             if ($this->request->isPost()) {
                 $data = array();
-                $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+                $uid = $this->request->param('uid');
+                if(!$uid) return json($this->outJson(0,'参数错误'));
                 $money = Db::name('member')->where(['uid' => $uid])->field('withdraw_money,have_withdrawal_money,member_brokerage_money,task_money,channel_money,static_money,withdrawal_password')->find();
                 if($money) {
                     //可提现金额
@@ -41,20 +42,29 @@ class Pay extends Base
      * @return \think\response\Json
      */
     public function withdrawShow(){
-        $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+        $uid = $this->request->param('uid');
+        if(!$uid) return json($this->outJson(0,'参数错误'));
         $alipay = Db::name('alipay_info')->where('uid',$uid)->find();
         $bank = Db::name('bank_info')->where('uid',$uid)->find();
-        if(!$alipay || !$bank){
+        if(!$alipay && !$bank){
             return json($this->outJson(0,'请先完善提现银行卡或提现支付宝'));
         }
         $money = Db::name('member')->where(['uid' => $uid])->field('withdraw_money,have_withdrawal_money,member_brokerage_money,task_money,channel_money,static_money,withdrawal_password')->find();
         //可提现金额
         $data['can_money'] = $money['member_brokerage_money']+$money['task_money']+$money['channel_money']+$money['static_money']-$money['withdraw_money']-$money['have_withdrawal_money'];
-        if($bank){
-            $data['tacitly'] = 1;
-        }elseif($alipay){
-            $data['tacitly'] = 2;
+        if($alipay){
+            $data['alipay'] = 1;
+            $data['alipay_account'] = $alipay['alipay'];
+        }else{
+            $data['alipay'] = 0;
         }
+        if($bank){
+            $data['bank'] = 1;
+            $data['bank_account'] = $bank['bank_name'].substr($bank['bank_account'],-4);
+        }else{
+            $data['bank'] = 0;
+        }
+
         return json($this->outJson(1,'获取成功',$data));
     }
 
@@ -65,7 +75,7 @@ class Pay extends Base
     public function withdraw(){
         try{
             if ($this->request->isPost()) {
-                $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+                $uid = $this->request->param('uid');
                 if(!$uid) return json($this->outJson(0,'参数错误'));
                 $money = trim($this->request->param('money'));
                 $type = $this->request->param('type'); //提现方式 1银行卡 2支付宝
@@ -84,10 +94,10 @@ class Pay extends Base
                 if ($money < 50) {
                     return json($this->outJson(0,'最低提现金额不能小于50'));
                 }
-                if(!$money['withdrawal_password']){
+                if(!$member['withdrawal_password']){
                     return json($this->outJson(0,'您的提现密码还未设置，请先设置提现密码！'));
                 }
-                if($money['withdrawal_password'] != $password){
+                if($member['withdrawal_password'] != $password){
                     return json($this->outJson(0,'密码错误'));
                 }
                 $sever_money = $money*0.05; //手续费
@@ -99,6 +109,7 @@ class Pay extends Base
                     'sever_money' => $money*0.05,
                     'real_money' => $real_money,
                     'type' => $type,
+                    'depos_status' => 1,
                     'add_time' => date('Y-m-d H:i:s')
                 ];
                 // 启动事务
@@ -109,7 +120,7 @@ class Pay extends Base
                     if ($id && $id2) {
                         // 提交事务
                         Db::commit();
-                        return json($this->outJson(1,'申请提现成功'));
+                        return json($this->outJson(1,'申请提现成功',$id));
                     } else {
                         // 回滚事务
                         Db::rollback();
@@ -149,9 +160,8 @@ class Pay extends Base
                 }
                 $log[$k]['account'] = '';
             }
-            return json($this->outJson(1,'获取成功',$log));
         }
-        return json($this->outJson(1,'获取失败',$log));
+        return json($this->outJson(1,'获取成功',$log));
     }
 
     /**
@@ -160,20 +170,18 @@ class Pay extends Base
      */
     public function withdrawDetails(){
         $id = $this->request->param('id');
-        if(!$id) return json($this->outJson('0','参数错误'));
-        $log = Db::name('deposit_log')->where('uid',$id)->field('id,uid,add_time,deposit_money,sever_money,depos_status')->find();
+        if(!$id) return json($this->outJson(0,'参数错误'));
+        $log = Db::name('deposit_log')->where('id',$id)->field('id,uid,type,add_time,deposit_money,sever_money,depos_status,check_msg')->find();
         if(!empty($log)){
-            foreach($log as $k=>$v){
-                if($v['type'] == 1){
-                    $bank = Db::name('bank_info')->where('uid',$v['uid'])->field('bank_name,bank_account')->find();
-                    $log[$k]['account'] = $bank['bank_name'].'('.substr($bank['bank_account'],-4).')';
-                }
-                if($v['type'] == 2){
-                    $alipay = Db::name('alipay_info')->where('uid',$v['uid'])->value('alipay');
-                    $log[$k]['account'] = $alipay;
-                }
-                $log[$k]['account'] = '';
+            if($log['type'] == 1){
+                $bank = Db::name('bank_info')->where('uid',$log['uid'])->field('bank_name,bank_account')->find();
+                $log['account'] = $bank['bank_name'].'('.substr($bank['bank_account'],-4).')';
             }
+            if($log['type'] == 2){
+                $alipay = Db::name('alipay_info')->where('uid',$log['uid'])->value('alipay');
+                $log['account'] = $alipay;
+            }
+            $log['account'] = '';
             return json($this->outJson(1,'获取成功',$log));
         }
         return json($this->outJson(0,'获取失败',$log));
@@ -186,6 +194,7 @@ class Pay extends Base
      */
     public function addAlipay(){
         $aliPay = $this->request->param();
+        if(!$aliPay['uid']) return json($this->outJson(0,'参数错误'));
         $alipay_info = Db::name('alipay_info')->where('uid',$aliPay['uid'])->find();
         $data = [
             'alipay' => $aliPay['alipay'],
@@ -195,17 +204,17 @@ class Pay extends Base
         if($alipay_info){   //修改
             $id = Db::name('alipay_info')->where('uid',$aliPay['uid'])->update($data);
             if($id){
-                return json($this->outJson(0,'修改成功',$id));
+                return json($this->outJson(1,'修改成功',$id));
             }else{
-                return json($this->outJson(1,'修改失败'));
+                return json($this->outJson(0,'修改失败'));
             }
         }else{  //新增
             $data['uid'] = $aliPay['uid'];
             $id = Db::name('alipay_info')->insertGetId($data);
             if($id){
-                return json($this->outJson(0,'添加成功',$id));
+                return json($this->outJson(1,'添加成功',$id));
             }else{
-                return json($this->outJson(1,'修改失败'));
+                return json($this->outJson(0,'修改失败'));
             }
         }
     }
@@ -216,15 +225,16 @@ class Pay extends Base
      */
     public function withdrawalPassword(){
         $uid = $this->request->param('uid');
+        if(!$uid) return json($this->outJson(0,'参数错误'));
         $withdrawal = $this->request->param('withdrawal_password');
-        if(strlen($withdrawal) != 6){
-            return json($this->outJson(1,'密码规则错误'));
-        }
+//        if(strlen($withdrawal) != 6){
+//            return json($this->outJson(0,'密码规则错误'));
+//        }
         $id = Db::name('member')->where('uid',$uid)->setField('withdrawal_password',$withdrawal);
         if($id){
-            return json($this->outJson(0,'设置成功',$id));
+            return json($this->outJson(1,'设置成功',$id));
         }else{
-            return json($this->outJson(1,'设置失败'));
+            return json($this->outJson(0,'设置失败'));
         }
 
     }
@@ -235,14 +245,7 @@ class Pay extends Base
      */
     public function bankVerify(){
         try{
-
-            $checkData = [
-                'bank_phone' => '13760387593',
-                'id_card' => '430703199006188349',
-                'bank_account' => '6217852000011282020',
-                'user_name' => '刘佩',
-            ];
-                //$this->request->param();
+            $checkData = $this->request->param();
             $validate = new \app\api\validate\Bank();
             if (!$vdata = $validate->scene('all')->check($checkData)) {
                 return json($this->outJson(0,$validate->getError()));
@@ -275,12 +278,7 @@ class Pay extends Base
             if($out_put['status'] != 01){
                 return json($this->outJson($out_put['status'],$out_put['msg']));
             }
-            return json($this->outJson(1,'验证成功'));
-//            $data = [
-//                'bank_name'=>$out_put['bank'],
-//                'bank_phone'=>$out_put['mobile'],
-//            ];
-//            return json($this->outJson($out_put['status'],$out_put['msg'],$data));
+            return json($this->outJson(1,'验证成功',$out_put));
          } catch (\Exception $e) {
             return json($this->outJson(0,'服务器响应失败'));
         }
@@ -293,20 +291,11 @@ class Pay extends Base
      */
     public function bankSet(){
         $checkData =$this->request->param();
-        $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
-// [
-//            'bank_phone' => '13760387593',
-//            'id_card' => '430703199006188349',
-//            'bank_account' => '6217852000011282020',
-//            'user_name' => '刘佩',
-//        ];
+        $uid = $this->request->param('uid');
+        if(!$uid) return json($this->outJson(0,'参数错误'));
         $validate = new \app\api\validate\Bank();
         if (!$vdata = $validate->scene('all')->check($checkData)) {
             return json($this->outJson(0,$validate->getError()));
-        }
-        $bool = $this->checkPhoneCode(trim($checkData['bank_phone']), trim($checkData['code']),!empty(trim($checkData['scene'])?trim($checkData['scene']):'bank'));
-        if(!$bool){
-            return json($this->outJson(0,'短信验证码错误'));
         }
         $bank = [
                 'bank_phone' => trim($checkData['bank_phone']),
@@ -342,7 +331,8 @@ class Pay extends Base
     public function getBank()
     {
         try{
-            $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+            $uid = $this->request->param('uid');
+            if(!$uid) return json($this->outJson(0,'参数错误'));
             if ($this->request->isPost()) {
                 $data = Db::name('bank_info')
                     ->where(['uid' => $uid])
@@ -370,7 +360,8 @@ class Pay extends Base
     public function pushPayLog()
     {
         try{
-            $uid = !empty($this->request->param('uid'))?$this->request->param('uid'):$this->uid;
+            $uid = $this->request->param('uid');
+            if(!$uid) return json($this->outJson(0,'参数错误'));
             if ($this->request->isPost()) {
                 $data = Db::name('pay_log')->where(['uid' => $uid])->field('money,pay_status,add_time,pay_time')->select();
                 $res = [];
@@ -459,10 +450,47 @@ class Pay extends Base
     public function memberCenter(){
 
         $data = array();
-        $uid = !empty($this->uid)?$this->uid:$this->request->param('uid');
-        $task_user_level = $this->request->param('task_user_level');
+        $uid = $this->request->param('uid');
+        if(!$uid) return json($this->outJson(0,'参数错误'));
         //获取用户详情
-        $user = Db::name('member')->where('uid',$uid)->field('nick_name,face,member_class,vip_end_time')->find();
+        $user = Db::name('member')->where('uid',$uid)->field('nick_name,face,member_class,vip_end_time,phone')->find();
+        if($user['face']){
+            $user['face'] = $this->request->domain().$user['face'];
+        }
+        //会员权益佣金比例
+        $allot = Db::name('allot_log')->where('user_level','in','2,3,4')->field('allot_one,allot_two,charge_type,user_level')->select();
+        foreach($allot as $k=>$v){
+            if($v['user_level'] == 2){
+                if($v['charge_type'] == 1){
+                    $data['vip']['recommend'] = $v['allot_one'];
+                    $data['vip']['between'] = $v['allot_two'];
+                }
+                if($v['charge_type'] == 2){
+                    $data['vtask']['recommend'] = $v['allot_one'];
+                    $data['vtask']['between'] = $v['allot_two'];
+                }
+            }
+            if($v['user_level'] == 3){
+                if($v['charge_type'] == 1){
+                    $data['svip']['recommend'] = $v['allot_one'];
+                    $data['svip']['between'] = $v['allot_two'];
+                }
+                if($v['charge_type'] == 2){
+                    $data['stask']['recommend'] = $v['allot_one'];
+                    $data['stask']['between'] = $v['allot_two'];
+                }
+            }
+            if($v['user_level'] == 4){
+                if($v['charge_type'] == 1){
+                    $data['ssvip']['recommend'] = $v['allot_one'];
+                    $data['ssvip']['between'] = $v['allot_two'];
+                }
+                if($v['charge_type'] == 2){
+                    $data['sstask']['recommend'] = $v['allot_one'];
+                    $data['sstask']['between'] = $v['allot_two'];
+                }
+            }
+        }
         //根据用户会员情况获取会员
         $vip = cp_getCacheFile('system');
         switch($user['member_class']){
@@ -482,28 +510,64 @@ class Pay extends Base
         }
         //专属VIP任务 获取比本身会员高一级的任务
         $model = new \app\api\model\Member();
-        if($task_user_level == 2){
-            $user_level = '2,3,4';
-        }elseif($task_user_level == 3){
-            $user_level = '3,4';
-        }elseif($task_user_level == 4){
-            $user_level = '4';
+
+            $vip = '2,3,4';
+
+            $svp = '3,4';
+
+            $ssvip = '4';
+
+        $vip_task = $model->memberTaskMore($vip,1,5);
+        if($vip_task){
+            foreach($vip_task as $k=>&$v){
+                $v['task_icon'] = $this->request->domain().$v['task_icon'];
+                $json_area = json_decode($v['task_area'],true);
+                $v['task_area'] = $json_area['city'];
+            }
         }
-        $level_task = $model->memberTaskMore($user_level,1,5);
+        $data['vip_task'] = $vip_task;
+
+        $svip_task = $model->memberTaskMore($svp,1,5);
+        if($svip_task){
+            foreach($svip_task as $k => &$v){
+                $v['task_icon'] = $this->request->domain().$v['task_icon'];
+                $json_area = json_decode($v['task_area'],true);
+                $v['task_area'] = $json_area['city'];
+            }
+        }
+        $data['svip_task'] = $svip_task;
+
+        $ssvip_task = $model->memberTaskMore($ssvip,1,5);
+        if($ssvip_task){
+            foreach($ssvip_task as $k => &$v){
+                $v['task_icon'] = $this->request->domain().$v['task_icon'];
+                $json_area = json_decode($v['task_area'],true);
+                $v['task_area'] = $json_area['city'];
+            }
+        }
+        $data['ssvip_task'] = $ssvip_task;
+
         //获取最新5条已完成任务无筛选条件
-        $sql = "SELECT s.id,s.title,s.uid,s.task_money,s.check_time,m.nick_name,m.face,c.name FROM wld_send_task_log AS s
-                LEFT JOIN wld_member AS m ON s.uid = m.uid LEFT JOIN wld_task_classify c ON s.task_cid = c.task_cid
+        $sql = "SELECT s.id,s.title,s.uid,s.task_money,s.check_time,m.nick_name,m.face,m.phone,c.name,t.task_icon FROM wld_send_task_log AS s
+                LEFT JOIN wld_member AS m ON s.uid = m.uid LEFT JOIN wld_task_classify c ON s.task_cid = c.task_cid LEFT JOIN wld_task t on s.task_id = t.task_id
                 WHERE s.is_check = 1 ORDER BY s.check_time DESC LIMIT 5;";
         $data['task'] = Db::query($sql);
+        if($data['task']){
+            foreach($data['task'] as &$v){
+                $v['task_icon'] = $this->request->domain().$v['task_icon'];
+                if($v['face']){
+                    $v['face'] = $this->request->domain().$v['face'];
+                }
+            }
+        }
         $data['user'] = $user;
-        $data['level_task'] = $level_task;
 
-        return json($this->outJson('0','成功',$data));
+        return json($this->outJson(1,'成功',$data));
 
     }
 
     /**
-     * 会员专属任务
+     * 会员专属任务更多(未调用)
      * @return \think\response\Json
      */
     public function privilegeTaskMore(){
@@ -521,7 +585,27 @@ class Pay extends Base
         }
         $data = $model->memberTaskMore($user_level,$page,15);
 
-        return json($this->outJson('0','成功',$data));
+        return json($this->outJson(1,'成功',$data));
+    }
+
+    /**
+     * 开通会员页面
+     * @return \think\response\Json
+     */
+    public function payShow(){
+        $data = array();
+        $uid = $this->request->param('uid');
+        if(!$uid) return json($this->outJson(0,'参数错误'));
+        //获取用户信息
+        $data['user'] = Db::name('member')->where('uid',$uid)->field('uid,nick_name,nick_name,member_class,face,vip_start_time,vip_end_time')->find();
+        if(!empty($data['user']['face'])){
+            $data['user']['face'] = $this->request->domain().$data['user']['face'];
+        }
+        //获取充值信息
+        $money_arr = cp_getCacheFile('system');
+        $data['vip'] = isset($money_arr['common_money']) ? $money_arr['common_money'] : 200;
+        $data['svip'] = isset($money_arr['expert_money']) ? $money_arr['expert_money'] : 1000;
+        return json($this->outJson(1,'获取成功',$data));
     }
 
     /**
@@ -530,71 +614,78 @@ class Pay extends Base
      */
     public function chargePay()
     {
-        try{
+//        try{
             if ($this->request->isPost()) {
                 $level = $this->request->param('level');    //充值会员等级 2：vip 3:svip
                 $type = $this->request->param('type');  //充值类型 1：充值 2：续费 3.升级
-                $pay_status = $this->request->param('pay_status');  //支付方式 1：支付宝 2：微信支付  3：快捷支付
-                $uid = !empty($this->uid)?$this->uid:$this->request->param('uid');
+                $pay_status = $this->request->param('pay_status');  //支付方式 2：支付宝 1：微信支付  3：快捷支付
+                $uid = $this->request->param('uid');
                 if (!in_array($level, [2,3])) return $this->outJson(0, '充值失败！');
                 if (!in_array($pay_status, [1,2,3])) return $this->outJson(0, '支付方式错误！');
                 if (!$level || !$pay_status || !$type || !$uid) return json($this->outJson(0,'参数不合法'));
 
-                $model = new \app\api\model\AllotLog();
                 $user = Db::name('member')->where(['uid'=>$uid])->field('uid,total_money,task_money,member_class,parent_level_1,parent_level_2,parent_level_3,invite_uid')->find();
                 $money_arr = cp_getCacheFile('system'); //获取充值金额
                 $common_money = isset($money_arr['common_money']) ? $money_arr['common_money'] : 200;
                 $expert_money = isset($money_arr['expert_money']) ? $money_arr['expert_money'] : 1000;
+                $money = 0;
                 //判断充值类型
                 if($type == 1 && $user['member_class'] == 1){ //充值
                     //根据充值等级获取充值金额
                     if ($level == 2) { //vip
                         $money = $common_money;
                         $html_title = '充值'.$money . '元升级为VIP';
-                        $vip = 1;
                     }
                     if ($level == 3) { //svip
                         $money = $expert_money;
                         $html_title = '充值'.$money . '元升级为SVIP';
-                        $vip = 2;
                     }
                 }elseif($type == 2){    //续费
                     //根据续费等级获取续费金额
                     if($level == 2 && $user['member_class'] == 2){ //vip
                         $money = $common_money;
                         $html_title = 'VIP续费'.$money;
-                        $vip = 1;
                     }
                     if($level == 3 && $user['member_class'] == 3){ //svip
                         $money = $expert_money;
                         $html_title = 'SVIP续费'.$money;
-                        $vip = 2;
                     }
                 }elseif($type == 3 && $user['member_class'] == 2){    //升级(只有已是vip会员才能升级只能升级svip)
                     //续费只补差价
                     $money = $expert_money - $common_money;
                     $html_title = 'VIP升级SVIP补差价'.$money;
-                    $vip = 3;
                 }else{
                     return json($this->outJson(0,'充值失败!'));
                 }
                 //实际支付金额
-                $actual_money = cp_randomFloat(2,false,0,1);
+                $actual_money = $money - cp_randomFloat(2,false,0,1);
 
                 // 支付订单写入
-                $pay_log = $model->createPayLogData($uid, $money, $pay_status, $type, $html_title,$vip);
+//                $model = new \app\api\model\AllotLog();
+//                $pay_log = $model->createPayLogData($uid, $money, $pay_status, $type, $html_title,$vip);
+                $pay_log = [
+                    'uid' => $uid,
+                    'money' => $money,
+                    'type' => $type, //充值类型 1：充值 2：续费 3：升级'
+                    'pay_mode' => $pay_status, //支付方式  1：支付宝 2:快捷支付 3：微信支付'
+                    'add_time' => time(),
+                    'order_sn' => date('Ymd').substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8),
+                    'goods_name' => $html_title,
+                    'vip' => $user['member_class'], //会员充值前等级 2：VIP 3：svip 4:服务中心'
+                    'pay_status' => 1 // 支付状态 1：待支付  2：已支付 3：支付失败'
+                ];
                 $pay_log_id = Db::name('pay_log')->insertGetId($pay_log);
 
                 if($pay_log_id && $pay_log['order_sn']){
                     $m = new \app\index\controller\Pay();
                     // 会员充值方式
                     switch ($pay_status) {
-                        case 1:
-                            // 支付宝支付 生成app可以跳转的支付链接
-                            $url = $m->create($html_title, $pay_log['order_sn'], $actual_money);
-                            return json($this->outJson(1, '操作成功', ['app_pay_url' => $url]));
-                            break;
                         case 2:
+                            // 支付宝支付 生成h5可以跳转的支付链接
+                            $url = $m->create($html_title, $pay_log['order_sn'], $actual_money);
+                            return json($this->outJson(1, '操作成功', $url));
+                            break;
+                        case 1:
                             // 微信支付
                             $res = $m->createWxPay($html_title, $pay_log['order_sn'], $actual_money);
                             if (!$res['status']) {
@@ -631,9 +722,9 @@ class Pay extends Base
             } else {
                 return json($this->outJson(500,'非法操作'));
             }
-        } catch (\Exception $e){
-            return json($this->outJson(0,'服务器响应失败'));
-        }
+//        } catch (\Exception $e){
+//            return json($this->outJson(0,'服务器响应失败'));
+//        }
     }
 
 }

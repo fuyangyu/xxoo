@@ -9,11 +9,11 @@ class WxPay
     // 通用参数
     protected $wxConfig = [
         'appid' => 'wxc55d0202e187e851',// 应用ID
-        'mch_id' => '1520276391',// 商户号
-        'notify_url' => 'http://www.dotgomedia.com/index.php/pay/wxNotify',//异步通知地址
+        'mch_id' => '1554383731',//'1520276391',// 商户号
+        'notify_url' => 'http://www.diandonglife.com/index.php/pay/wxNotify',//异步通知地址
         // 注：key为商户平台设置的密钥key
         // key设置路径：微信商户平台(pay.weixin.qq.com)-->账户设置-->API安全-->密钥设置
-        'wx_sign_key' => '05b7700178c9812a6d9bcee38e9a778e'
+        'wx_sign_key' => 'iuydgh7d78gr9gkw9g7s3fg9we45cw21'
     ];
 
     private function __construct($options)
@@ -103,16 +103,16 @@ class WxPay
         $nonce_str = $this->rand_code();
         $data['appid'] = $this->wxConfig['appid'];          //appid
         $data['mch_id'] = $this->wxConfig['mch_id'];        //商户号
-        $data['body'] = $subject;                           //商品描述
-        $data['spbill_create_ip'] = $this->getClientIp();   //ip地址
-        $data['total_fee'] = $total_amount;                 //金额
-        $data['out_trade_no'] = $order_sn;                  //商户订单号,不能重复
         $data['nonce_str'] = $nonce_str;                    //随机字符串
+        $data['sign'] = $this->getSign($data);              //获取签名
+        $data['body'] = $subject;                           //商品描述
+        $data['out_trade_no'] = $order_sn;                  //商户订单号,不能重复
+        $data['total_fee'] = $total_amount;                 //金额
+        $data['spbill_create_ip'] = $this->getClientIp();   //ip地址
         $data['notify_url'] = $this->wxConfig['notify_url'];//回调地址,用户接收支付后的通知,必须为能直接访问的网址,不能跟参数
-        $data['trade_type'] = 'APP';                        //支付方式
+        $data['trade_type'] = 'MWEB';                        //支付方式
         //将参与签名的数据保存到数组
         //注意：以上几个参数是追加到$data中的，$data中应该同时包含开发文档中要求必填的剔除sign以外的所有数据
-        $data['sign'] = $this->getSign($data);              //获取签名
         $xml = $this->ToXml($data);                         //数组转xml
         //curl 传递给微信方
         $url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
@@ -152,6 +152,7 @@ class WxPay
                     'prepayid' => $res['prepay_id'],
                     'appid' => $this->wxConfig['appid'],
                     'partnerid' => $this->wxConfig['mch_id'],
+                    'mweb_url'  => $res['mweb_url'],
                     'package'  => 'Sign=WXPay',
                     'noncestr' => $nonce_str,
                     'timestamp' => time(),

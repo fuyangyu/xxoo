@@ -10,33 +10,35 @@ class Home extends Base
     public function qrCode()
     {
         try{
-//            if ($this->request->isPost()) {
-                $uid = 374;
-                    //$this->request->param('uid');
+            if ($this->request->isPost()) {
+                $uid = $this->request->param('uid');
                 if(!$uid) return json($this->outJson(0,'参数错误'));
                 $old = Db::name('member')->where(['uid' => $uid])->field('invite_img,phone,face')->find();
                 if ($old['invite_img']) {
-//                    $old['url'] = $this->request->domain() . "/index.php/index/register/code/" . $old['phone'] . ".html";
-//                    $old['url'] = 'https://www.baidu.com?phone='.$old['phone'];
-                    $data = $this->request->domain().$old['invite_img'];
+                    $data['invite_img'] = $this->request->domain().$old['invite_img'];
+                    $data['code'] = $old['phone'];
                     return json($this->outJson(1,'获取成功',$data));
                 } else {
-//                    $url = $this->request->domain() . "/index.php/index/register/code/" . $old['phone'] . ".html";
-                    $url = 'https://www.baidu.com?phone='.$old['phone'];
-                    $logo = '.'.$old['face'];
+                    $url = 'http://www.diandonglife.com/share/invite.html?phone='.$old['phone'];
+                    if($old['face']){
+                        $logo = '.'.$old['face'];
+                    }else{
+                        $logo = './uploads/qrcode/qrlogo.png';
+                    }
                     $filename = uniqid() . ".png";
                     $msg = $this->createQrCodeImg($url,$filename, 200, $logo,50);
                     if (!$msg['status']) return json($msg);
                     $data = [
                         'invite_img' => $this->request->domain().substr($msg['msg'],1),
+                        'code' => $old['phone'],
 //                        'url' => $url
                     ];
                     Db::name('member')->where(['uid' => $uid])->setField('invite_img',substr($msg['msg'],1));
                     return json($this->outJson(1,'获取成功',$data));
                 }
-//            } else {
-//                return json($this->outJson(500,'非法操作'));
-//            }
+            } else {
+                return json($this->outJson(500,'非法操作'));
+            }
         } catch (\Exception $e){
             return json($this->outJson(0,'服务器响应失败'));
         }
@@ -167,10 +169,12 @@ class Home extends Base
                 $data['serve_money'] = isset($fileData['serve_money']) ? $fileData['serve_money'] : '';
 
                 //点动会员数据记录
-                $sql = "SELECT b.uid,m.nick_name,m.face,b.type,b.task_money,b.add_time,m.member_class FROM wld_brokerage_log as b INNER JOIN wld_member as m ON b.uid = m.uid AND b.type in(1,4) ORDER BY b.id DESC LIMIT 4;";
+                $sql = "SELECT b.uid,m.nick_name,m.face,b.type,b.money,b.add_time,m.member_class FROM wld_brokerage_log as b INNER JOIN wld_member as m ON b.uid = m.uid AND b.type in(1,4) ORDER BY b.id DESC LIMIT 4;";
                 $task = Db::query($sql);
                 foreach($task as &$v){
-                    $v['face'] = $this->request->domain().$v['face'];
+                    if($v['face']){
+                        $v['face'] = $this->request->domain().$v['face'];
+                    }
                 }
                 $data['task'] = $task;
                 return json($this->outJson(1,'获取成功',$data));
@@ -309,6 +313,7 @@ class Home extends Base
      * @return \think\response\Json
      */
     public function showTask(){
+        $uid = $this->request->param('uid');
         $task = array();
         //精选任务
         $sql = "SELECT task_id,title,task_icon,is_area,task_user_level,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num,(limit_total_num-get_task_num) as authentic_num,1 as is_start FROM wld_task
@@ -321,19 +326,17 @@ class Home extends Base
                     $v['task_area'] = json_decode($v['task_area'],true)['city'];
                 }
                 $v['task_icon'] = $this->request->domain().$v['task_icon'];
-                if($this->uid){
-                    $logId = Db::name('send_task_log')->where(['uid'=>$this->uid,'task_id'=>$v['task_id']])->where('is_check','in',[0,2])->find();
-                    $member_classs = Db::name('member')->where('uid',$this->uid)->value('member_class');
-                    if($logId){
-                        $task[$k]['status'] = 1;    //已经领取
-                    }
+                if($uid){
+                    $is_check = Db::name('send_task_log')->where(['uid'=>$uid,'task_id'=>$v['task_id']])->order('id','desc')->limit(1)->value('is_check');
+                    $member_classs = Db::name('member')->where('uid',$uid)->value('member_class');
+                    $task[$k]['is_check'] = $is_check;
                     $task[$k]['member_classs'] = $member_classs;
                 }
                 $v['task_user_level'] = explode(',',$v['task_user_level']);
             }
             return json($this->outJson(1,'成功',$task));
         }
-        return json($this->outJson(0,'失败'));
+        return json($this->outJson(0,'成功'));
     }
 
     /**
@@ -344,6 +347,7 @@ class Home extends Base
     public function showTaskMore(){
         if ($this->request->isPost()) {
             $task = array();
+            $uid = $this->request->param('uid');
             $page = $this->request->param('page',1); //页数
             $limit = 10;    //每页数量
             $start = 0;     //开始位置
@@ -360,12 +364,10 @@ class Home extends Base
                         $v['task_area'] = json_decode($v['task_area'],true)['city'];
                     }
                     $v['task_icon'] = $this->request->domain().$v['task_icon'];
-                    if($this->uid){
-                        $logId = Db::name('send_task_log')->where(['uid'=>$this->uid,'task_id'=>$v['task_id']])->where('is_check','in',[0,2])->find();
-                        $member_classs = Db::name('member')->where('uid',$this->uid)->value('member_class');
-                        if($logId){
-                            $task[$k]['status'] = 1;    //已经领取
-                        }
+                    if($uid){
+                        $is_check = Db::name('send_task_log')->where(['uid'=>$uid,'task_id'=>$v['task_id']])->order('id','desc')->limit(1)->value('is_check');
+                        $member_classs = Db::name('member')->where('uid',$uid)->value('member_class');
+                        $task[$k]['is_check'] = $is_check;
                         $task[$k]['member_classs'] = $member_classs;
                     }
                     $v['task_user_level'] = explode(',',$v['task_user_level']);

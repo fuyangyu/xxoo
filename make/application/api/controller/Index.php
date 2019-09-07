@@ -59,7 +59,7 @@ class Index extends Controller
             $params = array(
                 'key' => 'c43b5e383b9977eaf7d14576cbb9374c', //您申请的APPKEY
                 'mobile' => $phone, //接受短信的用户手机号码
-                'tpl_id' => '112467', //您申请的短信模板ID，根据实际情况修改
+                'tpl_id' => '183378', //您申请的短信模板ID，根据实际情况修改
                 'tpl_value' => "#code#={$randCode}" //您设置的模板变量，根据实际情况修改
             );
             $paramstring = http_build_query($params);
@@ -159,4 +159,5 @@ class Index extends Controller
 
         return json($this->outJson(1,'获取成功',$data));
     }
+
 }

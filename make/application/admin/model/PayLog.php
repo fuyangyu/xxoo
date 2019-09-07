@@ -26,12 +26,12 @@ class PayLog extends Base
         if ($page != 1) {
             $start = ($page - 1) * $limit;
         }
-        $obj = $this->where($where)->limit($start, $limit)->order(['id' => 'desc'])->select();
-        $data = $obj->toArray();
+        $data = Db::name('pay_log')->where($where)->limit($start, $limit)->order(['id' => 'desc'])->select();
         if ($data) {
             $uid_s = [];
-            foreach ($data as $k => $v) {
+            foreach ($data as $k => &$v) {
                 $uid_s[] = $v['uid'];
+                $v['type'] = $this->getType($v['type'],$v['vip']);
             }
             $temp_name_arr = [];
             $res = Db::name('member')->where(['uid' => ['in',$uid_s]])->field('uid,phone')->select();
@@ -54,6 +54,33 @@ class PayLog extends Base
         ];
     }
 
+
+    public function getType($type,$vip){
+        $html = '';
+        if($type == 1){
+            $html = '充值'.$this->getVip($vip);
+        }elseif($type == 2){
+            $html = '续费'.$this->getVip($vip);
+        }elseif($type == 3){
+            $html = '升级'.$this->getVip($vip);
+        }
+        return $html;
+    }
+    public function getVip($vip){
+        $html = '';
+        switch ($vip) {
+            case 2:
+                $html = 'vip';
+                break;
+            case 3:
+                $html = 'svip';
+                break;
+            case 4:
+                $html = '服务中心';
+                break;
+        }
+        return $html;
+    }
 
     // 获取器
     public function getTypeAttr($value)
@@ -136,6 +163,7 @@ class PayLog extends Base
         $end_time = isset($where['end_time']) ? $where['end_time'] : '';
         $keywords = isset($where['keywords']) ? $where['keywords'] : '';
         $pay_status = isset($where['pay_status']) ? $where['pay_status'] : 0;
+        $type = isset($where['type']) ? $where['type'] : 0;
         $where = [];
         if ($keywords) {
             $where['order_sn'] = ['like',"%{$keywords}%"];
@@ -151,6 +179,15 @@ class PayLog extends Base
         }
         if ($pay_status > 0) {
             $where['pay_status']  = $pay_status;
+        }
+        if ($type = 1) {
+            $where['type']  = 1;
+        }elseif($type = 2){
+            $where['type']  = 2;
+        }elseif($type = 3){
+            $where['type']  = 3;
+        }else{
+            $where['type']  = 0;
         }
         return $where;
     }

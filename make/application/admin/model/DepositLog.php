@@ -26,28 +26,29 @@ class DepositLog extends Base
         if ($page != 1) {
             $start = ($page - 1) * $limit;
         }
-        $obj = $this->where($where)->limit($start, $limit)->order(['id' => 'desc'])->select();
-        $data = $obj->toArray();
+        $data = Db::name('deposit_log')->where($where)->limit($start, $limit)->order(['id' => 'desc'])->select();
         if ($data) {
-            $uid_s = [];
-            foreach ($data as $k => $v) {
-                $uid_s[] = $v['uid'];
-            }
-            $temp_name_arr = [];
-            $res = Db::name('bank_info')->where(['uid' => ['in',$uid_s]])->field('uid,bank_card_num')->select();
-            foreach ($res as $k => $v) {
-                $temp_name_arr[$v['uid']] = $v['bank_card_num'];
-            }
+            foreach ($data as $k => &$v) {
+                if($v['type'] == 1){    //银行卡
+                    $bank = Db::name('bank_info')->where('uid',$v['uid'])->field('bank_account,user_name,bank_name')->find();
+                    $data[$k]['account'] = $bank['bank_account'];
+                    $data[$k]['name'] = $bank['user_name'];
+                    $data[$k]['account_name'] = $bank['bank_name'];
+                    $v['type'] = '银行卡';
+                    $v['is_check'] = $this->checkAttrName($v['is_check']);
+                    $v['depos_status'] = $this->deposStatus($v['depos_status']);
 
-            foreach ($data as $k => $v) {
-                if (isset($temp_name_arr[$v['uid']])) {
-                    $data[$k]['bank_info'] = $temp_name_arr[$v['uid']];
-                } else {
-                    $data[$k]['bank_info'] = '未绑定银行卡';
                 }
-                $data[$k]['check_name'] = $this->checkAttrName($v['is_check']);
+                if($v['type'] == 2){    //支付宝
+                   $alipay = Db::name('alipay_info')->where('uid',$v['uid'])->field('alipay,real_name')->find();
+                    $data[$k]['account'] = $alipay['alipay'];
+                    $data[$k]['name'] = $alipay['alipay'];
+                    $data[$k]['account_name'] = '支付宝';
+                    $v['type'] = '支付宝';
+                    $v['is_check'] = $this->checkAttrName($v['is_check']);
+                    $v['depos_status'] = $this->deposStatus($v['depos_status']);
+                }
             }
-
         }
         // 查询总记录数
         $total = $this->where($where)->count();
@@ -57,7 +58,10 @@ class DepositLog extends Base
         ];
     }
 
-
+    /**审核状态
+     * @param $value
+     * @return string
+     */
     protected function checkAttrName($value)
     {
         if ($value == 1) {
@@ -68,6 +72,18 @@ class DepositLog extends Base
         }
         if ($value == 0) {
             return '待审核';
+        }
+    }
+
+    public function deposStatus($value){
+        if ($value == 1) {
+            return '提现中';
+        }
+        if ($value == 2) {
+            return '提现成功';
+        }
+        if ($value == 3) {
+            return '提现失败';
         }
     }
 

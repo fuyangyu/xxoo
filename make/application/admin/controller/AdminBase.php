@@ -57,9 +57,23 @@ class AdminBase extends Base
     protected function getBusiness()
     {
         return [
-            '1' => '会员收费',
-            '2' => '广告任务',
-//            '3' => '静态分佣'
+            '1' => '推荐佣金',
+            '2' => '任务收入',
+            '3' => '渠道佣金',
+            '4' => '静态佣金',
+        ];
+    }
+
+    /**
+     * 充值类型
+     * @return array
+     */
+    protected function gerEcharge()
+    {
+        return [
+            '1' => '充值',
+            '2' => '续费',
+            '3' => '升级',
         ];
     }
 

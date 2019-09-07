@@ -56,15 +56,15 @@ class Task extends AdminBase
             if($limit_total_num > 0){
                 $data = Db::name('task')->where(['task_id' => $task_id])->setField('status',$status);
                 if($data){
-                    return json($this->outJson('0','下架成功'));
+                    return json($this->outJson(1,'下架成功'));
                 }
             }else{
-                return json($this->outJson('1','无法上架数量为0的任务!'));
+                return json($this->outJson(0,'无法上架数量为0的任务!'));
             }
         }
         $data = Db::name('task')->where(['task_id' => $task_id])->setField('status',$status);
         if($data){
-            return json($this->outJson('0','下架成功'));
+            return json($this->outJson(0,'下架成功'));
         }
     }
 
@@ -176,7 +176,7 @@ class Task extends AdminBase
         $status = $this->request->param('status');
         $failure_msg = $this->request->param('failure_msg');
         $message = array();
-        $data = array();
+        $brokerage = array();
         // 启动事务
         Db::startTrans();
         try{
@@ -198,78 +198,130 @@ class Task extends AdminBase
                 //获取分佣配置
                 $allot = Db::name('allot_log')->where(['user_level'=>$user['member_class'],'charge_type'=>2])->find();
                 if($user && $allot){
+                    $phone = substr_replace($user['phone'],'****',3,4);
+
+                    $brokerage[0]['uid'] = $user['uid'];
+                    $brokerage[0]['money'] = $task_old_data['task_money'];
+                    $brokerage[0]['member_class'] = $user['member_class'];
+                    $brokerage[0]['phone'] = $user['phone'];
+                    $brokerage[0]['tid'] = $task_old_data['task_id'];
+                    $brokerage[0]['sid'] = $user['uid'];
+                    $brokerage[0]['type'] = 4;  //充值类型 1：充值 2：续费 3：升级 4:任务
+                    $brokerage[0]['brokerage_type'] = 2;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
+                    $brokerage[0]['add_time'] = date('Y-m_d H:i:s');
                     //直推分佣
-                    if(!empty($user['invite_uid'])) {
-                        $data['uid_one'] = $user['invite_uid'];
-                        $data['one_money'] = $task_old_data['task_money'] * ($allot['allot_one'] / 100);
-                        $status1 = Db::name('member')->where(['uid' => $user['invite_uid']])->setInc('channel_money', $data['one_money']);
-                        //间推分佣
-                        if(!empty($user['parent_level_2']) && $status1){
-                            $data['uid_two'] = $user['parent_level_1'];
-                            $data['two_money'] = $task_old_data['task_money'] * ($allot['allot_two']/100);
-                            $status2 = Db::name('member')->where(['uid'=>$user['parent_level_2']])->setInc('channel_money', $data['two_money']);
-                            //服务中心分佣
-                            if(!empty($user['parent_level_3']) && $status2){
-                                $data['serve_one_money'] = $task_old_data['task_money'] * ($allot['team_one']/100);   //第一个服务中心分佣金额
-                                $data['serve_two_money'] = $task_old_data['task_money'] * ($allot['team_two']/100);   //第二个服务中心分佣金额\
-                                $service = array();
-                                $service = $model->recursionService($user['parent_level_3'],$service);
-                                if(!empty($service[0])) {
-                                    $data['serve_uid_one'] = $service[0];
-                                    Db::name('member')->where(['uid' => $service[0]])->setInc('channel_money', $data['serve_one_money']);
-                                }
-                                if(!empty($service[1])) {
-                                    $data['serve_uid_two'] = $service[1];
-                                    Db::name('member')->where(['uid' => $service[1]])->setInc('channel_money', $data['serve_two_money']);
-                                }
-                                //写入分佣记录
-                                $data['task_money'] = $task_old_data['task_money'];
-                                $data['uid'] = $task_old_data['uid'];
-                                $data['tid'] = $task_old_data['task_id'];
-                                $data['type'] = 4;  //任务
-                                $data['add_time'] = date('Y-m_d H:i:s');
-                                if(!empty($data)){
-                                    Db::name('brokerage_log')->insertGetId($data);
-                                }
+                    $one_money = $two_money = $serve_one_money = $serve_two_money = 0;
+                    if(!empty($user['invite_uid']) && $allot['allot_one'] != 0) {
+                        $one_money = $task_old_data['task_money'] * ($allot['allot_one'] / 100);
+                        //获取分佣用户信息
+                        $oneData = Db::name('member')->where('uid',$user['invite_uid'])->field('uid,member_class,phone')->find();
+                        $brokerage[1]['uid'] = $oneData['uid'];
+                        $brokerage[1]['money'] = $one_money;
+                        $brokerage[1]['member_class'] = $oneData['member_class'];
+                        $brokerage[1]['phone'] = $oneData['phone'];
+                        $brokerage[1]['tid'] = $task_old_data['task_id'];
+                        $brokerage[1]['sid'] = $user['uid'];
+                        $brokerage[1]['type'] = 4;  //充值类型 1：充值 2：续费 3：升级 4:任务
+                        $brokerage[1]['brokerage_type'] = 3;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
+                        $brokerage[1]['add_time'] = date('Y-m_d H:i:s');
+
+                        $message[1] = [  //直推用户
+                            'uid' => $user['invite_uid'],
+                            'content' => '您的团队用户'.$phone.'完成“'.$task_old_data['title'].'”任务获得任务收如入'.$one_money.'元',
+                            'add_time' => date('Y-m-d H:i:s')
+                        ];
+
+                        $message[0] = [  //完成任务用户
+                            'uid' => $task_old_data['uid'],
+                            'content' => '您已经完成“'.$task_old_data['title'].'”任务获得任务收如入'.$task_old_data['task_money'].'元',
+                            'add_time' => date('Y-m-d H:i:s')
+                        ];
+
+                        Db::name('member')->where(['uid' => $user['invite_uid']])->setInc('channel_money', $one_money);
+                    }
+                    //间推分佣
+                    if(!empty($user['parent_level_2']) && $allot['allot_two'] != 0){
+                        $two_money = $task_old_data['task_money'] * ($allot['allot_two']/100);
+                        //获取分佣用户信息
+                        $twoData = Db::name('member')->where('uid',$user['parent_level_2'])->field('uid,member_class,phone')->find();
+                        $brokerage[2]['uid'] = $twoData['uid'];
+                        $brokerage[2]['money'] = $two_money;
+                        $brokerage[2]['member_class'] = $twoData['member_class'];
+                        $brokerage[2]['phone'] = $twoData['phone'];
+                        $brokerage[2]['tid'] = $task_old_data['task_id'];
+                        $brokerage[2]['sid'] = $user['uid'];
+                        $brokerage[2]['type'] = 4;  //充值类型 1：充值 2：续费 3：升级 4:任务
+                        $brokerage[2]['brokerage_type'] = 3;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
+                        $brokerage[2]['add_time'] = date('Y-m_d H:i:s');
+
+                        Db::name('member')->where(['uid'=>$user['parent_level_2']])->setInc('channel_money', $two_money);
+                    }
+                    //服务中心分佣
+                    if(!empty($user['parent_level_3'])){
+                        $serve_one_money = $task_old_data['task_money'] * ($allot['team_one']/100);   //第一个服务中心分佣金额
+                        $serve_two_money = $task_old_data['task_money'] * ($allot['team_two']/100);   //第二个服务中心分佣金额
+                        $service = array();
+                        $service = $model->recursionService($user['parent_level_3'],$service);
+                        if(!empty($service)) {
+                            if (!empty($service[0]) && $allot['team_one'] != 0) {
+                                //获取分佣用户信息
+                                $one_serve = Db::name('member')->where('uid', $service[0])->field('uid,member_class,phone')->find();
+                                $brokerage[3]['uid'] = $one_serve['uid'];
+                                $brokerage[3]['money'] = $serve_one_money;
+                                $brokerage[3]['member_class'] = $one_serve['member_class'];
+                                $brokerage[3]['phone'] = $one_serve['phone'];
+                                $brokerage[3]['tid'] = $task_old_data['task_id'];
+                                $brokerage[3]['sid'] = $user['uid'];
+                                $brokerage[3]['type'] = 4;  //充值类型 1：充值 2：续费 3：升级 4:任务
+                                $brokerage[3]['brokerage_type'] = 3;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
+                                $brokerage[3]['add_time'] = date('Y-m_d H:i:s');
+
+                                $message[3] = [  //第一服务中心
+                                    'uid' => $service[0],
+                                    'content' => '您的团队用户' . $phone . '完成“' . $task_old_data['title'] . '”任务获得任务收如入' . $serve_one_money . '元',
+                                    'add_time' => date('Y-m-d H:i:s')
+                                ];
+
+                                $message[2] = [  //间退用户
+                                    'uid' => $user['parent_level_2'],
+                                    'content' => '您的团队用户' . $phone . '完成“' . $task_old_data['title'] . '”任务获得任务收如入' . $two_money . '元',
+                                    'add_time' => date('Y-m-d H:i:s')
+                                ];
+                                Db::name('member')->where(['uid' => $service[0]])->setInc('channel_money', $serve_one_money);
+                            }
+                            if (isset($service[1]) && $allot['team_two'] != 0) {
+                                //获取分佣用户信息
+                                $two_serve = Db::name('member')->where('uid', $service[1])->field('uid,member_class,phone')->find();
+                                $brokerage[4]['uid'] = $two_serve['uid'];
+                                $brokerage[4]['money'] = $serve_two_money;
+                                $brokerage[4]['member_class'] = $two_serve['member_class'];
+                                $brokerage[4]['phone'] = $two_serve['phone'];
+                                $brokerage[4]['tid'] = $task_old_data['task_id'];
+                                $brokerage[4]['sid'] = $user['uid'];
+                                $brokerage[4]['type'] = 4;  //充值类型 1：充值 2：续费 3：升级 4:任务
+                                $brokerage[4]['brokerage_type'] = 3;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
+                                $brokerage[4]['add_time'] = date('Y-m_d H:i:s');
+
+                                $message[4] = [  //第二服务中心
+                                    'uid' => $service[1],
+                                    'content' => '您的团队用户' . $phone . '完成“' . $task_old_data['title'] . '”任务获得任务收如入' . $serve_two_money . '元',
+                                    'add_time' => date('Y-m-d H:i:s')
+                                ];
+
+                                Db::name('member')->where(['uid' => $service[1]])->setInc('channel_money', $serve_two_money);
                             }
                         }
                     }
+
                     //用户总收入金额和任务佣金总收入
                     $member['task_money'] = $user['task_money'] + $task_old_data['task_money'];    //任务总收入佣金
                     Db::name('member')->where(['uid'=>$task_old_data['uid']])->update($member);
                     //更新整个平台已完成任务总金额
                     Db::name('earnings')->where(['send_id'=>666])->setInc('task_total_money', $task_old_data['task_money']);
-                }
-                //-- 分佣发放完毕 --
-
-                if ($up) {
-                    $phone = substr_replace($user['phone'],'****',3,4);
-
-                    $message[0] = [  //完成任务用户
-                        'uid' => $task_old_data['uid'],
-                        'content' => '您已经完成“'.$task_old_data['title'].'”任务获得任务收如入'.$task_old_data['task_money'].'元',
-                        'add_time' => date('Y-m-d H:i:s')
-                    ];
-                    $message[1] = [  //直推用户
-                        'uid' => $user['invite_uid'],
-                        'content' => '您的团队用户'.$phone.'完成“'.$task_old_data['title'].'”任务获得任务收如入'.$data['two_money'].'元',
-                        'add_time' => date('Y-m-d H:i:s')
-                    ];
-                    $message[2] = [  //间退用户
-                        'uid' => $user['parent_level_2'],
-                        'content' => '您的团队用户'.$phone.'完成“'.$task_old_data['title'].'”任务获得任务收如入'.$data['one_money'].'元',
-                        'add_time' => date('Y-m-d H:i:s')
-                    ];
-                    $message[3] = [  //第一服务中心
-                        'uid' => $service[0],
-                        'content' => '您的团队用户'.$phone.'完成“'.$task_old_data['title'].'”任务获得任务收如入'.$data['serve_one_money'].'元',
-                        'add_time' => date('Y-m-d H:i:s')
-                    ];
-                    $message[4] = [  //第二服务中心
-                        'uid' => $service[1],
-                        'content' => '您的团队用户'.$phone.'完成“'.$task_old_data['title'].'”任务获得任务收如入'.$data['serve_two_money'].'元',
-                        'add_time' => date('Y-m-d H:i:s')
-                    ];
+                    //写入分佣记录
+                    if(!empty($brokerage)){
+                        Db::name('brokerage_log')->insertAll($brokerage);
+                    }
                     //消息记录
                     Db::name('message_log')->insertAll($message);
                     // 提交事务
@@ -278,7 +330,7 @@ class Task extends AdminBase
                         'logMsg' => "审核任务成功-id($id)",
                         'url' => $this->entranceUrl . "/task/drawList.html"
                     ]));
-                } else {
+                }else {
                     // 回滚事务
                     Db::rollback();
                     return json($this->outJson(1,'操作失败,编码001'));
@@ -295,11 +347,10 @@ class Task extends AdminBase
                 ]);
                 if ($ups) {
                     //消息存储
-                    $this->insertMessage([
+                    Db::name('message_log')->insert([
                         'uid' => $task_old_data['uid'],
                         'content' => '您提交的“'.$task_old_data['title'].'”任务因不符合要求被驳回，赶紧去重新提交吧！',
-                        'add_time' => date('Y-m-d H:i:s')
-                    ]);
+                        'add_time' => date('Y-m-d H:i:s')]);
                     // 提交事务
                     Db::commit();
                     return json($this->outJson(0,'操作成功',[
@@ -407,7 +458,11 @@ class Task extends AdminBase
                 //'dist' => '南山区',
                 'limit_user_num' => '',
                 'is_area' => 0,
-                'img' => []
+                'img' => [],
+                'task_icon' => '',
+                'task_step' => '',
+                'taks_fixation_num' => 0,
+                'start_time' =>''
             ];
             if ($id > 0) {
                 $result = Db::name('task')->where(['task_id' => $id])->find();

@@ -28,7 +28,7 @@ class Token{
      * @param String $user_id
      * @return array
      */
-    public function getAccessToken($user_id,$nick_name='')
+    public function getAccessToken($user_id,$nick_name='',$city='',$member_class=1)
     {
         $fileData = Cache::get('token');
         $token_id = md5($user_id . "_" . uniqid());
@@ -40,6 +40,8 @@ class Token{
                     'time' => time() +  $v_time,
                     'uid' => $user_id,
                     'nick_name' => $nick_name,
+                    'city' => $city,
+                    'member_class' => $member_class,
                 ];
                 Cache::set('token',$fileData,0);
                 return $this->outJson(1,'获取token成功',$fileData[$user_id]);
@@ -55,6 +57,8 @@ class Token{
                 'time' => time() +  $v_time,
                 'uid' => $user_id,
                 'nick_name' => $nick_name,
+                'city' => $city,
+                'member_class' => $member_class,
             ];
             Cache::set('token',$fileData,0);
             return $this->outJson(1,'获取token成功',$fileData[$user_id]);
@@ -72,17 +76,17 @@ class Token{
         $token = trim($token);
         $fileData = Cache::get('token');
         $check = [];
-        if (!$fileData) return $this->outJson(400,'token验证失败！');
+        if (!$fileData) return $this->outJson(1002,'token验证失败！');
         foreach ($fileData as $k => $v) {
             if ($v['token'] == $token) {
                 $check = $v;
             }
         }
-        if (!$check) return $this->outJson(400,'token验证失败！');
+        if (!$check) return $this->outJson(1002,'token验证失败！');
         // 存在缓存的情况
         // 判断是否是在生命周期
         if (time() > $check['time']) {
-            return $this->outJson(400,'token已失效！');
+            return $this->outJson(1002,'token已失效！');
         }
         return $this->outJson(1,'token验证成功！');
     }

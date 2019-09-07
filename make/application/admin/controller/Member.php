@@ -109,6 +109,19 @@ class Member extends AdminBase
     }
 
     /**
+     * 会员提现账户管理
+     * @return array
+     */
+    public function depositAccount(){
+        $memberModel = new \app\admin\model\Member();
+        $param = [
+            'keywords' => $this->request->param('keywords',''),
+        ];
+        $data = $memberModel->getDepositData($memberModel->filtrationDepositWhere($param),$this->request->param('limit',15));
+        return $data;
+    }
+
+    /**
      * 编辑会员
      * @return mixed
      */
@@ -162,7 +175,7 @@ class Member extends AdminBase
     public function getBrokerageData()
     {
         if ($this->request->isAjax()) {
-            $model = new \app\admin\model\HireLog();
+            $model = new \app\admin\model\BrokerageLog();
             $param = [
                 'start_time' => $this->request->param('startTime',''),
                 'end_time' => $this->request->param('endTime',''),
@@ -171,7 +184,7 @@ class Member extends AdminBase
                 'type' => $this->request->param('type',0),
                 'check' => $this->request->param('check')
             ];
-            $data = $model->getListData($model->filtrationWhere($param),$this->request->param('limit',15));
+            $data = $model->getListData($param,$this->request->param('limit',15));
             return $data;
         }
     }
@@ -188,7 +201,7 @@ class Member extends AdminBase
                 ['url' => '','name'=>'充值记录列表']
             ],
             'userLevel' => $this->userLevel(2),
-            'business' => $this->getBusiness()
+            'business' => $this->gerEcharge()
         ]);
     }
 
@@ -204,7 +217,8 @@ class Member extends AdminBase
                 'start_time' => $this->request->param('startTime',''),
                 'end_time' => $this->request->param('endTime',''),
                 'keywords' => $this->request->param('keywords',''),
-                'pay_status' => $this->request->param('pay_status','')
+                'pay_status' => $this->request->param('pay_status',''),
+                'type' => $this->request->param('type',''),
             ];
             $data = $model->getListData($model->filtrationWhere($param),$this->request->param('limit',15));
             return $data;
@@ -282,74 +296,48 @@ class Member extends AdminBase
      */
     public function checkWithdraw()
     {
-        $id = $this->request->param('id');
         if ($this->request->isAjax()) {
             // 审核失败 退换提现金额
-            $status = $this->request->param('status');
-            $check_msg = $this->request->param('check_msg');
-            $uid = $this->request->param('uid');
-            $money = $this->request->param('money');
-            Db::startTrans();
-            try{
-                $bl = 1;
-                if ($status == 2) {
-                    // 审核失败 退换用户提现金额
-                    if (cp_mbs_strlen($check_msg) > 20) {
-                        return $this->outJson(1,'审核失败原因不能超过20个字符！');
-                    }
-                    $up = Db::name('deposit_log')->where(['id' => $id])->update([
-                        'is_check' => 2,
-                        'check_msg' => $check_msg,
-                        'is_down' => 1,
-                        'check_time' => date('Y-m-d H:i:s')
-                    ]);
-                    $bl = Db::name('member')->where(['uid' => $uid])->setInc('balance',$money);
-                } else {
-                    $check = Db::name('bank_info')->where(['uid' => $uid])->find();
-                    if (!$check) {
-                        return $this->outJson(1,'未绑定银行卡无法进行提现操作！');
-                    }
-                    $up = Db::name('deposit_log')->where(['id' => $id])->update([
-                        'is_check' => 1,
-                        'is_down' => 1,
-                        'check_time' => date('Y-m-d H:i:s')
-                    ]);
+            $status = $this->request->param('status');  //审核状态 1成功 2失败
+            $check_msg = $this->request->param('check_msg');    //审核失败原因
+            $id = $this->request->param('id');
+            if($status == 1){   //成功
+                $check = Db::name('deposit_log')->where('id',$id)->update(['is_check',1,'check_time'=>date('Y-m-d H:i:s')]);
+                if($check){
+                    return json($this->outJson(1,'审核成功',$id));
                 }
-                if ($bl && $up) {
-                    Db::commit();
-                    return $this->outJson(0,'操作成功',[
-                        'logMsg' => "提现审核成功-id($id)",
-                        'url' => $this->entranceUrl . "/member/withdraw.html"
-                    ]);
-                } else {
-                    Db::rollback();
-                    return $this->outJson(1,'操作失败');
+            }elseif($status == 2){
+                if(cp_mbs_strlen($check_msg) < 15){
+                    $check = Db::name('deposit_log')->where('id',$id)->update(['is_check'=>2,'check_msg'=>$check_msg,'check_time'=>date('Y-m-d H:i:s')]);
+                    if($check){
+                        return json($this->outJson(1,'审核驳回成功',$id));
+                    }else{
+                        return json($this->outJson(0,'审核驳回失败',$id));
+                    }
+                }else{
+                    return json($this->outJson(0,'审核驳回理由太多了'));
                 }
-            } catch(\Exception $e) {
-                Db::rollback();
-                return $this->outJson(1,'操作失败,debug:'. $e->getMessage());
             }
-        } else {
-            $old = Db::name('deposit_log')->where(['id' => $id])->find();
-            $bankInfo = Db::name('bank_info')->where(['uid' => $old['uid']])->find();
-            $result = [
-                'phone' => $old['phone'],
-                'money' => $old['money'],
-                'uid' => $old['uid'],
-                'user_name' => isset($bankInfo['user_name']) ? $bankInfo['user_name'] : '',
-                'bank_name' => isset($bankInfo['bank_name']) ? $bankInfo['bank_name'] : '',
-                'bank_branch_name' => isset($bankInfo['bank_branch_name']) ? $bankInfo['bank_branch_name'] : '',
-                'bank_card_num' => isset($bankInfo['bank_card_num']) ? $bankInfo['bank_card_num'] : '',
-            ];
-            return $this->fetch('check_withdraw',[
-                'crumbs'=>[
-                    ['url' => $this->entranceUrl . "/index/main",'name'=>'首页'],
-                    ['url' => $this->entranceUrl . "/member/withdraw",'name'=>'提现记录列表'],
-                    ['url' => '','name'=>'提现审核']
-                ],
-                'data' => $result,
-                'id' => $id
-            ]);
+
+        }
+    }
+
+    /**
+     * 提现申请确认打款成功
+     * @return \think\response\Json
+     * @throws \think\Exception
+     */
+    public function affirmRemit(){
+        if($this->request->isAjax()){
+            $id = $this->request->param('id');
+            if(!$id) return json($this->outJson(0,'参数错误'));
+
+            $status = Db::name('deposit_log')->where('id',$id)->update(['depos_status'=>2,'is_check'=>1,'check_time'=>date('Y-m-d H:i:s')]);
+            if($status){
+                return json($this->outJson(1,'确认打款成功'));
+            }else{
+                return json($this->outJson(0,'确认打款失败'));
+            }
         }
     }
 

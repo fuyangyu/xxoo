@@ -994,7 +994,7 @@ class AllotLog extends Base
 
             // TODO 其他支付方式 必须支付完成才进行 所有操作状态修改
             // TODO 包括用户余额额度的增加 佣金状态 支付状态
-            $pay_log['pay_status'] = 1
+            'pay_status' => 1
         ];
         return $pay_log;
     }
@@ -1069,7 +1069,7 @@ class AllotLog extends Base
      */
     public function createOrderSn()
     {
-        $orderSn =  date('Ymd').substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8);;
+        $orderSn =  date('Ymd').substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8);
         return $orderSn;
     }
 

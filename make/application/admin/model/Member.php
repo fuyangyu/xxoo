@@ -30,13 +30,10 @@ class Member extends Base
         $data = $obj->toArray();
         if ($data) {
             foreach ($data as $k => $v) {
-                $line_total = $this->where($where)
-                    ->whereOr('parent_level_1','=',$v['uid'])
-                    ->whereOr('parent_level_2','=',$v['uid'])
-                    ->whereOr('parent_level_3','=',$v['uid'])
-                    ->whereOr('parents','=',$v['uid'])
-                    ->count();
+                $line_total = $this->where($where)->where('invite_uid','=',$v['uid'])->count();
                 $data[$k]['line_total'] = $line_total;
+                $data[$k]['invite_phone'] = $this->where('uid',$v['invite_uid'])->value('phone'); //邀请人手机号
+                $data[$k]['parent_level_2'] = $this->where('uid',$v['parent_level_2'])->value('phone'); //间推人手机号
             }
         }
         // 查询总记录数
@@ -62,6 +59,13 @@ class Member extends Base
             $start = ($page-1) * $limit;
         }
         $data = Db::name('member_serve')->where($where)->limit($start,$limit)->order(['id'=>'desc'])->select();
+        foreach($data as $k=>$v){
+            if($v['uid']){
+                $member = Db::name('member')->where('uid',$v['uid'])->field('phone,member_class')->find();
+                $data[$k]['user_phone'] = $member['phone'];
+                $data[$k]['member_class'] = $this->getMemberClassAttr($member['member_class']);
+            }
+        }
         // 查询总记录数
         $total = Db::name('member_serve')->where($where)->count();
         return [
@@ -100,6 +104,59 @@ class Member extends Base
         }
         return $where;
     }
+
+
+    /**
+     * 异步获取会员提现账户管理
+     * @param array $where
+     * @param int $limit
+     * @return array
+     */
+    public function getDepositData($where = [],$limit=10)
+    {
+        $request = Request::instance();
+        $page = $request->param('pageIndex',1,'int');
+        $start = 0;
+        if ($page != 1) {
+            $start = ($page-1) * $limit;
+        }
+        $data = Db::name('member')->alias('m')->join('bank_info b','m.uid=b.uid','LEFT')->join('alipay_info a','m.uid=a.uid','LEFT')->where($where)
+                ->limit($start,$limit)->order(['m.uid'=>'desc'])
+                ->field('m.phone,m.nick_name,m.member_class,b.user_name,b.id_card,b.bank_name,b.bank_account,a.alipay')->select();
+        foreach($data as &$v){
+            if($v['member_class']){
+                $v['member_class'] = $this->getMemberClassAttr($v['member_class']);
+            }
+        }
+        // 查询总记录数
+        $total = Db::name('member')->where($where)->count();
+        return [
+            'rows' => $data,
+            'total' => $total
+        ];
+    }
+
+    /**
+     * 会员提现账户管理搜索条件
+     * @param array $where
+     * @return array
+     */
+    public function filtrationDepositWhere($where = [])
+    {
+        if (!$where) return [];
+        $keywords = isset($where['keywords']) ? $where['keywords'] : '';
+        $where = [];
+        if ($keywords) {
+            if (is_numeric($keywords) && !cp_isMobile($keywords)) {
+                $where['m.uid'] = $keywords;
+            } else {
+                $where['m.phone'] = ['like',"%{$keywords}%"];
+            }
+        }
+        return $where;
+    }
+
+
 
     /**
      * 异步获取下线会员数据
