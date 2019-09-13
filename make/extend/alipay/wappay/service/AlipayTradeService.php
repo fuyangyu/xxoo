@@ -80,7 +80,7 @@ class AlipayTradeService {
 		$request = new AlipayTradeWapPayRequest();
 	
 		$request->setNotifyUrl($notify_url);
-//		$request->setReturnUrl($return_url);
+		$request->setReturnUrl($return_url);
 		$request->setBizContent ( $biz_content );
 	
 		// 首先调用支付api

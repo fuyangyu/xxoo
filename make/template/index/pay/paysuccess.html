@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>支付成功</title>
+  <script src="https://unpkg.com/amfe-flexible@2.2.1/index.min.js"></script>
+  <style>
+    body, ul, li, p{margin: 0;padding: 0;}
+    .dd-page{padding: .972972rem 1.027027rem 0;overflow: hidden;background-color: #fff;-webkit-box-sizing: border-box;box-sizing: border-box;}
+    .dd-order-status{text-align: center;}
+    .dd-order-status .icon-success{width: 5.513515rem;}
+    .dd-order-status p{padding-top: .351351rem;padding-bottom: .432432rem;font-size: .486486rem;color: #262626;}
+    .dd-order-item{padding-top: 0.7027027027027027rem;font-size: 0;color: #000;}
+    .dd-order-item span{font-size: 0.40540540540540543rem;}
+    .dd-order-item span:first-child{color: #747474;}
+    .dd-button-group{padding: 2.189189rem 1.621622rem 0;font-size: .432432rem;}
+    .dd-button{display: block;height: 1.189189rem;line-height: 1.189189rem;border-radius: 0.972973rem;text-align:center;color: #fff;text-decoration: none;background: #e0073b;}
+  </style>
+</head>
+
+<body>
+  <div class="dd-page">
+    <div class="dd-order-status">
+      <img class="icon-success" src="http://www.diandonglife.com/pay-success.png">
+      <p>支付成功</p>
+    </div>
+    <ul class="dd-order">
+      <li class="dd-order-item">
+        <span>支付订单: </span>
+        <span>{$trade_no}</span>
+      </li>
+      <li class="dd-order-item">
+        <span>支付金额: </span>
+        <span>{$total_amount}元</span>
+      </li>
+      <li class="dd-order-item">
+        <span>支付时间: </span>
+        <span>{$timestamp}</span>
+      </li>
+    </ul>
+    <div class="dd-button-group">
+      <a href="http://www.diandonglife.com" class="dd-button">返回首页</a>
+    </div>
+  </div>
+</body>
+</html>

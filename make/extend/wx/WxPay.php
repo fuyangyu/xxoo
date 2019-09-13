@@ -9,11 +9,11 @@ class WxPay
     // 通用参数
     protected $wxConfig = [
         'appid' => 'wxc55d0202e187e851',// 应用ID
-        'mch_id' => '1554383731',//'1520276391',// 商户号
+        'mch_id' => '1520276391',//'1520276391',// 商户号
         'notify_url' => 'http://www.diandonglife.com/index.php/pay/wxNotify',//异步通知地址
         // 注：key为商户平台设置的密钥key
         // key设置路径：微信商户平台(pay.weixin.qq.com)-->账户设置-->API安全-->密钥设置
-        'wx_sign_key' => 'iuydgh7d78gr9gkw9g7s3fg9we45cw21'
+        'key' => '791F7ACCCE92EB5EBF79C443BF6FF4C3'
     ];
 
     private function __construct($options)
@@ -80,7 +80,7 @@ class WxPay
         //使用 & 符号连接参数
         $stringA = implode("&", $newArr);
         //拼接key 注意：key是在商户平台API安全里自己设置的
-        $stringSignTemp = $stringA."&key=".$this->wxConfig['wx_sign_key'];
+        $stringSignTemp = $stringA."&key=".$this->wxConfig['key'];
         //将字符串进行MD5加密
         $stringSignTemp = md5($stringSignTemp);
         //将所有字符转换为大写
@@ -98,25 +98,47 @@ class WxPay
      * @return array
      */
     public function wxPay($subject, $order_sn, $total_amount) {
-        // 微信支付 是已分为单位 所以这里需要乘以100 元转换为分
-        $total_amount = 100 * $total_amount;
-        $nonce_str = $this->rand_code();
-        $data['appid'] = $this->wxConfig['appid'];          //appid
-        $data['mch_id'] = $this->wxConfig['mch_id'];        //商户号
-        $data['nonce_str'] = $nonce_str;                    //随机字符串
+
+        $data['appid'] = $this->wxConfig['appid'];  //公众账号ID
+        $data['mch_id'] = $this->wxConfig['mch_id'];    //商户号
+        $data['body'] = $subject;       //商品描述
+        $data['trade_type'] = 'MWEB';  //支付方式
+        $data['nonce_str'] = $this->rand_code();    //随机字符串
+        $data['out_trade_no'] = $order_sn;      //商户订单号
+        $data['total_fee'] = 100 * $total_amount;   //标价金额
+        $data['spbill_create_ip'] = $this->getClientIp();   //终端IP
+        $data['scene_info'] = '{"h5_info": {"type":"Wap","wap_url": "http://www.diandonglife.com","wap_name": "点动充值"}}';
+        $data['notify_url'] = $this->wxConfig['notify_url'];    //通知地址
+//        $data['key'] = $this->wxConfig['key'];
+
+
+
+/*        $signA ="appid=$appid&body=$body&mch_id=$mch_id&nonce_str=$nonce_str
+                &notify_url=$notify_url&out_trade_no=$out_trade_no&spbill_create_ip=$spbill_create_ip
+                &total_fee=$total_fee&trade_type=$trade_type";
+        //3.拼接字符串
+        $strSignTmp = $signA."&key=$key";
+        //4.MD5加密后转换成大写
+        $sign = strtoupper(MD5($strSignTmp));
+        //5.拼接成所需XML格式
+        $post_data = "<xml>
+                       <appid>$appid</appid>
+                       <body>$body</body>
+                       <mch_id>$mch_id</mch_id>
+                       <nonce_str>$nonce_str</nonce_str>
+                       <notify_url>$notify_url</notify_url>
+                       <out_trade_no>$out_trade_no</out_trade_no>
+                       <spbill_create_ip>$spbill_create_ip</spbill_create_ip>
+                       <total_fee>$total_fee</total_fee>
+                       <trade_type>$trade_type</trade_type>
+                       <sign>$sign</sign>
+                   </xml>";*/
+
         $data['sign'] = $this->getSign($data);              //获取签名
-        $data['body'] = $subject;                           //商品描述
-        $data['out_trade_no'] = $order_sn;                  //商户订单号,不能重复
-        $data['total_fee'] = $total_amount;                 //金额
-        $data['spbill_create_ip'] = $this->getClientIp();   //ip地址
-        $data['notify_url'] = $this->wxConfig['notify_url'];//回调地址,用户接收支付后的通知,必须为能直接访问的网址,不能跟参数
-        $data['trade_type'] = 'MWEB';                        //支付方式
-        //将参与签名的数据保存到数组
-        //注意：以上几个参数是追加到$data中的，$data中应该同时包含开发文档中要求必填的剔除sign以外的所有数据
-        $xml = $this->ToXml($data);                         //数组转xml
+        $xml = $this->ToXml($data);
         //curl 传递给微信方
         $url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-        //header("Content-type:text/xml");
+        header("Content-type:text/xml");
         $ch = curl_init();
         curl_setopt($ch,CURLOPT_URL, $url);
         if(stripos($url,"https://")!==FALSE){
@@ -145,22 +167,22 @@ class WxPay
             //返回成功,将xml数据转换为数组.
             $res = $this->FromXml($data);
             if($res['return_code'] != 'SUCCESS'){
-                return $this->outJson(0,"微信预支付订单,签名失败！");
+                return $this->outJson(0,"微信预支付订单,签名失败！",$res);
             } else{
                 //接收微信返回的数据,传给APP
-                $result = [
-                    'prepayid' => $res['prepay_id'],
-                    'appid' => $this->wxConfig['appid'],
-                    'partnerid' => $this->wxConfig['mch_id'],
-                    'mweb_url'  => $res['mweb_url'],
-                    'package'  => 'Sign=WXPay',
-                    'noncestr' => $nonce_str,
-                    'timestamp' => time(),
-                ];
+//                $result = [
+//                    'prepayid' => $res['prepay_id'],
+//                    'appid' => $this->wxConfig['appid'],
+//                    'partnerid' => $this->wxConfig['mch_id'],
+//                    'mweb_url'  => $res['mweb_url'],
+//                    'package'  => 'Sign=WXPay',
+//                    'noncestr' => $data['nonce_str'],
+//                    'timestamp' => time(),
+//                ];
                 //第二次生成签名
-                $sign = $this->getSign($result);
-                $result['sign'] = $sign;
-                return $this->outJson(1,'微信预支付订单创建成功',$result);
+//                $sign = $this->getSign($result);
+//                $result['sign'] = $sign;
+                return $this->outJson(1,'微信预支付订单创建成功',$res);
             }
         } else {
             $error = curl_errno($ch);
@@ -181,49 +203,6 @@ class WxPay
         $data = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
         return $data;
     }
-
-    // APP支付成功后,会调用你填写的回调地址 .
-    // 返回参数详见微信文档:https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_7&index=3
-    // 微信支付回调
-    /*protected function wx_notify(){
-        //接收微信返回的数据数据,返回的xml格式
-        $xmlData = file_get_contents('php://input');
-        //将xml格式转换为数组
-        $data = $this->FromXml($xmlData);
-        //用日志记录检查数据是否接受成功，验证成功一次之后，可删除。
-        $file = fopen('./wx_log.txt', 'a+');
-        fwrite($file,var_export($data,true));
-        //为了防止假数据，验证签名是否和返回的一样。
-        //记录一下，返回回来的签名，生成签名的时候，必须剔除sign字段。
-        $sign = $data['sign'];
-        unset($data['sign']);
-        if($sign == $this->getSign($data)){
-            //签名验证成功后，判断返回微信返回的
-            if ($data['result_code'] == 'SUCCESS') {
-                //根据返回的订单号做业务逻辑
-                $arr = array(
-                    'pay_status' => 1,
-                );
-                $re = M('order')->where(['order_sn'=>$data['out_trade_no']])->save($arr);
-                //处理完成之后，告诉微信成功结果！
-                if($re){
-                    echo '<xml>
-              <return_code><![CDATA[SUCCESS]]></return_code>
-              <return_msg><![CDATA[OK]]></return_msg>
-              </xml>';exit();
-                }
-            }
-            //支付失败，输出错误信息
-            else{
-                $file = fopen('./wx_log.txt', 'a+');
-                fwrite($file,"错误信息：".$data['return_msg'].date("Y-m-d H:i:s"),time()."\r\n");
-            }
-        }
-        else{
-            $file = fopen('./wx_log.txt', 'a+');
-            fwrite($file,"错误信息：签名验证失败".date("Y-m-d H:i:s"),time()."\r\n");
-        }
-    }*/
 
     // 获取实际ip
     protected function getClientIp($type = 0,$adv=true) {

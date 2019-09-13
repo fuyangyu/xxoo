@@ -2,7 +2,8 @@
 namespace app\index\controller;
 use think\Db;
 use think\Log;
-class Pay
+use think\Controller;
+class Pay extends Controller
 {
     protected $config;
 
@@ -14,6 +15,7 @@ class Pay
      */
     public function __construct()
     {
+        parent::__construct();
         // 支付宝配置
         $this->config = [
 //            'app_id' => '2018111362152250',
@@ -24,10 +26,10 @@ class Pay
             'app_id' => "2018111362152250",
             //商户私钥，您的原始格式RSA私钥
             'merchant_private_key' => "MIIEpQIBAAKCAQEAtUH45lBssBil2JLlJsN6hB5A2sW0gAwlxW9XjwWD1jbW1VUXv+NjRcazeZY7J648rmgCF1pX8ScVjVdYgf3dyChn/tFCSADo0HczK3I1ShFKebQGg5Guk0dB2/vAVjfWPP/pt3kma6NXyp9R9tcTtpGa8ezxKwbfi4VO2MmF9UMA8b+ltXa9EuA+I0l5Yo7ClKpk8TMyqeAUC8YKvJ5M5QaTBd4ZekIOJuFiR+mhoP4PYMIGLKvx7TNgtZF6b7eS9NWf5V75l24NLbZHcDzfXicUZTENmULkEG9K6l9H9ZF1Q0fITHpAPV5srnSV6xsvJ+AbGiOHMC4o4A5/Bm/nMwIDAQABAoIBAEOejf1V6YY0W8KU4nn4mP8qziUPdowCfCDQrciEVS+YG8NQUGDcso84VoI4gm8GOEsUMBuIL6CeZRLqj/FGxPND57APXvu/oxsKLQO7QpgUJUWL3JY+xfLZtX8cxx8jC4CMNCOnRacIM9s6XniIuij03un76+iSUtkY7VZAsAHTz9rmLnC5LPCQoMvtUnhuPPDvenAgrQ506cu0bzmFApKfemecaUh19zKtUitFdAdMpNvjDPhho16zDGu8kdauGGQSKDbU3uYx/KQSLi9f0/vHTdti9P5SXo7ONCyRtfWHVW9TKQV9hzNMZqGy7b/ahY8PczeDJ4I9dBgdcadTmgECgYEA+TA16Dw/lj+wIXYHOfamdrxVJ4JTVEAWL95FQYQSBUHGoPcRg2aCwRfITj55Bsak+ya2etgmZbowhI1+1J6esOvCxQh3HftcaY3kkkgcT4ARm1TU/1N4G0iwA8FA6IiUv1hFjfJ/TcnGocvdQoiW1hBcX7ins8cJD+Lb780w1QECgYEAujZkOvIgIUSHNEL6qlSqU4oMjvPEtKeGT28UQdWQtT/nDGFiVHVHql4oSJADpJKIR5SQ3sG8aBpbzCjQ/WxTv7iRjw37OJxCMaDbjtafXqthoXPy95GuNfe6DaL1MjXdrPVmY0O0AsROTIMk5XmyShoh1ngWEhL95Ds4gmDdeDMCgYEAxMoaCGlsHg/13LcFRfVPyP06kpUNkb96xhrWvsK6KISlhIEZx5exMyTA/2m+0mcV63HLMoB48mVz43qK6wbJdBb8HfZte7QCaymvlQZ1tSMCxJTeETWt6H4i4xQ/WmRidCoV49/aQWhUAXqqJd0QocUR7lY5unQ4597UqjB1nAECgYEAiyeAaWhtSE8ctppjFgylKD6euelDEzmprgy1V6lQNZJmiCLyR2lJP/CTK/6rKj3yp4NHa5/duvIPrZbG7ssYHsq/w+bP2PM0qD+sM6cBe86Y6/1pEUcFqADTQcOIdpg4azsL45xBllu6o4TReschzCyRIuOkoqccooT66ruWZW8CgYEA6VSJ2yoL4fFUKelWoNriIPdQevtL9pVEvbmNVZLK7Cyywlhk4FTZCs4YRjJEo2QNNXO3jXPPMA8SOUF7G6VVQRRjxfTJAcO6VtEFFFZgKSVYlxKqGCTnh+5c3BgE7N1R2flEwxhyoGjFfNHehXZ2nKUzADu7yKE/LUl3ED31J9o=",
-        //异步通知地址
+            //异步通知地址
             'notify_url' => "http://www.diandonglife.com/index.php/pay/callback",
             //同步跳转
-//                'return_url' => "http://mitsein.com/alipay.trade.wap.pay-PHP-UTF-8/return_url.php",
+            'return_url' => "http://www.diandonglife.com/index.php/pay/return_url",
             //编码格式
             'charset' => "UTF-8",
             //参数返回格式，只支持 json
@@ -50,6 +52,34 @@ class Pay
         ];
     }
 
+    /**
+     * 支付宝同步回调
+     * @return mixed
+     */
+    public function return_url()
+    {
+        require_once ROOT_PATH . '/extend/alipay/wappay/service/AlipayTradeService.php';
+        $arr = $_GET;
+        $alipaySevice = new \AlipayTradeService($this->config);
+        $result = $alipaySevice->check($arr);
+        if ($result) {//验证成功
+            $out_trade_no = htmlspecialchars($_GET['out_trade_no']);
+            //支付宝交易号
+            $trade_no = htmlspecialchars($_GET['trade_no']);
+            $total_amount = htmlspecialchars($_GET['total_amount']);
+            $timestamp = htmlspecialchars($_GET['timestamp']);
+            return $this->fetch('paysuccess', [
+                'out_trade_no' => $out_trade_no,
+                'trade_no' => $trade_no,
+                'total_amount' => $total_amount,
+                'timestamp' => $timestamp,
+            ]);
+        } else {
+            //验证失败
+            echo "验证失败";
+        }
+
+    }
 
     /**
      * 支付宝创建app可以跳转的url
@@ -70,10 +100,11 @@ class Pay
             $payRequestBuilder->setTotalAmount($total_amount);
             $payRequestBuilder->setTimeExpress($timeout_express);
             $payResponse = new \AlipayTradeService($this->config);
-            $result=$payResponse->wapPay($payRequestBuilder,'',$this->config['notify_url']);
+            $result=$payResponse->wapPay($payRequestBuilder,$this->config['return_url'],$this->config['notify_url']);
 
             return $result;
     }
+
 
     /**
      * 支付宝支付 回调地址
@@ -97,14 +128,14 @@ class Pay
             //商户订单号
             $out_trade_no = $_POST['out_trade_no'];
             //支付宝交易号
-            //$trade_no = $_POST['trade_no'];
+            $trade_no = $_POST['trade_no'];
             //交易状态
             //$trade_status = $_POST['trade_status'];
             if ($_POST['trade_status'] == 'TRADE_SUCCESS') {
                 //佣金发放
-                $res = $this->setOrderStatus($out_trade_no);
+                $res = $this->setOrderStatus($out_trade_no,$trade_no);
                 if($res['status'] != 1){
-                    $msg = '支付失败,时间：' . date('Y-m-d H:i:s') . '具体的信息：' . $res['data']['debug'] . "\r\n";
+                    $msg = '分佣失败,时间：' . date('Y-m-d H:i:s') . '具体的信息：' . $res['data']['debug'] . "\r\n";
                     $file['time'] = date('Y-m-d H:i:s');
                     $file['msg'] = $msg;
                     $this->log($file,'zfb_pay.log');
@@ -167,10 +198,10 @@ class Pay
             if ($data['result_code'] == 'SUCCESS') {
                 //根据返回的订单号做业务逻辑
                 // TODO 成功 修改订单状态 测试完成后 需要修改成false
-                $res = $this->setOrderStatus($data['out_trade_no']);
+                $res = $this->setOrderStatus($data['out_trade_no'],$data['transaction_id']);
                 if ($res['status'] != 1) {
                     // 分佣失败
-                    $msg = '支付失败,时间：' . date('Y-m-d H:i:s') . '具体的信息：' . $data['data']['debug'] . "\r\n";
+                    $msg = '分佣失败,时间：' . date('Y-m-d H:i:s') . '具体的信息：' . $data['data']['debug'] . "\r\n";
                     $file['time'] = date('Y-m-d H:i:s');
                     $file['msg'] = $msg;
                     $this->log($file, 'wx_log.log');
@@ -199,28 +230,26 @@ class Pay
     /**
      * 修改订单状态 用户会员等级和到期时间 佣金发放
      * @param $out_trade_no
+     * @param $trade_no
      * @return array
      */
-    protected function setOrderStatus($out_trade_no)
+    public function setOrderStatus($out_trade_no = '2019091010149102',$trade_no = '')
     {
-        try {
+            try {
             // 启动事务
             Db::startTrans();
             $pay_log = Db::name('pay_log')->where(['order_sn' => $out_trade_no, 'pay_status' => 1])->find();
+
             if (!$pay_log) return $this->outJson(0, '操作失败', ['debug' => '操作失败，错误编码001,未找到订单']);
             //获取用户信息
-            $user = Db::name('member')->where(['uid' => $pay_log['uid']])->field('uid,total_money,member_brokerage_money,member_class,parent_level_1,parent_level_2,parent_level_3,invite_uid')->find();
+            $user = Db::name('member')->where(['uid' => $pay_log['uid']])->field('uid,phone,vip_end_time,total_money,member_brokerage_money,member_class,parent_level_1,parent_level_2,parent_level_3,invite_uid')->find();
             if (!$user) return $this->outJson(0, '操作失败', ['debug' => '操作失败，错误编码002,用户信息获取失败']);
-            //获取会员分佣配置
-            $allot = Db::name('allot_log')->where(['user_level' => $user['member_class'], 'charge_type' => 1])->find();
-            if (!$allot) return $this->outJson(0, '操作失败', ['debug' => '操作失败，错误编码003,获取分佣配置失败']);
-
             // 修改支付状态
             $pay_log_id = Db::name('pay_log')->where(['id' => $pay_log['id']])->update([
                 'pay_status' => 2,
-                'pay_time' => time()
+                'pay_time' => time(),
+                'trade_no' =>$trade_no,
             ]);
-
             $member = array();
             $brokerage = array();
             $message = array();
@@ -231,19 +260,19 @@ class Pay
                     case 2:
                         $member['member_class'] = 2;  //vip
                         $member['vip_start_time'] = date('Y-m_d H:i:s');
-                        $member['$vip_end_time'] = date('Y-m_d H:i:s', strtotime("+1 year"));
+                        $member['vip_end_time'] = date('Y-m_d H:i:s', strtotime("+1 year"));
                         $content = '加入点动生活VIP会员';
                         break;
                     case 3:
                         $member['member_class'] = 3;  //svip
                         $member['vip_start_time'] = date('Y-m_d H:i:s');
-                        $member['$vip_end_time'] = date('Y-m_d H:i:s', strtotime("+1 year"));
+                        $member['vip_end_time'] = date('Y-m_d H:i:s', strtotime("+1 year"));
                         $content = '加入点动生活SVIP会员';
                         break;
                 }
             }
             if ($pay_log['type'] == 2 && $user['vip_end_time']) { //续费 会员到期时间增加一年
-                $member['$vip_end_time'] = date('Y-m_d H:i:s', strtotime("+1 year", strtotime($user['vip_end_time'])));
+                $member['vip_end_time'] = date('Y-m_d H:i:s', strtotime("+1 year 1months", strtotime($user['vip_end_time'])));
                 $content = '续费点动生活会员';
             }
             if ($pay_log['type'] == 3 && $user['member_class'] == 2) {    //升级只能vip升级svip 只修改会员等级 不休改到期时间
@@ -252,14 +281,15 @@ class Pay
             }
             //修改会员状态和过期时间
             $member_id = Db::name('member')->where(['uid' => $pay_log['uid']])->update($member);
-
             if ($pay_log_id && $member_id) {
                 $phone = substr_replace($user['phone'],'****',3,4);
                 //直推分佣
-                if (!empty($user['invite_uid']) && $allot['allot_one'] != 0) {
-                    $one_money = $pay_log['money'] * ($allot['allot_one'] / 100);
+                $oneData = Db::name('member')->where('uid',$user['invite_uid'])->field('uid,member_class,phone')->find();
+                if(!$oneData)  return $this->outJson(0, '操作失败', ['debug' => '操作失败，错误编码003,获取直推用户信息失败']);
+                $allot_one = Db::name('allot_log')->where(['user_level' => $oneData['member_class'], 'charge_type' => 1])->value('allot_one');
+                if (!empty($allot_one)) {
+                    $one_money = $pay_log['money'] * ($allot_one / 100);
                     //获取分佣用户信息
-                    $oneData = Db::name('member')->where('uid',$user['invite_uid'])->field('uid,member_class,phone')->find();
                     $brokerage[0]['uid'] = $oneData['uid'];
                     $brokerage[0]['money'] = $one_money;
                     $brokerage[0]['member_class'] = $oneData['member_class'];
@@ -279,10 +309,12 @@ class Pay
                     Db::name('member')->where(['uid' => $user['invite_uid']])->setInc('member_brokerage_money', $one_money);
                 }
                 //间推分佣
-                if (!empty($user['parent_level_2']) && $allot['allot_two'] != 0) {
-                    $two_money = $pay_log['money'] * ($allot['allot_two'] / 100);
+                $twoData = Db::name('member')->where('uid', $user['parent_level_2'])->field('uid,member_class,phone')->find();
+                if(!$twoData)  return $this->outJson(0, '操作失败', ['debug' => '操作失败，错误编码004,获取间推用户信息失败']);
+                $allot_two = Db::name('allot_log')->where(['user_level' => $twoData['member_class'], 'charge_type' => 1])->value('allot_two');
+                if (!empty($allot_two)) {
+                    $two_money = $pay_log['money'] * ($allot_two / 100);
                     //获取分佣用户信息
-                    $twoData = Db::name('member')->where('uid', $user['parent_level_2'])->field('uid,member_class,phone')->find();
                     $brokerage[1]['uid'] = $twoData['uid'];
                     $brokerage[1]['money'] = $two_money;
                     $brokerage[1]['member_class'] = $twoData['member_class'];
@@ -303,53 +335,61 @@ class Pay
                 }
                 //服务中心分佣
                 if (!empty($user['parent_level_3'])) {
-                    $serve_one_money = $pay_log['money'] * ($allot['team_one'] / 100);   //第一个服务中心分佣金额
-                    $serve_two_money = $pay_log['money'] * ($allot['team_two'] / 100);   //第二个服务中心分佣金额
                     $service = array();
                     $model = new \app\admin\model\Task();
                     $service = $model->recursionService($user['parent_level_3'], $service);
                     if(!empty($service)) {
-                        if (!empty($service[0]) && $allot['team_one'] != 0) {
-                            //获取分佣用户信息
+                        if(!empty($service[0])) {
                             $one_serve = Db::name('member')->where('uid', $service[0])->field('uid,member_class,phone')->find();
-                            $brokerage[2]['uid'] = $one_serve['uid'];
-                            $brokerage[2]['money'] = $serve_one_money;
-                            $brokerage[2]['member_class'] = $one_serve['member_class'];
-                            $brokerage[2]['phone'] = $one_serve['phone'];
-                            $brokerage[2]['tid'] = $pay_log['id'];
-                            $brokerage[2]['sid'] = $user['uid'];
-                            $brokerage[2]['type'] = $pay_log['type'];  //充值类型 1：充值 2：续费 3：升级
-                            $brokerage[2]['brokerage_type'] = 1;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
-                            $brokerage[2]['add_time'] = date('Y-m_d H:i:s');
+                            if (!$one_serve) return $this->outJson(0, '操作失败', ['debug' => '操作失败，错误编码005,获取第一服务中心用户信息失败']);
+                            $team_one = Db::name('allot_log')->where(['user_level' => $one_serve['member_class'], 'charge_type' => 1])->value('team_one');
+                            if (!empty($team_one)) {
+                                //获取分佣用户信息
+                                $serve_one_money = $pay_log['money'] * ($team_one / 100);   //第一个服务中心分佣金额
+                                $brokerage[2]['uid'] = $one_serve['uid'];
+                                $brokerage[2]['money'] = $serve_one_money;
+                                $brokerage[2]['member_class'] = $one_serve['member_class'];
+                                $brokerage[2]['phone'] = $one_serve['phone'];
+                                $brokerage[2]['tid'] = $pay_log['id'];
+                                $brokerage[2]['sid'] = $user['uid'];
+                                $brokerage[2]['type'] = $pay_log['type'];  //充值类型 1：充值 2：续费 3：升级
+                                $brokerage[2]['brokerage_type'] = 1;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
+                                $brokerage[2]['add_time'] = date('Y-m_d H:i:s');
 
-                            $message[2] = [  //第一服务中心
-                                'uid' => $service[0],
-                                'content' => '您的团队用户' . $phone . $content . '，获得推荐佣金' . $serve_one_money . '元',
-                                'add_time' => date('Y-m-d H:i:s')
-                            ];
+                                $message[2] = [  //第一服务中心
+                                    'uid' => $service[0],
+                                    'content' => '您的团队用户' . $phone . $content . '，获得推荐佣金' . $serve_one_money . '元',
+                                    'add_time' => date('Y-m-d H:i:s')
+                                ];
 
-                            Db::name('member')->where(['uid' => $service[0]])->setInc('member_brokerage_money', $serve_one_money);
+                                Db::name('member')->where(['uid' => $service[0]])->setInc('member_brokerage_money', $serve_one_money);
+                            }
                         }
-                        if (isset($service[1]) && $allot['team_two'] != 0) {
-                            //获取分佣用户信息
+                        if(isset($service[1])) {
                             $two_serve = Db::name('member')->where('uid', $service[1])->field('uid,member_class,phone')->find();
-                            $brokerage[3]['uid'] = $two_serve['uid'];
-                            $brokerage[3]['money'] = $serve_two_money;
-                            $brokerage[3]['member_class'] = $two_serve['member_class'];
-                            $brokerage[3]['phone'] = $two_serve['phone'];
-                            $brokerage[3]['tid'] = $pay_log['id'];
-                            $brokerage[3]['sid'] = $user['uid'];
-                            $brokerage[3]['type'] = $pay_log['type'];  //充值类型 1：充值 2：续费 3：升级
-                            $brokerage[3]['brokerage_type'] = 1;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
-                            $brokerage[3]['add_time'] = date('Y-m_d H:i:s');
+                            if (!$two_serve) return $this->outJson(0, '操作失败', ['debug' => '操作失败，错误编码006,获取第二服务中心用户信息失败']);
+                            $team_two = Db::name('allot_log')->where(['user_level' => $two_serve['member_class'], 'charge_type' => 1])->value('team_two');
+                            if (!empty($team_two)) {
+                                //获取分佣用户信息
+                                $serve_two_money = $pay_log['money'] * ($team_two / 100);   //第二个服务中心分佣金额
+                                $brokerage[3]['uid'] = $two_serve['uid'];
+                                $brokerage[3]['money'] = $serve_two_money;
+                                $brokerage[3]['member_class'] = $two_serve['member_class'];
+                                $brokerage[3]['phone'] = $two_serve['phone'];
+                                $brokerage[3]['tid'] = $pay_log['id'];
+                                $brokerage[3]['sid'] = $user['uid'];
+                                $brokerage[3]['type'] = $pay_log['type'];  //充值类型 1：充值 2：续费 3：升级
+                                $brokerage[3]['brokerage_type'] = 1;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
+                                $brokerage[3]['add_time'] = date('Y-m_d H:i:s');
 
-                            $message[3] = [  //第二服务中心
-                                'uid' => $service[0],
-                                'content' => '您的团队用户' . $phone . $content . '，获得推荐佣金' . $serve_two_money . '元',
-                                'add_time' => date('Y-m-d H:i:s')
-                            ];
+                                $message[3] = [  //第二服务中心
+                                    'uid' => $service[0],
+                                    'content' => '您的团队用户' . $phone . $content . '，获得推荐佣金' . $serve_two_money . '元',
+                                    'add_time' => date('Y-m-d H:i:s')
+                                ];
 
-                            Db::name('member')->where(['uid' => $service[1]])->setInc('member_brokerage_money', $serve_two_money);
+                                Db::name('member')->where(['uid' => $service[1]])->setInc('member_brokerage_money', $serve_two_money);
+                            }
                         }
                     }
 
@@ -363,16 +403,17 @@ class Pay
                 Db::name('message_log')->insertAll($message);
                 // 提交事务
                 Db::commit();
-                return $this->outJson(1, '操作成功');
+                return json($this->outJson(1, '操作成功'));
             } else {
                 // 回滚事务
                 Db::rollback();
-                return $this->outJson(0,'操作失败',['debug' => '操作失败，错误编码004,订单号：' . $out_trade_no . '错误体debug：修改订单状态或会员状态失败' ]);
+                return json($this->outJson(0,'操作失败',['debug' => '操作失败，错误编码008,订单号：' . $out_trade_no . '错误体debug：修改订单状态或会员状态失败' ]));
             }
         }catch (\Exception $e){
             // 回滚事务
             Db::rollback();
-            return $this->outJson(0,'操作失败',['debug' => '操作失败，错误编码003,订单号：' . $out_trade_no . '错误体debug：' . $e->getMessage()]);
+                $this->log('操作失败，错误编码007,订单号：' . $out_trade_no . '错误体debug：' . $e->getMessage(),'brokerage.log');
+            return json($this->outJson(0,'操作失败',['debug' => '操作失败，错误编码007,订单号：' . $out_trade_no . '错误体debug：' . $e->getMessage()]));
         }
 
     }
@@ -671,6 +712,11 @@ class Pay
     public function staticBrokerage(){
         set_time_limit(0);
         ini_set("memory_limit","500M");
+        $channel_time = $this->request->param('channel_time');
+        if(!$channel_time) return json($this->outJson(0,'参数错误'));
+        $sql = "select * from wld_channel_log WHERE channel_time = from_unixtime({$channel_time},'%Y-%m') limit 1;";
+        $channelData = Db::query($sql);
+        if($channelData) return json($this->outJson(0,'发放失败,已存在该月份发放记录'));
         $vip_messageLog = $svip_messageLog = $serve_messageLog = array();
         //获取各等级用户数量
         $data = cp_getCacheFile('system');
@@ -678,11 +724,11 @@ class Pay
         $svip_num = isset($data['svip_num']) ? $data['svip_num'] : '500';
         $serve_num = isset($data['serve_num']) ? $data['serve_num'] : '100';
         //本月会员收入
-        $currentMemberSql = "SELECT SUM(money) as member_money FROM wld_pay_log WHERE pay_status = 2 and from_unixtime(pay_time,'%Y-%m') = date_format(now(), '%Y-%m');";
+        $currentMemberSql = "SELECT SUM(money) as member_money FROM wld_pay_log WHERE pay_status = 2 and from_unixtime(pay_time,'%Y-%m') = from_unixtime({$channel_time},'%Y-%m');";
         $member = Db::query($currentMemberSql);
         $member_money = !empty($member[0]['member_money'])?$member[0]['member_money']:0;
         //本月任务收入
-        $currentTaskSql = "SELECT SUM(task_money) as task_money FROM wld_send_task_log WHERE is_check = 1 AND date_format(check_time, '%Y-%m') = date_format(now(), '%Y-%m');";
+        $currentTaskSql = "SELECT SUM(task_money) as task_money FROM wld_send_task_log WHERE is_check = 1 AND date_format(check_time, '%Y-%m') = from_unixtime({$channel_time},'%Y-%m');";
         $task = Db::query($currentTaskSql);
         $task_money = !empty($task[0]['task_money'])?$task[0]['task_money']:0;
         //计算静态各等级静态收益 36+1.5
@@ -698,7 +744,7 @@ class Pay
                     Db::name('member')->where('uid', $item['uid'])->setInc('static_money', $vip_money);
                     $vip_channel = [
                         'uid' => $item['uid'], 'phone' => $item['phone'], 'member_class' => 2, 'channel_money' => $vip_money,
-                        'channel_time' => date('Y-m'), 'add_time' => date('Y-m-d H:i:s'),
+                        'channel_time' => date('Y-m',$channel_time), 'add_time' => date('Y-m-d H:i:s'),
                     ];
                     //静态佣金记录
                     $vip_id = Db::name('channel_log')->insertGetId($vip_channel);
@@ -719,7 +765,7 @@ class Pay
                     Db::name('member')->where('uid', $v['uid'])->setInc('static_money', $svip_money);
                     $svip_channel = [
                         'uid' => $v['uid'], 'phone' => $v['phone'], 'member_class' => 3, 'channel_money' => $svip_money,
-                        'channel_time' => date('Y-m'), 'add_time' => date('Y-m-d H:i:s'),
+                        'channel_time' => date('Y-m',$channel_time), 'add_time' => date('Y-m-d H:i:s'),
                     ];
                     //静态佣金记录
                     $svip_id = Db::name('channel_log')->insertGetId($svip_channel);
@@ -740,7 +786,7 @@ class Pay
                     Db::name('member')->where('uid', $value['uid'])->setInc('static_money', $serve_money);
                     $serve_channel = [
                         'uid' => $value['uid'], 'phone' => $value['phone'], 'member_class' => 4, 'channel_money' => $serve_money,
-                        'channel_time' => date('Y-m'), 'add_time' => date('Y-m-d H:i:s'),
+                        'channel_time' => date('Y-m',$channel_time), 'add_time' => date('Y-m-d H:i:s'),
                     ];
                     //静态佣金记录
                     $serve_id = Db::name('channel_log')->insertGetId($serve_channel);
@@ -753,5 +799,6 @@ class Pay
                 Db::name('message_log')->insertAll($serve_messageLog);
             }
         }
+        return json($this->outJson(1,'静态佣金发放成功'));
     }
 }

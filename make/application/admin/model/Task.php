@@ -464,22 +464,21 @@ class Task extends Base
     {
         set_time_limit(0);
         ini_set("memory_limit","-1"); //不限制内存
-        if (count($data) != 2) {
-            $user = Db::name('member')->where(['uid' => $uid, 'member_class' => 4])->field('uid,invite_uid')->find();
+            $user = Db::name('member')->where(['uid' => $uid])->field('uid,invite_uid,member_class')->find();
             if ($user) {
-                array_push($data, $user['uid']);
-                if (count($data) == 2) {
-                    return $data;
-                } else {
+                if($user['member_class'] == 4) {
+                    array_push($data, $user['uid']);
+                    if (count($data) == 2) {
+                        return $data;
+                    }else{
+                        return $this->recursionService($user['invite_uid'], $data);
+                    }
+                }else {
                     return $this->recursionService($user['invite_uid'], $data);
                 }
             }else {
                 return $data;
             }
-        }
     }
 
-    public function getService($uid = array()){
-
-    }
 }

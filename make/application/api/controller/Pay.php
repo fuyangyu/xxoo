@@ -597,7 +597,7 @@ class Pay extends Base
         $uid = $this->request->param('uid');
         if(!$uid) return json($this->outJson(0,'参数错误'));
         //获取用户信息
-        $data['user'] = Db::name('member')->where('uid',$uid)->field('uid,nick_name,nick_name,member_class,face,vip_start_time,vip_end_time')->find();
+        $data['user'] = Db::name('member')->where('uid',$uid)->field('uid,phone,nick_name,nick_name,member_class,face,vip_start_time,vip_end_time')->find();
         if(!empty($data['user']['face'])){
             $data['user']['face'] = $this->request->domain().$data['user']['face'];
         }
@@ -614,16 +614,15 @@ class Pay extends Base
      */
     public function chargePay()
     {
-//        try{
+        try{
             if ($this->request->isPost()) {
                 $level = $this->request->param('level');    //充值会员等级 2：vip 3:svip
                 $type = $this->request->param('type');  //充值类型 1：充值 2：续费 3.升级
                 $pay_status = $this->request->param('pay_status');  //支付方式 2：支付宝 1：微信支付  3：快捷支付
                 $uid = $this->request->param('uid');
-                if (!in_array($level, [2,3])) return $this->outJson(0, '充值失败！');
-                if (!in_array($pay_status, [1,2,3])) return $this->outJson(0, '支付方式错误！');
+                if (!in_array($level, [2,3])) return json($this->outJson(0, '充值失败！'));
+                if (!in_array($pay_status, [1,2,3])) return json($this->outJson(0, '支付方式错误！'));
                 if (!$level || !$pay_status || !$type || !$uid) return json($this->outJson(0,'参数不合法'));
-
                 $user = Db::name('member')->where(['uid'=>$uid])->field('uid,total_money,task_money,member_class,parent_level_1,parent_level_2,parent_level_3,invite_uid')->find();
                 $money_arr = cp_getCacheFile('system'); //获取充值金额
                 $common_money = isset($money_arr['common_money']) ? $money_arr['common_money'] : 200;
@@ -644,16 +643,16 @@ class Pay extends Base
                     //根据续费等级获取续费金额
                     if($level == 2 && $user['member_class'] == 2){ //vip
                         $money = $common_money;
-                        $html_title = 'VIP续费'.$money;
+                        $html_title = 'VIP续费'.$money.'元';
                     }
                     if($level == 3 && $user['member_class'] == 3){ //svip
                         $money = $expert_money;
-                        $html_title = 'SVIP续费'.$money;
+                        $html_title = 'SVIP续费'.$money.'元';
                     }
                 }elseif($type == 3 && $user['member_class'] == 2){    //升级(只有已是vip会员才能升级只能升级svip)
                     //续费只补差价
                     $money = $expert_money - $common_money;
-                    $html_title = 'VIP升级SVIP补差价'.$money;
+                    $html_title = 'VIP升级SVIP补差价'.$money.'元';
                 }else{
                     return json($this->outJson(0,'充值失败!'));
                 }
@@ -666,16 +665,17 @@ class Pay extends Base
                 $pay_log = [
                     'uid' => $uid,
                     'money' => $money,
+                    'actual_money' => $actual_money,
                     'type' => $type, //充值类型 1：充值 2：续费 3：升级'
-                    'pay_mode' => $pay_status, //支付方式  1：支付宝 2:快捷支付 3：微信支付'
+                    'pay_mode' => $pay_status, //支付方式 2：支付宝 1：微信支付  3：快捷支付
                     'add_time' => time(),
                     'order_sn' => date('Ymd').substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8),
                     'goods_name' => $html_title,
-                    'vip' => $user['member_class'], //会员充值前等级 2：VIP 3：svip 4:服务中心'
+                    'vip' => $level,
+                    'member_class' => $user['member_class'],//会员充值前等级 2：VIP 3：svip 4:服务中心'
                     'pay_status' => 1 // 支付状态 1：待支付  2：已支付 3：支付失败'
                 ];
                 $pay_log_id = Db::name('pay_log')->insertGetId($pay_log);
-
                 if($pay_log_id && $pay_log['order_sn']){
                     $m = new \app\index\controller\Pay();
                     // 会员充值方式
@@ -688,10 +688,7 @@ class Pay extends Base
                         case 1:
                             // 微信支付
                             $res = $m->createWxPay($html_title, $pay_log['order_sn'], $actual_money);
-                            if (!$res['status']) {
-                                return json($this->outJson(0, $res['msg']));
-                            }
-                            return json($this->outJson(1, '操作成功', $res['data']));
+                            return json($res);
                             break;
                         case 3:
                             // 如果是快捷支付 需要判断银行卡信息是否健全
@@ -710,11 +707,11 @@ class Pay extends Base
                             if (!$res['status']) {
                                 return json($this->outJson(0, $res['msg']));
                             }
-                            return $this->outJson(1, '操作成功', $res['data']);
+                            return json($this->outJson(1, '操作成功', $res['data']));
                             break;
                     }
                 }else{
-                    return $this->outJson(0, '操作失败');
+                    return json($this->outJson(0, '操作失败'));
                 }
 
 //                $data = $model->userPay($this->uid,$level,$pay_status);
@@ -722,9 +719,9 @@ class Pay extends Base
             } else {
                 return json($this->outJson(500,'非法操作'));
             }
-//        } catch (\Exception $e){
-//            return json($this->outJson(0,'服务器响应失败'));
-//        }
+        } catch (\Exception $e){
+            return json($this->outJson(0,'服务器响应失败'),$e->getMessage());
+        }
     }
 
 }
