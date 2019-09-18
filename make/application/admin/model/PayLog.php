@@ -163,7 +163,7 @@ class PayLog extends Base
         $end_time = isset($where['end_time']) ? $where['end_time'] : '';
         $keywords = isset($where['keywords']) ? $where['keywords'] : '';
         $pay_status = isset($where['pay_status']) ? $where['pay_status'] : 0;
-        $type = isset($where['type']) ? $where['type'] : 0;
+        $vip = isset($where['vip']) ? $where['vip'] : 0;
         $where = [];
         if ($keywords) {
             $where['order_sn'] = ['like',"%{$keywords}%"];
@@ -180,14 +180,10 @@ class PayLog extends Base
         if ($pay_status > 0) {
             $where['pay_status']  = $pay_status;
         }
-        if ($type = 1) {
-            $where['type']  = 1;
-        }elseif($type = 2){
-            $where['type']  = 2;
-        }elseif($type = 3){
-            $where['type']  = 3;
-        }else{
-            $where['type']  = 0;
+        if($vip == 2){
+            $where['vip']  = 2;
+        }elseif($vip == 3){
+            $where['vip']  = 3;
         }
         return $where;
     }

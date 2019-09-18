@@ -185,4 +185,11 @@ class AdminBase extends Base
 
         return Db::name('message_log')->insert($data);
     }
+
+    protected function log($data, $file = 'pay.log'){
+        $log_file = ROOT_PATH . '/cache_data/' . $file;
+        $content = var_export($data,true);
+        $content .= "\r\n\n";
+        file_put_contents($log_file,$content, FILE_APPEND);
+    }
 }

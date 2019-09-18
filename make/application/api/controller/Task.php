@@ -34,7 +34,7 @@ class Task extends Base
                         }
                         $value['task_user_level'] = explode(',',$value['task_user_level']);
                         if($uid){
-                            $is_check = Db::name('send_task_log')->where(['uid'=>$uid,'task_id'=>$value['task_id']])->order('id','desc')->limit(1)->value('is_check');
+                            $is_check = Db::name('send_task_log')->where(['uid'=>$uid,'task_id'=>$value['task_id']])->where('is_check','not in','1')->value('is_check');
                             $member_classs = Db::name('member')->where('uid',$uid)->value('member_class');
                             $data['task'][$v['task_cid']][$key]['is_check'] = $is_check;
                             $data['task'][$v['task_cid']][$key]['member_classs'] = $member_classs;
@@ -89,7 +89,7 @@ class Task extends Base
             if ($page > 1) {
                 $start = ($page-1) * $limit;
             }
-            $sql = "SELECT task_id,title,task_icon,is_area,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num,(limit_total_num-get_task_num) as authentic_num,1 as is_start FROM wld_task
+            $sql = "SELECT task_id,task_user_level,title,task_icon,is_area,task_area,start_time,task_money,(taks_fixation_num+get_task_num) as rap_num,(limit_total_num-get_task_num) as authentic_num,1 as is_start FROM wld_task
                     WHERE start_time < unix_timestamp(now()) AND status = 1 AND task_cid = {$task_cid}
                     ORDER BY start_time DESC LIMIT {$start},{$limit};";
             $task = Db::query($sql);
@@ -100,11 +100,12 @@ class Task extends Base
                     }
                     $v['task_icon'] = $this->request->domain().$v['task_icon'];
                     if($uid){
-                        $is_check = Db::name('send_task_log')->where(['uid'=>$uid,'task_id'=>$v['task_id']])->order('id','desc')->limit(1)->value('is_check');
+                        $is_check = Db::name('send_task_log')->where(['uid'=>$uid,'task_id'=>$v['task_id']])->where('is_check','not in','1')->value('is_check');
                         $member_classs = Db::name('member')->where('uid',$uid)->value('member_class');
                         $task[$k]['is_check'] = $is_check;
                         $task[$k]['member_classs'] = $member_classs;
                     }
+                    $v['task_user_level'] = explode(',',$v['task_user_level']);
                 }
             }
             $data['task'] = $task;

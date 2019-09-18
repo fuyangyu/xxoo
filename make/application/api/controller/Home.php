@@ -169,7 +169,7 @@ class Home extends Base
                 $data['serve_money'] = isset($fileData['serve_money']) ? $fileData['serve_money'] : '';
 
                 //点动会员数据记录
-                $sql = "SELECT b.uid,m.nick_name,m.face,b.type,b.money,b.add_time,m.member_class FROM wld_brokerage_log as b INNER JOIN wld_member as m ON b.uid = m.uid AND b.type in(1,4) ORDER BY b.id DESC LIMIT 4;";
+                $sql = "SELECT b.uid,m.nick_name,m.phone,m.face,b.type,b.money,b.add_time,m.member_class FROM wld_brokerage_log as b INNER JOIN wld_member as m ON b.uid = m.uid AND b.type in(1,4) ORDER BY b.id DESC LIMIT 4;";
                 $task = Db::query($sql);
                 foreach($task as &$v){
                     if($v['face']){

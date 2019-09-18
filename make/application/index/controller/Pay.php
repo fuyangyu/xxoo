@@ -233,7 +233,7 @@ class Pay extends Controller
      * @param $trade_no
      * @return array
      */
-    public function setOrderStatus($out_trade_no = '2019091010149102',$trade_no = '')
+    public function setOrderStatus($out_trade_no = '',$trade_no = '')
     {
             try {
             // 启动事务
@@ -285,114 +285,117 @@ class Pay extends Controller
                 $phone = substr_replace($user['phone'],'****',3,4);
                 //直推分佣
                 $oneData = Db::name('member')->where('uid',$user['invite_uid'])->field('uid,member_class,phone')->find();
-                if(!$oneData)  return $this->outJson(0, '操作失败', ['debug' => '操作失败，错误编码003,获取直推用户信息失败']);
-                $allot_one = Db::name('allot_log')->where(['user_level' => $oneData['member_class'], 'charge_type' => 1])->value('allot_one');
-                if (!empty($allot_one)) {
-                    $one_money = $pay_log['money'] * ($allot_one / 100);
-                    //获取分佣用户信息
-                    $brokerage[0]['uid'] = $oneData['uid'];
-                    $brokerage[0]['money'] = $one_money;
-                    $brokerage[0]['member_class'] = $oneData['member_class'];
-                    $brokerage[0]['phone'] = $oneData['phone'];
-                    $brokerage[0]['tid'] = $pay_log['id'];
-                    $brokerage[0]['sid'] = $user['uid'];
-                    $brokerage[0]['type'] = $pay_log['type'];  //充值类型 1：充值 2：续费 3：升级
-                    $brokerage[0]['brokerage_type'] = 1;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
-                    $brokerage[0]['add_time'] = date('Y-m_d H:i:s');
+                if($oneData) {
+                    $allot_one = Db::name('allot_log')->where(['user_level' => $oneData['member_class'], 'charge_type' => 1])->value('allot_one');
+                    if (!empty($allot_one)) {
+                        $one_money = $pay_log['money'] * ($allot_one / 100);
+                        //获取分佣用户信息
+                        $brokerage[0]['uid'] = $oneData['uid'];
+                        $brokerage[0]['money'] = $one_money;
+                        $brokerage[0]['member_class'] = $oneData['member_class'];
+                        $brokerage[0]['phone'] = $oneData['phone'];
+                        $brokerage[0]['tid'] = $pay_log['id'];
+                        $brokerage[0]['sid'] = $user['uid'];
+                        $brokerage[0]['type'] = $pay_log['type'];  //充值类型 1：充值 2：续费 3：升级
+                        $brokerage[0]['brokerage_type'] = 1;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
+                        $brokerage[0]['add_time'] = date('Y-m_d H:i:s');
 
-                    $message[0] = [  //直推用户
-                        'uid' => $user['invite_uid'],
-                        'content' => '您的团队用户'.$phone.$content.'，获得推荐佣金'.$one_money.'元',
-                        'add_time' => date('Y-m-d H:i:s')
-                    ];
+                        $message[0] = [  //直推用户
+                            'uid' => $user['invite_uid'],
+                            'content' => '您的团队用户' . $phone . $content . '，获得推荐佣金' . $one_money . '元',
+                            'add_time' => date('Y-m-d H:i:s')
+                        ];
 
-                    Db::name('member')->where(['uid' => $user['invite_uid']])->setInc('member_brokerage_money', $one_money);
-                }
-                //间推分佣
-                $twoData = Db::name('member')->where('uid', $user['parent_level_2'])->field('uid,member_class,phone')->find();
-                if(!$twoData)  return $this->outJson(0, '操作失败', ['debug' => '操作失败，错误编码004,获取间推用户信息失败']);
-                $allot_two = Db::name('allot_log')->where(['user_level' => $twoData['member_class'], 'charge_type' => 1])->value('allot_two');
-                if (!empty($allot_two)) {
-                    $two_money = $pay_log['money'] * ($allot_two / 100);
-                    //获取分佣用户信息
-                    $brokerage[1]['uid'] = $twoData['uid'];
-                    $brokerage[1]['money'] = $two_money;
-                    $brokerage[1]['member_class'] = $twoData['member_class'];
-                    $brokerage[1]['phone'] = $twoData['phone'];
-                    $brokerage[1]['tid'] = $pay_log['id'];
-                    $brokerage[1]['sid'] = $user['uid'];
-                    $brokerage[1]['type'] = $pay_log['type'];  //充值类型 1：充值 2：续费 3：升级
-                    $brokerage[1]['brokerage_type'] = 1;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
-                    $brokerage[1]['add_time'] = date('Y-m_d H:i:s');
+                        Db::name('member')->where(['uid' => $user['invite_uid']])->setInc('member_brokerage_money', $one_money);
+                    }
+                    //间推分佣
+                    $twoData = Db::name('member')->where('uid', $user['parent_level_2'])->field('uid,member_class,phone')->find();
+                    if ($twoData) {
+                        $allot_two = Db::name('allot_log')->where(['user_level' => $twoData['member_class'], 'charge_type' => 1])->value('allot_two');
+                        if (!empty($allot_two)) {
+                            $two_money = $pay_log['money'] * ($allot_two / 100);
+                            //获取分佣用户信息
+                            $brokerage[1]['uid'] = $twoData['uid'];
+                            $brokerage[1]['money'] = $two_money;
+                            $brokerage[1]['member_class'] = $twoData['member_class'];
+                            $brokerage[1]['phone'] = $twoData['phone'];
+                            $brokerage[1]['tid'] = $pay_log['id'];
+                            $brokerage[1]['sid'] = $user['uid'];
+                            $brokerage[1]['type'] = $pay_log['type'];  //充值类型 1：充值 2：续费 3：升级
+                            $brokerage[1]['brokerage_type'] = 1;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
+                            $brokerage[1]['add_time'] = date('Y-m_d H:i:s');
 
-                    $message[1] = [  //间推用户
-                        'uid' => $user['parent_level_2'],
-                        'content' => '您的团队用户' . $phone . $content . '，获得推荐佣金' . $two_money . '元',
-                        'add_time' => date('Y-m-d H:i:s')
-                    ];
+                            $message[1] = [  //间推用户
+                                'uid' => $user['parent_level_2'],
+                                'content' => '您的团队用户' . $phone . $content . '，获得推荐佣金' . $two_money . '元',
+                                'add_time' => date('Y-m-d H:i:s')
+                            ];
 
-                    Db::name('member')->where(['uid' => $user['parent_level_2']])->setInc('member_brokerage_money', $two_money);
-                }
-                //服务中心分佣
-                if (!empty($user['parent_level_3'])) {
-                    $service = array();
-                    $model = new \app\admin\model\Task();
-                    $service = $model->recursionService($user['parent_level_3'], $service);
-                    if(!empty($service)) {
-                        if(!empty($service[0])) {
-                            $one_serve = Db::name('member')->where('uid', $service[0])->field('uid,member_class,phone')->find();
-                            if (!$one_serve) return $this->outJson(0, '操作失败', ['debug' => '操作失败，错误编码005,获取第一服务中心用户信息失败']);
-                            $team_one = Db::name('allot_log')->where(['user_level' => $one_serve['member_class'], 'charge_type' => 1])->value('team_one');
-                            if (!empty($team_one)) {
-                                //获取分佣用户信息
-                                $serve_one_money = $pay_log['money'] * ($team_one / 100);   //第一个服务中心分佣金额
-                                $brokerage[2]['uid'] = $one_serve['uid'];
-                                $brokerage[2]['money'] = $serve_one_money;
-                                $brokerage[2]['member_class'] = $one_serve['member_class'];
-                                $brokerage[2]['phone'] = $one_serve['phone'];
-                                $brokerage[2]['tid'] = $pay_log['id'];
-                                $brokerage[2]['sid'] = $user['uid'];
-                                $brokerage[2]['type'] = $pay_log['type'];  //充值类型 1：充值 2：续费 3：升级
-                                $brokerage[2]['brokerage_type'] = 1;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
-                                $brokerage[2]['add_time'] = date('Y-m_d H:i:s');
-
-                                $message[2] = [  //第一服务中心
-                                    'uid' => $service[0],
-                                    'content' => '您的团队用户' . $phone . $content . '，获得推荐佣金' . $serve_one_money . '元',
-                                    'add_time' => date('Y-m-d H:i:s')
-                                ];
-
-                                Db::name('member')->where(['uid' => $service[0]])->setInc('member_brokerage_money', $serve_one_money);
-                            }
+                            Db::name('member')->where(['uid' => $user['parent_level_2']])->setInc('member_brokerage_money', $two_money);
                         }
-                        if(isset($service[1])) {
-                            $two_serve = Db::name('member')->where('uid', $service[1])->field('uid,member_class,phone')->find();
-                            if (!$two_serve) return $this->outJson(0, '操作失败', ['debug' => '操作失败，错误编码006,获取第二服务中心用户信息失败']);
-                            $team_two = Db::name('allot_log')->where(['user_level' => $two_serve['member_class'], 'charge_type' => 1])->value('team_two');
-                            if (!empty($team_two)) {
-                                //获取分佣用户信息
-                                $serve_two_money = $pay_log['money'] * ($team_two / 100);   //第二个服务中心分佣金额
-                                $brokerage[3]['uid'] = $two_serve['uid'];
-                                $brokerage[3]['money'] = $serve_two_money;
-                                $brokerage[3]['member_class'] = $two_serve['member_class'];
-                                $brokerage[3]['phone'] = $two_serve['phone'];
-                                $brokerage[3]['tid'] = $pay_log['id'];
-                                $brokerage[3]['sid'] = $user['uid'];
-                                $brokerage[3]['type'] = $pay_log['type'];  //充值类型 1：充值 2：续费 3：升级
-                                $brokerage[3]['brokerage_type'] = 1;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
-                                $brokerage[3]['add_time'] = date('Y-m_d H:i:s');
+                        //服务中心分佣
+                        if (!empty($user['parent_level_3'])) {
+                            $service = array();
+                            $model = new \app\admin\model\Task();
+                            $service = $model->recursionService($user['parent_level_3'], $service);
+                            if (!empty($service)) {
+                                if (!empty($service[0])) {
+                                    $one_serve = Db::name('member')->where('uid', $service[0])->field('uid,member_class,phone')->find();
+                                    if ($one_serve) {
+                                        $team_one = Db::name('allot_log')->where(['user_level' => $one_serve['member_class'], 'charge_type' => 1])->value('team_one');
+                                        if (!empty($team_one)) {
+                                            //获取分佣用户信息
+                                            $serve_one_money = $pay_log['money'] * ($team_one / 100);   //第一个服务中心分佣金额
+                                            $brokerage[2]['uid'] = $one_serve['uid'];
+                                            $brokerage[2]['money'] = $serve_one_money;
+                                            $brokerage[2]['member_class'] = $one_serve['member_class'];
+                                            $brokerage[2]['phone'] = $one_serve['phone'];
+                                            $brokerage[2]['tid'] = $pay_log['id'];
+                                            $brokerage[2]['sid'] = $user['uid'];
+                                            $brokerage[2]['type'] = $pay_log['type'];  //充值类型 1：充值 2：续费 3：升级
+                                            $brokerage[2]['brokerage_type'] = 1;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
+                                            $brokerage[2]['add_time'] = date('Y-m_d H:i:s');
 
-                                $message[3] = [  //第二服务中心
-                                    'uid' => $service[0],
-                                    'content' => '您的团队用户' . $phone . $content . '，获得推荐佣金' . $serve_two_money . '元',
-                                    'add_time' => date('Y-m-d H:i:s')
-                                ];
+                                            $message[2] = [  //第一服务中心
+                                                'uid' => $service[0],
+                                                'content' => '您的团队用户' . $phone . $content . '，获得推荐佣金' . $serve_one_money . '元',
+                                                'add_time' => date('Y-m-d H:i:s')
+                                            ];
 
-                                Db::name('member')->where(['uid' => $service[1]])->setInc('member_brokerage_money', $serve_two_money);
+                                            Db::name('member')->where(['uid' => $service[0]])->setInc('member_brokerage_money', $serve_one_money);
+                                        }
+                                    }
+                                    if (isset($service[1])) {
+                                        $two_serve = Db::name('member')->where('uid', $service[1])->field('uid,member_class,phone')->find();
+                                        if ($two_serve) {
+                                            $team_two = Db::name('allot_log')->where(['user_level' => $two_serve['member_class'], 'charge_type' => 1])->value('team_two');
+                                            if (!empty($team_two)) {
+                                                //获取分佣用户信息
+                                                $serve_two_money = $pay_log['money'] * ($team_two / 100);   //第二个服务中心分佣金额
+                                                $brokerage[3]['uid'] = $two_serve['uid'];
+                                                $brokerage[3]['money'] = $serve_two_money;
+                                                $brokerage[3]['member_class'] = $two_serve['member_class'];
+                                                $brokerage[3]['phone'] = $two_serve['phone'];
+                                                $brokerage[3]['tid'] = $pay_log['id'];
+                                                $brokerage[3]['sid'] = $user['uid'];
+                                                $brokerage[3]['type'] = $pay_log['type'];  //充值类型 1：充值 2：续费 3：升级
+                                                $brokerage[3]['brokerage_type'] = 1;  //佣金类型：1推荐佣金 2任务佣金 3渠道佣金
+                                                $brokerage[3]['add_time'] = date('Y-m_d H:i:s');
+
+                                                $message[3] = [  //第二服务中心
+                                                    'uid' => $service[0],
+                                                    'content' => '您的团队用户' . $phone . $content . '，获得推荐佣金' . $serve_two_money . '元',
+                                                    'add_time' => date('Y-m-d H:i:s')
+                                                ];
+
+                                                Db::name('member')->where(['uid' => $service[1]])->setInc('member_brokerage_money', $serve_two_money);
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-
                 }
                 if (!empty($brokerage)) {
                     Db::name('brokerage_log')->insertAll($brokerage);
@@ -412,7 +415,7 @@ class Pay extends Controller
         }catch (\Exception $e){
             // 回滚事务
             Db::rollback();
-                $this->log('操作失败，错误编码007,订单号：' . $out_trade_no . '错误体debug：' . $e->getMessage(),'brokerage.log');
+            $this->log('操作失败，错误编码007,订单号：' . $out_trade_no . '错误体debug：' . $e->getMessage(),'brokerage.log');
             return json($this->outJson(0,'操作失败',['debug' => '操作失败，错误编码007,订单号：' . $out_trade_no . '错误体debug：' . $e->getMessage()]));
         }
 

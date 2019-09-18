@@ -21,6 +21,15 @@ class Sales extends AdminBase
         ]);
     }
 
+    protected function getBusiness()
+    {
+        return [
+            '1' => '广告任务',
+            '2' => '会员收费',
+        ];
+    }
+
+
     /**
      * 异步获取分销配置列表数据
      * @return array
@@ -87,9 +96,9 @@ class Sales extends AdminBase
             $result = [
                 'allot_one' => '',
                 'allot_two' => '',
-                'allot_three' => '',
-                'infinite' => '',
-                'carry_index' => '',
+//                'allot_three' => '',
+//                'infinite' => '',
+//                'carry_index' => '',
                 'charge_type' => 1,
                 'user_level' => 1,
                 'team_one' => '',

@@ -153,12 +153,12 @@ class Pay extends Base
                 if($v['type'] == 1){
                     $bank = Db::name('bank_info')->where('uid',$v['uid'])->field('bank_name,bank_account')->find();
                     $log[$k]['account'] = $bank['bank_name'].'('.substr($bank['bank_account'],-4).')';
-                }
-                if($v['type'] == 2){
+                }elseif($v['type'] == 2){
                     $alipay = Db::name('alipay_info')->where('uid',$v['uid'])->value('alipay');
                     $log[$k]['account'] = $alipay;
+                }else{
+                    $log[$k]['account'] = '';
                 }
-                $log[$k]['account'] = '';
             }
         }
         return json($this->outJson(1,'获取成功',$log));
@@ -176,12 +176,12 @@ class Pay extends Base
             if($log['type'] == 1){
                 $bank = Db::name('bank_info')->where('uid',$log['uid'])->field('bank_name,bank_account')->find();
                 $log['account'] = $bank['bank_name'].'('.substr($bank['bank_account'],-4).')';
-            }
-            if($log['type'] == 2){
+            }elseif($log['type'] == 2){
                 $alipay = Db::name('alipay_info')->where('uid',$log['uid'])->value('alipay');
                 $log['account'] = $alipay;
+            }else {
+                $log['account'] = '';
             }
-            $log['account'] = '';
             return json($this->outJson(1,'获取成功',$log));
         }
         return json($this->outJson(0,'获取失败',$log));

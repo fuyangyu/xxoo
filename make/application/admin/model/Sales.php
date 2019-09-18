@@ -155,9 +155,6 @@ class Sales extends Base
             $init = [
                 'allot_one' => trim($data['allot_one']),
                 'allot_two' => trim($data['allot_two']),
-                'allot_three' => trim($data['allot_three']),
-                'infinite' => trim($data['infinite']),
-                'carry_index' => trim($data['carry_index']),
                 'charge_type' => trim($data['charge_type']),
                 'user_level' => trim($data['user_level']),
                 'team_one' => trim($data['team_one']),

@@ -10,9 +10,6 @@ class Task extends Base
     //设置了模型的数据集返回类型
     protected $resultSetType = 'collection';
 
-    // 领取任务的时间段
-    protected $momentDateTime = '8-20';
-
     // 领取任务的间隔
     protected $incision = 24;
 
@@ -244,23 +241,24 @@ class Task extends Base
                 }
             }
         }
-        // 检测该任务今日是否有领取
+        // 是否已领取该任务未完成
         $checkTaskLogData = Db::name('send_task_log')
             ->where(['task_id' => $tid, 'uid' => $uid])
-            ->whereTime('add_time','today')
-            ->order('id','desc')
+            ->where('is_check','not in','1')
+//            ->whereTime('add_time','today')
+//            ->order('id','desc')
             ->find();
         if ($checkTaskLogData) {
             // 3-1）必须要审核通过
-            if ($checkTaskLogData['is_check'] != 1) {
+//            if ($checkTaskLogData['is_check'] != 1) {
                 return $this->outJson(0,"该任务当天您已领取,等待平台审核中");
-            }
+//            }
             // 3-2）必须要与审核通过该条任务间隔24个小
 //            $pop_arr = array_pop($checkTaskLogData);
-            $incisionTime = $checkTaskLogData['add_time']+$this->incision * 3600;;
-            if (time() < $incisionTime) {   // 少于24个小时
-                return $this->outJson(0,"当日任务领取必须间隔{$this->incision}小时");
-            }
+//            $incisionTime = $checkTaskLogData['add_time']+$this->incision * 3600;;
+//            if (time() < $incisionTime) {   // 少于24个小时
+//                return $this->outJson(0,"当日任务领取必须间隔{$this->incision}小时");
+//            }
         }
         // 写库
         $init_insert = [

@@ -118,7 +118,7 @@ class Login extends Base
 
                 // 验证该号码是否已经被注册
                 $checkPhone = Db::name('member')->where(['phone' => trim($data['phone'])])->find();
-                if ($checkPhone) return json($this->outJson(0,'该手机号码已被注册'));
+                if ($checkPhone) return json($this->outJson(3,'该手机号码已被注册'));
 
                 //验证地址
                 if(empty($data['province']) || empty($data['city'])){

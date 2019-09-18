@@ -162,7 +162,6 @@ class Member extends Base
             }
 
         }
-        return json($this->outJson(0,'获取失败'));
     }
 
     /**

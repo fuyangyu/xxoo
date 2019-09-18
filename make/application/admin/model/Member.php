@@ -65,6 +65,13 @@ class Member extends Base
                 $data[$k]['user_phone'] = $member['phone'];
                 $data[$k]['member_class'] = $this->getMemberClassAttr($member['member_class']);
             }
+            if($v['status'] == 1){
+                $data[$k]['status_name'] = '未处理';
+            }elseif($v['status'] == 2){
+                $data[$k]['status_name'] = '已处理';
+            }elseif($v['status'] == 3){
+                $data[$k]['status_name'] = '未通过';
+            }
         }
         // 查询总记录数
         $total = Db::name('member_serve')->where($where)->count();
